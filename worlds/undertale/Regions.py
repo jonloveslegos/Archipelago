@@ -2,9 +2,9 @@ from BaseClasses import MultiWorld
 
 
 def link_undertale_areas(world: MultiWorld, player: int):
+    link_randomized_undertale_areas(world, player)
     for (exit, region) in mandatory_connections:
         world.get_entrance(exit, player).connect(world.get_region(region, player))
-    link_randomized_undertale_areas(world, player)
 
 
 def link_randomized_undertale_areas(world: MultiWorld, player: int):
@@ -47,17 +47,20 @@ undertale_regions = [
     ("Ruins", ["Ruins Exit"]),
     ("Old Home", ["Old Home Exit"]),
     ("Snowdin Forest", ["Snowdin Forest Exit"]),
-    ("Snowdin Town", ["Snowdin Town Exit", "Papyrus\" Home Entrance"]),
-    ("Papyrus\" Home", []),
-    ("Waterfall", ["Waterfall Exit", "Undyne\"s Home Entrance"]),
-    ("Undyne\"s Home", []),
-    ("Hotland", ["Cooking Show Entrance", "Lab Elevator"]),
+    ("Snowdin Town", ["Snowdin Town Exit", "papyrus\' Home Entrance", "Snowdin Boat"]),
+    ("papyrus\' Home", []),
+    ("Waterfall", ["Waterfall Exit", "undyne\'s Home Entrance", "Waterfall Boat"]),
+    ("undyne\'s Home", []),
+    ("Hotland", ["Cooking Show Entrance", "Lab Elevator", "Hotland Boat"]),
     ("Cooking Show", ["News Show Entrance"]),
     ("News Show", ["Hotland Exit"]),
     ("True Lab", []),
     ("Core", ["Core Exit"]),
     ("New Home", ["New Home Exit"]),
     ("Barrier", []),
+    ("Snowdin Boat Person", ["From Snowdin To Waterfall", "From Snowdin To Hotland"]),
+    ("Waterfall Boat Person", ["From Waterfall To Hotland", "From Waterfall To Snowdin"]),
+    ("Hotland Boat Person", ["From Hotland To Snowdin", "From Hotland To Waterfall"]),
 ]
 
 # (Entrance, region pointed to)
@@ -66,13 +69,22 @@ mandatory_connections = [
     ("New Game", "Ruins"),
     ("Ruins Exit", "Old Home"),
     ("Snowdin Forest Exit", "Snowdin Town"),
-    ("Papyrus\" Home Entrance", "Papyrus\" Home"),
-    ("Undyne\"s Home Entrance", "Undyne\"s Home"),
+    ("papyrus\' Home Entrance", "papyrus\' Home"),
+    ("undyne\'s Home Entrance", "undyne\'s Home"),
     ("Cooking Show Entrance", "Cooking Show"),
     ("News Show Entrance", "News Show"),
     ("Lab Elevator", "True Lab"),
     ("Core Exit", "New Home"),
     ("New Home Exit", "Barrier"),
+    ("From Snowdin To Waterfall", "Waterfall"),
+    ("From Snowdin To Hotland", "Hotland"),
+    ("From Waterfall To Snowdin", "Snowdin Town"),
+    ("From Waterfall To Hotland", "Hotland"),
+    ("From Hotland To Snowdin", "Snowdin Town"),
+    ("From Hotland To Waterfall", "Waterfall"),
+    ("Snowdin Boat", "Snowdin Boat Person"),
+    ("Waterfall Boat", "Waterfall Boat Person"),
+    ("Hotland Boat", "Hotland Boat Person"),
 ]
 
 randomized_connections = [

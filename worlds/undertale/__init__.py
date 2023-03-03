@@ -64,7 +64,8 @@ class UndertaleWorld(World):
             "rando_area": bool(self.multiworld.rando_area[self.player].value),
             "rando_stats": bool(self.multiworld.rando_stats[self.player].value),
             "prog_armor": bool(self.multiworld.prog_armor[self.player].value),
-            "prog_weapons": bool(self.multiworld.prog_weapons[self.player].value)
+            "prog_weapons": bool(self.multiworld.prog_weapons[self.player].value),
+            "rando_boat_unlocks": bool(self.multiworld.rando_boat_unlocks[self.player].value)
         }
 
     def generate_basic(self):
@@ -114,6 +115,15 @@ class UndertaleWorld(World):
         else:
             itempool += ["Left Home Key"]
             itempool += ["Right Home Key"]
+        if not self.multiworld.rando_boat_unlocks[self.player]:
+            itempool = [item for item in itempool if not (item == "Snowdin Transport" or item == "Waterfall Transport"
+                                                          or item == "Hotland Transport")]
+            self.multiworld.get_location("Boat Person Snowdin", self.player).place_locked_item(
+                self.create_item("Snowdin Transport"))
+            self.multiworld.get_location("Boat Person Waterfall", self.player).place_locked_item(
+                self.create_item("Waterfall Transport"))
+            self.multiworld.get_location("Boat Person Hotland", self.player).place_locked_item(
+                self.create_item("Hotland Transport"))
         if not self.multiworld.rando_love[self.player] or \
                 (self.multiworld.route_required[self.player] != "genocide" and
                  self.multiworld.route_required[self.player] != "all_routes"):

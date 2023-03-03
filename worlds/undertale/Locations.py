@@ -83,6 +83,9 @@ advancement_table = {
     "True Lab Plot": AdvData(79063, "Hotland"),
     "Left New Home Key": AdvData(79064, "New Home"),
     "Right New Home Key": AdvData(79065, "New Home"),
+    "Boat Person Snowdin": AdvData(79066, "Snowdin Boat Person"),
+    "Boat Person Waterfall": AdvData(79067, "Waterfall Boat Person"),
+    "Boat Person Hotland": AdvData(79068, "Hotland Boat Person"),
     "LOVE 2": AdvData(79902, "???"),
     "LOVE 3": AdvData(79903, "???"),
     "LOVE 4": AdvData(79904, "???"),
@@ -144,9 +147,9 @@ advancement_table = {
     "HP 18": AdvData(79616, "???"),
     "HP 19": AdvData(79617, "???"),
     "HP 20": AdvData(79618, "???"),
-    "Undyne Date": AdvData(None, "Undyne\"s Home"),
+    "Undyne Date": AdvData(None, "undyne\'s Home"),
     "Alphys Date": AdvData(None, "Hotland"),
-    "Papyrus Date": AdvData(None, "Papyrus\" Home"),
+    "Papyrus Date": AdvData(None, "papyrus\' Home"),
 }
 
 exclusion_table = {

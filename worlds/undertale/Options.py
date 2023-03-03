@@ -81,6 +81,12 @@ class RandomizeStats(Toggle):
     default = 0
 
 
+class RandomizeBoat(Toggle):
+    """Turns Boat Person destinations into items."""
+    display_name = "Randomize Boat Unlocks"
+    default = 0
+
+
 undertale_options: typing.Dict[str, type(Option)] = {
     "route_required":                           RouteRequired,
     "prog_plot":                                ProgressivePlot,
@@ -94,4 +100,5 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "only_flakes":                              OnlyFlakes,
     "prog_armor":                               ProgressiveArmor,
     "prog_weapons":                             ProgressiveWeapons,
+    "rando_boat_unlocks":                       RandomizeBoat,
 }

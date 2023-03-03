@@ -87,6 +87,9 @@ item_table = {
     "Left Home Key": ItemData(77787, ItemClassification.progression),
     "LOVE": ItemData(77788, ItemClassification.useful),
     "Right Home Key": ItemData(77789, ItemClassification.progression),
+    "Snowdin Transport": ItemData(77090, ItemClassification.progression),
+    "Waterfall Transport": ItemData(77091, ItemClassification.progression),
+    "Hotland Transport": ItemData(77092, ItemClassification.progression),
     "Key Piece": ItemData(77000, ItemClassification.progression),
     "100G": ItemData(77999, ItemClassification.useful),
     "500G": ItemData(77998, ItemClassification.useful),
@@ -164,6 +167,9 @@ key_items = {
     "DEF Up": 4,
     "HP Up": 19,
     "LOVE": 19,
+    "Snowdin Transport": 1,
+    "Waterfall Transport": 1,
+    "Hotland Transport": 1,
 }
 
 junk_weights_all = {
