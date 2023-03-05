@@ -23,7 +23,7 @@ class KeyPieces(Range):
     display_name = "Key Piece Amount"
     default = 5
     range_start = 1
-    range_end = 14
+    range_end = 10
 
 
 class KeyHunt(Toggle):
@@ -41,13 +41,13 @@ class ProgressivePlot(Toggle):
 class ProgressiveArmor(Toggle):
     """Makes the armor progressive."""
     display_name = "Progressive Armor"
-    default = 0
+    default = 1
 
 
 class ProgressiveWeapons(Toggle):
     """Makes the weapons progressive."""
     display_name = "Progressive Weapons"
-    default = 0
+    default = 1
 
 
 class OnlyFlakes(Toggle):
@@ -87,6 +87,12 @@ class RandomizeBoat(Toggle):
     default = 0
 
 
+class RandomizeBattleActions(Toggle):
+    """Turns every option in battles into items."""
+    display_name = "Randomize Battle Actions"
+    default = 0
+
+
 undertale_options: typing.Dict[str, type(Option)] = {
     "route_required":                           RouteRequired,
     "prog_plot":                                ProgressivePlot,
@@ -94,11 +100,12 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "key_pieces":                               KeyPieces,
     "rando_love":                               RandomizeLove,
     "rando_stats":                              RandomizeStats,
+    "rando_boat_unlocks":                       RandomizeBoat,
+    "rando_battle_actions":                     RandomizeBattleActions,
     "rando_area":                               RandomizeAreas,
     "temy_include":                             IncludeTemy,
     "no_equips":                                NoEquips,
     "only_flakes":                              OnlyFlakes,
     "prog_armor":                               ProgressiveArmor,
     "prog_weapons":                             ProgressiveWeapons,
-    "rando_boat_unlocks":                       RandomizeBoat,
 }

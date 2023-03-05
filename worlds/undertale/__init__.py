@@ -65,7 +65,8 @@ class UndertaleWorld(World):
             "rando_stats": bool(self.multiworld.rando_stats[self.player].value),
             "prog_armor": bool(self.multiworld.prog_armor[self.player].value),
             "prog_weapons": bool(self.multiworld.prog_weapons[self.player].value),
-            "rando_boat_unlocks": bool(self.multiworld.rando_boat_unlocks[self.player].value)
+            "rando_boat_unlocks": bool(self.multiworld.rando_boat_unlocks[self.player].value),
+            "rando_battle_actions": bool(self.multiworld.rando_battle_actions[self.player].value)
         }
 
     def generate_basic(self):
@@ -115,6 +116,13 @@ class UndertaleWorld(World):
         else:
             itempool += ["Left Home Key"]
             itempool += ["Right Home Key"]
+        if not self.multiworld.rando_battle_actions[self.player]:
+            itempool = [item for item in itempool if not (item == "Attack Action" or item == "Act Action"
+                                                          or item == "Item Action" or item == "Mercy Action")]
+            self.multiworld.push_precollected(self.create_item("Attack Action"))
+            self.multiworld.push_precollected(self.create_item("Act Action"))
+            self.multiworld.push_precollected(self.create_item("Item Action"))
+        self.multiworld.push_precollected(self.create_item("Mercy Action"))
         if not self.multiworld.rando_boat_unlocks[self.player]:
             itempool = [item for item in itempool if not (item == "Snowdin Transport" or item == "Waterfall Transport"
                                                           or item == "Hotland Transport")]
