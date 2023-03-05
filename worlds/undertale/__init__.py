@@ -66,7 +66,8 @@ class UndertaleWorld(World):
             "prog_armor": bool(self.multiworld.prog_armor[self.player].value),
             "prog_weapons": bool(self.multiworld.prog_weapons[self.player].value),
             "rando_boat_unlocks": bool(self.multiworld.rando_boat_unlocks[self.player].value),
-            "rando_battle_actions": bool(self.multiworld.rando_battle_actions[self.player].value)
+            "rando_battle_actions": bool(self.multiworld.rando_battle_actions[self.player].value),
+            "rando_elevator_controls": bool(self.multiworld.rando_elevator_controls[self.player].value)
         }
 
     def generate_basic(self):
@@ -123,6 +124,9 @@ class UndertaleWorld(World):
             self.multiworld.push_precollected(self.create_item("Act Action"))
             self.multiworld.push_precollected(self.create_item("Item Action"))
         self.multiworld.push_precollected(self.create_item("Mercy Action"))
+        if not self.multiworld.rando_elevator_controls[self.player]:
+            itempool = [item for item in itempool if not item == "Elevator Controls"]
+            self.multiworld.push_precollected(self.create_item("Elevator Controls"))
         if not self.multiworld.rando_boat_unlocks[self.player]:
             itempool = [item for item in itempool if not (item == "Snowdin Transport" or item == "Waterfall Transport"
                                                           or item == "Hotland Transport")]

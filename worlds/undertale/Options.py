@@ -93,6 +93,12 @@ class RandomizeBattleActions(Toggle):
     default = 0
 
 
+class RandomizeElevatorControls(Toggle):
+    """Adds a new item that unlocks elevators."""
+    display_name = "Randomize Elevator Controls"
+    default = 0
+
+
 undertale_options: typing.Dict[str, type(Option)] = {
     "route_required":                           RouteRequired,
     "prog_plot":                                ProgressivePlot,
@@ -108,4 +114,5 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "only_flakes":                              OnlyFlakes,
     "prog_armor":                               ProgressiveArmor,
     "prog_weapons":                             ProgressiveWeapons,
+    "rando_elevator_controls":                             RandomizeElevatorControls,
 }
