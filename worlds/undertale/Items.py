@@ -105,6 +105,7 @@ item_table = {
     "Undyne Date": ItemData(None, ItemClassification.progression),
     "Alphys Date": ItemData(None, ItemClassification.progression),
     "Papyrus Date": ItemData(None, ItemClassification.progression),
+    "Phone Call Trap": ItemData(77098, ItemClassification.trap),
 }
 
 non_key_items = {

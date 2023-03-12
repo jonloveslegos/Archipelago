@@ -322,19 +322,15 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             await ctx.send_msgs(sync_msg)
         if start_index == len(ctx.items_received):
             counter = -1
-            while counter > -99:
-                if os.path.exists(os.path.expandvars(r"%localappdata%/UNDERTALE/" +
-                                                     f"{str(counter)}PLR{str(ctx.slot)}.item")):
-                    os.remove(os.path.expandvars(r"%localappdata%/UNDERTALE/"+f"{str(counter)}PLR{str(ctx.slot)}.item"))
-                counter -= 1
             placedWeapon = 0
             placedArmor = 0
             for item in args["items"]:
                 id = NetworkItem(*item).location
                 while NetworkItem(*item).location < 0 and \
-                        os.path.isfile(os.path.expandvars(r"%localappdata%/UNDERTALE/" +
-                                                          f"{str(id)}PLR{str(NetworkItem(*item).player)}.item")):
+                        counter <= id:
                     id -= 1
+                if NetworkItem(*item).location < 0:
+                    counter -= 1
                 filename = f"{str(id)}PLR{str(NetworkItem(*item).player)}.item"
                 with open(os.path.expandvars(r"%localappdata%/UNDERTALE/"+filename), "w") as f:
                     if NetworkItem(*item).item == 77701:
