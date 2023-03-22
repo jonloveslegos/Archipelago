@@ -1,25 +1,19 @@
-# Based (read: copied almost wholesale and edited) off the KHDays1 Client.
+# Based (read: copied almost wholesale and edited) off the TLoZ Client.
 
 import asyncio
 import copy
 import json
 import logging
-import os
-import subprocess
 import time
-import typing
 from asyncio import StreamReader, StreamWriter
-from typing import List
 
 import Utils
-from Utils import async_start
-from worlds import lookup_any_location_id_to_name
-from CommonClient import CommonContext, server_loop, gui_enabled, console_loop, ClientCommandProcessor, logger, \
+from NetUtils import ClientStatus
+from CommonClient import CommonContext, server_loop, gui_enabled, ClientCommandProcessor, logger, \
     get_base_parser
 
 from worlds.khdays.Items import item_table
 from worlds.khdays.Locations import location_table
-from worlds.khdays import Items, Locations
 
 SYSTEM_MESSAGE_ID = 0
 
@@ -158,6 +152,10 @@ async def nds_sync_task(ctx: KHDaysContext):
                             {"cmd": "LocationChecks",
                             "locations": ctx.locations_array}
                         ])
+                    if ctx.game is not None and 'won' in data_decoded:
+                        if not ctx.finished_game:
+                            await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
+                            ctx.finished_game = True
                 except asyncio.TimeoutError:
                     logger.debug("Read Timed Out, Reconnecting")
                     error_status = CONNECTION_TIMING_OUT_STATUS

@@ -53,7 +53,7 @@ itemIds["Magic LV2 4C"] = 0x194E36
 itemIds["Magic LV3 4"] = 0x194E37
 itemIds["Magic LV3 4B"] = 0x194E38
 itemIds["Magic LV4 4"] = 0x194E39
-itemIds["Ddoublecast 4"] = 0x194E3A
+itemIds["Doublecast 4"] = 0x194E3A
 itemIds["Triplecast 3"] = 0x194E3B
 itemIds["Quadcast 3"] = 0x194E3C
 
@@ -286,7 +286,7 @@ function handle_items(itemName)
         while i < toSend do
             local temp = sentCount[itemName]+toSend-i
             if temp <= itemMax[itemName] then
-                got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+20000+temp
+                got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+500000+temp
             end
             i = i + 1
         end
@@ -495,6 +495,11 @@ function receive()
             already_obtained = handle_items(k)
         end
         retTable["checked_locs"] = already_obtained
+    end
+    if mainmemory.read_u8(0x1A7F60) == 0x54 then
+        if mainmemory.read_u8(0x1A497C) == 0x0166 then
+            retTable["won"] == "true"
+        end
     end
     
     msg = json.encode(retTable).."\n"
