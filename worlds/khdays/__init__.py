@@ -11,7 +11,7 @@ from BaseClasses import Item, Location, Region, Entrance, MultiWorld, ItemClassi
 from .Items import item_table, KHDaysItem
 from .Locations import location_table, KHDaysLocation
 from .Options import khdays_options
-from .Rules import set_rules
+from .Rules import set_rules, set_completion_rules
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import add_rule
 
@@ -58,33 +58,28 @@ class KHDaysWorld(World):
     def create_event(self, event: str):
         return KHDaysItem(event, ItemClassification.progression, None, self.player)
 
-    def create_location(self, name, id, parent, event=False):
-        return_location = KHDaysLocation(self.player, name, id, parent)
-        return_location.event = event
-        return return_location
-
     def create_regions(self):
         menu = Region("Menu", self.player, self.multiworld)
         missions = Region("Missions", self.player, self.multiworld)
 
-        for location in location_table:
-            missions.locations.append(
-                self.create_location(location, location_table[location], missions))
+        missions.locations = [KHDaysLocation(self.player, loc_name, loc_data, missions)
+                           for loc_name, loc_data in location_table.items()]
         begin_game = Entrance(self.player, "Begin Game", menu)
         menu.exits.append(begin_game)
         begin_game.connect(missions)
         self.multiworld.regions.append(menu)
         self.multiworld.regions.append(missions)
 
-    def create_items(self):
+    def generate_basic(self):
         item_pool = []
         for (name) in item_table:
             for i in range(item_table[name].khdaysamount):
-                item_pool += {self.create_item(name)}
+                item_pool += [self.multiworld.create_item(name, self.player)]
         self.multiworld.itempool += item_pool
 
-    # refer to Rules.py
-    set_rules = set_rules
+    def set_rules(self):
+        set_rules(self.multiworld, self.player)
+        set_completion_rules(self.multiworld, self.player)
 
     def get_filler_item_name(self) -> str:
         if self.filler_items is None:

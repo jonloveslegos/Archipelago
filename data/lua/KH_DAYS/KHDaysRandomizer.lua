@@ -1,5 +1,3 @@
---Shamelessly copied code off the TLoZ lua
-
 console.clear()
 
 local socket = require("socket")
@@ -271,9 +269,11 @@ itemMax["Sliding Dash LV+"] = 2
 itemMax["Haste LV+"] = 2
 itemMax["High Jump LV+"] = 2
 obtainedCount = {}
+sentCount = {}
 for k, v in pairs(itemIds) do
-    obtainedCount[k] = mainmemory.read_u8(v)
-    itemMax[k] = itemMax[k] - mainmemory.read_u8(v)
+    obtainedCount[k] = 0
+    sentCount[k] = 0
+    itemMax[k] = itemMax[k]
     mainmemory.write_u8(v, 0)
 end
 already_obtained = {}
@@ -284,12 +284,13 @@ function handle_items(itemName)
         local i = 0
         local toSend = potion_count-obtainedCount[itemName]
         while i < toSend do
-            if (toSend)+i < itemMax[itemName] then
-                got_checks[tostring(i)] = (toSend)+i+(itemIds[itemName]*100)-165478400+20000
+            local temp = sentCount[itemName]+toSend-i
+            if temp <= itemMax[itemName] then
+                got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+20000+temp
             end
-            mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
             i = i + 1
         end
+        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-toSend)
     end
     if already_obtained ~= nil then
         local merged = {}
@@ -326,10 +327,7 @@ end
 
 function recieve_item(itemName)
     mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])+1)
-    if mainmemory.read_u8(itemIds[itemName]) > 99 then
-        mainmemory.write_u8(itemIds[itemName], 99)
-    end
-    obtainedCount[itemName] = mainmemory.read_u8(itemIds[itemName])
+    obtainedCount[itemName] = obtainedCount[itemName] + 1
 end
 
 local bizhawk_version = client.getversion()
@@ -359,6 +357,18 @@ local u8 = nil
 local wU8 = nil
 local isNesHawk = false
 
+function countEntries(inputTable)
+    result = {} 
+    for i, v in ipairs(inputTable) do
+        if result[v] ~= nil then
+            result[v] = result[v] + 1
+        else
+            result[v] = 1
+        end
+    end
+    return result
+end
+
 function processBlock(block)
     if block ~= nil then
         local msgBlock = block['messages']
@@ -373,13 +383,27 @@ function processBlock(block)
         local itemsBlock = block["items"]
         isInGame = StateOKForMainLoop()
         if itemsBlock ~= nil and isInGame then
-            --get item from item code
-            --get function from item
-            --do function
+            tempCount = {}
+            for k, v in pairs(itemIds) do
+                tempCount[k] = 0
+            end
             for i, item in pairs(itemsBlock) do
-                if i > obtainedCount[item] then
-                    recieve_item(item)
+                tempCount[item] = tempCount[item] + 1
+            end
+            for k, v in pairs(tempCount) do
+                if v > mainmemory.read_u8(itemIds[k]) then
+                    recieve_item(k)
                 end
+            end
+        end
+        local locBlock = block["checked_locs"]
+        if locBlock ~= nil then
+            sentCount = {}
+            for k, v in pairs(itemIds) do
+                sentCount[k] = 0
+            end
+            for y, u in pairs(countEntries(locBlock)) do
+                sentCount[y] = u
             end
         end
     end

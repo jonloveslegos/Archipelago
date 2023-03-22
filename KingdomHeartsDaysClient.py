@@ -126,6 +126,7 @@ def get_payload(ctx: KHDaysContext):
     return json.dumps(
         {
             "items": [items_by_id[item.item] for item in ctx.items_received],
+            "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")])[:-1] for item in ctx.checked_locations],
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10}
         }
@@ -150,10 +151,9 @@ async def nds_sync_task(ctx: KHDaysContext):
                     data = await asyncio.wait_for(reader.readline(), timeout=5)
                     data_decoded = json.loads(data.decode())
                     if ctx.game is not None and 'checked_locs' in data_decoded:
-                        print(data_decoded["checked_locs"])
+                        ctx.locations_array = []
                         for i in data_decoded["checked_locs"]:
                             ctx.locations_array.append(data_decoded["checked_locs"][i])
-                        print(ctx.locations_array)
                         await ctx.send_msgs([
                             {"cmd": "LocationChecks",
                             "locations": ctx.locations_array}
