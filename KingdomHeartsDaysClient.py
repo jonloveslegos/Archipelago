@@ -32,7 +32,7 @@ items_by_id = {id: item for item, id in item_ids.items()}
 locations_by_id = {id: location for location, id in location_ids.items()}
 
 
-valid_characters = {"Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", "Larxene", "Lexaeus", "Luxord", "Marluxia", "Riku", "Vexen", "Xemnas", "Xion", "Zexion", "Mickey", "Donald", "Goofy"}
+valid_characters = {"Roxas"}
 
 
 class KHDaysCommandProcessor(ClientCommandProcessor):
@@ -47,6 +47,10 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
         global DISPLAY_MSGS
         DISPLAY_MSGS = not DISPLAY_MSGS
         logger.info(f"Messages are now {'enabled' if DISPLAY_MSGS else 'disabled'}")
+
+    def _cmd_unlocked_characters(self):
+        """Displays a list of characters that you have available."""
+        logger.info(valid_characters)
 
     def _cmd_set_character_one(self, char_name: str = ""):
         """Sets the first character in the next mission"""
@@ -148,7 +152,7 @@ def get_payload(ctx: KHDaysContext):
     current_time = time.time()
     return json.dumps(
         {
-            "items": [items_by_id[item.item] for item in ctx.items_received],
+            "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000],
             "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")])[:-1] for item in ctx.checked_locations],
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
@@ -175,6 +179,7 @@ async def nds_sync_task(ctx: KHDaysContext):
                     # 2. An array representing the memory values of the locations area (if in game)
                     data = await asyncio.wait_for(reader.readline(), timeout=5)
                     data_decoded = json.loads(data.decode())
+                    valid_characters = {items_by_id[item.item] for item in ctx.items_received if item.item < 25000}
                     if ctx.game is not None and 'checked_locs' in data_decoded:
                         ctx.locations_array = []
                         for i in data_decoded["checked_locs"]:
