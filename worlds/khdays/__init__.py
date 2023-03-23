@@ -81,6 +81,15 @@ class KHDaysWorld(World):
 
         self.multiworld.push_precollected(self.multiworld.create_item("Roxas", self.player))
         self.multiworld.itempool += item_pool
+        for (name, spot) in location_table:
+            if "Elixir" in name:
+                self.multiworld.exclude_locations += {spot}
+            if "Megalixir" in name:
+                self.multiworld.exclude_locations += {spot}
+            if "Mega-Potion" in name:
+                self.multiworld.exclude_locations += {spot}
+            if "Mega-Ether" in name:
+                self.multiworld.exclude_locations += {spot}
 
     def set_rules(self):
         set_rules(self.multiworld, self.player)
