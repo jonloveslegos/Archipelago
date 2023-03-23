@@ -151,7 +151,7 @@ def get_payload(ctx: KHDaysContext):
     return json.dumps(
         {
             "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000],
-            "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")])[:-1] for item in ctx.checked_locations],
+            "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations],
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
             "char_1": ctx.char_1,

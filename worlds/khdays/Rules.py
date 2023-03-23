@@ -16,7 +16,7 @@ from .Options import khdays_options
 class KHDaysLogic(LogicMixin):
 
     def days_has_magic(self, state: CollectionState, player: int):
-        return state.has_any({"Fire", "Fira", "Firaga", "Blizzard", "Blizzara", "Blizzaga", "Thunder", "Thundara", "Thundaga", "Aero", "Aerora", "Aeroga", "Cure", "Cura", "Curaga"}, player)
+        return state.has_any({"Fire"}, player)
 
     def days_has_day_access(self, state: CollectionState, day_number: int, player: int):
         can_do = True

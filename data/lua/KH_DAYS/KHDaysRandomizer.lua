@@ -297,10 +297,9 @@ itemMax["High Jump LV+"] = 2
 obtainedCount = {}
 sentCount = {}
 for k, v in pairs(itemIds) do
-    obtainedCount[k] = 0
+    obtainedCount[k] = mainmemory.read_u8(v)
     sentCount[k] = 0
     itemMax[k] = itemMax[k]
-    mainmemory.write_u8(v, 0)
 end
 already_obtained = {}
 function handle_items(itemName)
@@ -308,26 +307,42 @@ function handle_items(itemName)
     local got_checks = {}
     if obtainedCount[itemName] < potion_count then
         local i = 0
-        local toSend = potion_count-obtainedCount[itemName]
+        local toSend = potion_count-obtainedCount[itemName] + sentCount[itemName]
         while i < toSend do
-            local temp = sentCount[itemName]+toSend-i
+            local temp = toSend-i
             if temp <= itemMax[itemName] then
                 got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+500000+temp
+                print((itemIds[itemName]*1000)-1654784000+500000+temp)
+                print(temp)
             end
             i = i + 1
         end
-        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-toSend)
+        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-(potion_count-obtainedCount[itemName]))
     end
     if already_obtained ~= nil then
         local merged = {}
         local i = 0
         for k, v in pairs(already_obtained) do
-            merged[tostring(i)] = v
-            i = i + 1
+            if countEntries(merged)[v] == nil then
+                merged[tostring(i)] = v
+                i = i + 1
+            else
+                if countEntries(merged)[v] <= 0 then
+                    merged[tostring(i)] = v
+                    i = i + 1
+                end
+            end
         end
         for k, v in pairs(got_checks) do
-            merged[tostring(i)] = v
-            i = i + 1
+            if countEntries(merged)[v] == nil then
+                merged[tostring(i)] = v
+                i = i + 1
+            else
+                if countEntries(merged)[v] <= 0 then
+                    merged[tostring(i)] = v
+                    i = i + 1
+                end
+            end
         end
         return merged
     else
@@ -430,6 +445,7 @@ function processBlock(block)
             end
             for y, u in pairs(countEntries(locBlock)) do
                 sentCount[y] = u
+                print(y)
             end
         end
         local char1 = block["char_1"]
