@@ -312,8 +312,6 @@ function handle_items(itemName)
             local temp = toSend-i
             if temp <= itemMax[itemName] then
                 got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+500000+temp
-                print((itemIds[itemName]*1000)-1654784000+500000+temp)
-                print(temp)
             end
             i = i + 1
         end
@@ -445,7 +443,6 @@ function processBlock(block)
             end
             for y, u in pairs(countEntries(locBlock)) do
                 sentCount[y] = u
-                print(y)
             end
         end
         local char1 = block["char_1"]
