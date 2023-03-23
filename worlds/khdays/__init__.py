@@ -63,6 +63,15 @@ class KHDaysWorld(World):
 
         missions.locations = [KHDaysLocation(self.player, loc_name, loc_data, missions)
                            for loc_name, loc_data in location_table.items()]
+        for item in missions.locations:
+            if "Elixir" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Megalixir" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Mega-Potion" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Mega-Ether" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
         begin_game = Entrance(self.player, "Begin Game", menu)
         menu.exits.append(begin_game)
         begin_game.connect(missions)
@@ -81,15 +90,6 @@ class KHDaysWorld(World):
 
         self.multiworld.push_precollected(self.multiworld.create_item("Roxas", self.player))
         self.multiworld.itempool += item_pool
-        for (name, spot) in location_table:
-            if "Elixir" in name:
-                self.multiworld.exclude_locations += {spot}
-            if "Megalixir" in name:
-                self.multiworld.exclude_locations += {spot}
-            if "Mega-Potion" in name:
-                self.multiworld.exclude_locations += {spot}
-            if "Mega-Ether" in name:
-                self.multiworld.exclude_locations += {spot}
 
     def set_rules(self):
         set_rules(self.multiworld, self.player)

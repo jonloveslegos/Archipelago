@@ -20,15 +20,15 @@ class ItemData(typing.NamedTuple):
 
 
 item_table: Dict[str, ItemData] = {
-    "Potion": ItemData(filler, 99, 0x194DCA),
+    "Potion": ItemData(filler, 90, 0x194DCA),
     "Panel Slot": ItemData(useful, 105,0x194DC9),
-    "Hi-Potion": ItemData(filler, 99,0x194DCB),
-    "Mega-Potion": ItemData(filler, 99,0x194DCC),
-    "Ether": ItemData(filler, 99,0x194DCD),
-    "Hi-Ether": ItemData(filler, 99,0x194DCE),
-    "Mega-Ether": ItemData(filler, 99,0x194DCF),
-    "Elixir": ItemData(filler, 99,0x194DD0),
-    "Megalixir": ItemData(filler, 99,0x194DD1),
+    "Hi-Potion": ItemData(filler, 55,0x194DCB),
+    "Mega-Potion": ItemData(filler, 5,0x194DCC),
+    "Ether": ItemData(filler, 60,0x194DCD),
+    "Hi-Ether": ItemData(filler, 30,0x194DCE),
+    "Mega-Ether": ItemData(filler, 5,0x194DCF),
+    "Elixir": ItemData(filler, 10, 0x194DD0),
+    "Megalixir": ItemData(filler, 5, 0x194DD1),
     "Panacea": ItemData(filler, 99,0x194DD2),
     "Limit Recharge": ItemData(filler, 99,0x194DD3),
     "Level Up": ItemData(useful, 39,0x194E07),
