@@ -38,8 +38,7 @@ class KHDaysWorld(World):
     option_definitions = khdays_options
     game = "Kingdom Hearts Days"
     topology_present = False
-    data_version = 1
-    base_id = 7000
+    data_version = 0
     web = KHDaysWeb()
 
     item_name_to_id = {name: data.code for name, data in item_table.items()}

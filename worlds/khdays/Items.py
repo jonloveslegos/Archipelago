@@ -239,6 +239,6 @@ for (name) in item_table:
     i += 1
 
 i = 0
-for name in {"Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", "Larxene", "Lexaeus", "Luxord", "Marluxia", "Riku", "Vexen", "Xemnas", "Xion", "Zexion", "Mickey", "Donald", "Goofy"}:
+for name in ["Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", "Larxene", "Lexaeus", "Luxord", "Marluxia", "Riku", "Vexen", "Xemnas", "Xion", "Zexion", "Mickey", "Donald", "Goofy"]:
     item_table[name] = ItemData(useful, 1, 0, 25000-i-1)
     i += 1

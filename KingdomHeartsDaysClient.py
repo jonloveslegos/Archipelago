@@ -32,9 +32,6 @@ items_by_id = {id: item for item, id in item_ids.items()}
 locations_by_id = {id: location for location, id in location_ids.items()}
 
 
-valid_characters = {"Roxas"}
-
-
 class KHDaysCommandProcessor(ClientCommandProcessor):
 
     def _cmd_nds(self):
@@ -50,11 +47,11 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
 
     def _cmd_unlocked_characters(self):
         """Displays a list of characters that you have available."""
-        logger.info(valid_characters)
+        logger.info(self.ctx.valid_characters)
 
     def _cmd_set_character_one(self, char_name: str = ""):
         """Sets the first character in the next mission"""
-        if char_name in valid_characters:
+        if char_name in self.ctx.valid_characters:
             if isinstance(self.ctx, KHDaysContext):
                 self.ctx.char_1 = char_name
                 logger.info("Character one is now "+char_name)
@@ -63,7 +60,7 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
 
     def _cmd_set_character_two(self, char_name: str = ""):
         """Sets the second character in the next mission (Do not put a name to set it to nobody)"""
-        if char_name in valid_characters:
+        if char_name in self.ctx.valid_characters:
             if isinstance(self.ctx, KHDaysContext):
                 self.ctx.char_2 = char_name
                 logger.info("Character two is now "+char_name)
@@ -80,6 +77,7 @@ class KHDaysContext(CommonContext):
     items_handling = 0b111  # full remote
     char_1 = "Roxas"
     char_2 = ""
+    valid_characters = {"Roxas"}
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -179,7 +177,7 @@ async def nds_sync_task(ctx: KHDaysContext):
                     # 2. An array representing the memory values of the locations area (if in game)
                     data = await asyncio.wait_for(reader.readline(), timeout=5)
                     data_decoded = json.loads(data.decode())
-                    valid_characters = {items_by_id[item.item] for item in ctx.items_received if item.item < 25000}
+                    ctx.valid_characters = {items_by_id[item.item] for item in ctx.items_received if item.item < 25000}
                     if ctx.game is not None and 'checked_locs' in data_decoded:
                         ctx.locations_array = []
                         for i in data_decoded["checked_locs"]:
