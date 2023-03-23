@@ -87,6 +87,7 @@ class KHDaysContext(CommonContext):
         self.nds_status = CONNECTION_INITIAL_STATUS
         self.game = 'Kingdom Hearts Days'
         self.awaiting_rom = False
+        self.day_requirement = 358
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -100,7 +101,8 @@ class KHDaysContext(CommonContext):
 
     def on_package(self, cmd: str, args: dict):
         if cmd == 'Connected':
-            self.slot_data = args.get("slot_data", {})
+            slot_data = args["slot_data"]
+            self.day_requirement = slot_data["day_requirement"]
         elif cmd == 'Print':
             msg = args['text']
             if ': !' not in msg:
@@ -181,8 +183,8 @@ async def nds_sync_task(ctx: KHDaysContext):
                             {"cmd": "LocationChecks",
                             "locations": ctx.locations_array}
                         ])
-                    if ctx.game is not None and 'won' in data_decoded:
-                        if not ctx.finished_game:
+                    if ctx.game is not None and 'day' in data_decoded:
+                        if not ctx.finished_game and int(data_decoded["day"]) >= ctx.day_requirement:
                             await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
                             ctx.finished_game = True
                 except asyncio.TimeoutError:

@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
 from ..AutoWorld import LogicMixin
 
+from .Options import khdays_options
+
 
 class KHDaysLogic(LogicMixin):
 
@@ -599,4 +601,4 @@ def set_rules(world: MultiWorld, player: int):
 
 
 def set_completion_rules(world: MultiWorld, player: int):
-    world.completion_condition[player] = lambda state: state.days_has_day_access(state, 358, player)
+    world.completion_condition[player] = lambda state, world=world, player=player: state.days_has_day_access(state, world.DayRequirement[player].value, player)

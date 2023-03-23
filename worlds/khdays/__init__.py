@@ -33,7 +33,7 @@ class KHDaysWeb(WebWorld):
 class KHDaysWorld(World):
     """
     Kingdom Hearts Days is a game for the Nintendo DS! Complete tasks for the Organization, to get rewards!
-    You objective is to beat the final day and win the game!
+    Your objective is to beat the final day and win the game!
     """
     option_definitions = khdays_options
     game = "Kingdom Hearts Days"
@@ -87,5 +87,6 @@ class KHDaysWorld(World):
         return self.multiworld.random.choice(self.filler_items)
 
     def fill_slot_data(self) -> Dict[str, Any]:
-        slot_data = {}
-        return slot_data
+        return {
+            "day_requirement": self.multiworld.DayRequirement[self.player].value,
+        }
