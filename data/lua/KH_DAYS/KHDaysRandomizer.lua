@@ -531,8 +531,8 @@ function receive()
         retTable["checked_locs"] = already_obtained
     end
     if mainmemory.read_u8(0x1A7F60) == 0x54 then
-        if mainmemory.read_u8(0x1A497C) == 0x0166 then
-            retTable["won"] = "true"
+        if not (mainmemory.read_u8(0x1A4978) == 255 and mainmemory.read_u8(0x1A497C) == 255) then
+            retTable["day"] = tostring(mainmemory.read_u8(0x1A497C))
         end
     end
     
