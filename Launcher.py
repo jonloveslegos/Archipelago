@@ -163,6 +163,8 @@ components: Iterable[Component] = (
               file_identifier=SuffixIdentifier('.apzl')),
     #Kingdom Hearts 2
     Component('KH2 Client', "KH2Client"),
+    #Kingdom Hearts Days
+    Component('KH Days Client', "KingdomHeartsDaysClient"),
     # Functions
     Component('Open host.yaml', func=open_host_yaml),
     Component('Open Patch', func=open_patch),

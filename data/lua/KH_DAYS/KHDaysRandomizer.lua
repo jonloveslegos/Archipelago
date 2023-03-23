@@ -3,6 +3,32 @@ console.clear()
 local socket = require("socket")
 local json = require('json')
 
+charId = 0x00
+charId2 = 0x00
+
+char_ids = {}
+
+char_ids[""] = 0x00
+char_ids["Roxas"] = 0x00
+char_ids["Axel"] = 0x01
+char_ids["Xigbar"] = 0x02
+char_ids["Saix"] = 0x03
+char_ids["Xaldin"] = 0x04
+char_ids["Sora"] = 0x05
+char_ids["Demyx"] = 0x06
+char_ids["Larxene"] = 0x07
+char_ids["Lexaeus"] = 0x08
+char_ids["Luxord"] = 0x09
+char_ids["Marluxia"] = 0x0A
+char_ids["Riku"] = 0x0B
+char_ids["Vexen"] = 0x0C
+char_ids["Xemnas"] = 0x0D
+char_ids["Xion"] = 0x0E
+char_ids["Zexion"] = 0x0F
+char_ids["Mickey"] = 0x10
+char_ids["Donald"] = 0x11
+char_ids["Goofy"] = 0x12
+
 itemIds = {}
 
 itemIds["Panel Slot"] = 0x194DC9
@@ -406,6 +432,14 @@ function processBlock(block)
                 sentCount[y] = u
             end
         end
+        local char1 = block["char_1"]
+        if char1 ~= nil then
+            charId = char_ids[char1]
+        end
+        local char2 = block["char_2"]
+        if char2 ~= nil then
+            charId2 = char_ids[char2]
+        end
     end
 end
 
@@ -498,7 +532,7 @@ function receive()
     end
     if mainmemory.read_u8(0x1A7F60) == 0x54 then
         if mainmemory.read_u8(0x1A497C) == 0x0166 then
-            retTable["won"] == "true"
+            retTable["won"] = "true"
         end
     end
     
@@ -557,6 +591,18 @@ function main()
                     zeldaSocket = client
                     zeldaSocket:settimeout(0)
                 end
+            end
+        end
+        if mainmemory.read_u8(0x04BD84) == 0x02 then
+            mainmemory.write_u8(0x04C65B, charId)
+        else
+            mainmemory.write_u8(0x04C65B, 0x00)
+        end
+        if charId2 ~= 0x00 then
+            if mainmemory.read_u8(0x04BD84) == 0x02 then
+                mainmemory.write_u8(0x04C75F, charId2)
+            else
+                mainmemory.write_u8(0x04C75F, 0x00)
             end
         end
         emu.frameadvance()

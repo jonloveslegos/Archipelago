@@ -32,6 +32,9 @@ items_by_id = {id: item for item, id in item_ids.items()}
 locations_by_id = {id: location for location, id in location_ids.items()}
 
 
+valid_characters = {"Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", "Larxene", "Lexaeus", "Luxord", "Marluxia", "Riku", "Vexen", "Xemnas", "Xion", "Zexion", "Mickey", "Donald", "Goofy"}
+
+
 class KHDaysCommandProcessor(ClientCommandProcessor):
 
     def _cmd_nds(self):
@@ -45,10 +48,34 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
         DISPLAY_MSGS = not DISPLAY_MSGS
         logger.info(f"Messages are now {'enabled' if DISPLAY_MSGS else 'disabled'}")
 
+    def _cmd_set_character_one(self, char_name: str = ""):
+        """Sets the first character in the next mission"""
+        if char_name in valid_characters:
+            if isinstance(self.ctx, KHDaysContext):
+                self.ctx.char_1 = char_name
+                logger.info("Character one is now "+char_name)
+        else:
+            logger.info("Invalid character, did you misspell it?")
+
+    def _cmd_set_character_two(self, char_name: str = ""):
+        """Sets the second character in the next mission (Do not put a name to set it to nobody)"""
+        if char_name in valid_characters:
+            if isinstance(self.ctx, KHDaysContext):
+                self.ctx.char_2 = char_name
+                logger.info("Character two is now "+char_name)
+        elif char_name == "":
+            if isinstance(self.ctx, KHDaysContext):
+                self.ctx.char_2 = char_name
+                logger.info("Character two is now nobody")
+        else:
+            logger.info("Invalid character, did you misspell it?")
+
 
 class KHDaysContext(CommonContext):
     command_processor = KHDaysCommandProcessor
     items_handling = 0b111  # full remote
+    char_1 = "Roxas"
+    char_2 = ""
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -109,7 +136,7 @@ class KHDaysContext(CommonContext):
             logging_pairs = [
                 ("Client", "Archipelago")
             ]
-            base_title = "Archipelago KHDays 1 Client"
+            base_title = "Archipelago KH Days Client"
 
         self.ui = KHDaysManager(self)
         self.ui_task = asyncio.create_task(self.ui.async_run(), name="UI")
@@ -122,7 +149,9 @@ def get_payload(ctx: KHDaysContext):
             "items": [items_by_id[item.item] for item in ctx.items_received],
             "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")])[:-1] for item in ctx.checked_locations],
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
-                         if key[0] > current_time - 10}
+                         if key[0] > current_time - 10},
+            "char_1": ctx.char_1,
+            "char_2": ctx.char_2
         }
     )
 
