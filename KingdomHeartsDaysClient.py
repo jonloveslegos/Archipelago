@@ -4,6 +4,7 @@ import asyncio
 import copy
 import json
 import logging
+import random
 import time
 from asyncio import StreamReader, StreamWriter
 
@@ -166,6 +167,10 @@ async def nds_sync_task(ctx: KHDaysContext):
         error_status = None
         if ctx.nds_streams:
             (reader, writer) = ctx.nds_streams
+            if ctx.char_1 not in ctx.valid_characters:
+                ctx.char_1 = ctx.random.choice(tuple(ctx.valid_characters))
+            if ctx.char_2 not in ctx.valid_characters:
+                ctx.char_2 = ""
             msg = get_payload(ctx).encode()
             writer.write(msg)
             writer.write(b'\n')

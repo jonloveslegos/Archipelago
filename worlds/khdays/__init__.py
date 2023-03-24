@@ -8,7 +8,7 @@ import bsdiff4
 
 import Utils
 from BaseClasses import Item, Location, Region, Entrance, MultiWorld, ItemClassification, Tutorial
-from .Items import item_table, KHDaysItem
+from .Items import item_table, KHDaysItem, character_list
 from .Locations import location_table, KHDaysLocation
 from .Options import khdays_options
 from .Rules import set_rules, set_completion_rules
@@ -80,15 +80,16 @@ class KHDaysWorld(World):
 
     def generate_basic(self):
         item_pool = []
+        chosen_char = character_list[self.multiworld.StartingCharacter[self.player]]
         for (name) in item_table:
             if name == "Potion":
                 for i in range(item_table[name].khdaysamount - 18):
                     item_pool += [self.multiworld.create_item(name, self.player)]
-            elif name != "Roxas":
+            elif name != chosen_char:
                 for i in range(item_table[name].khdaysamount):
                     item_pool += [self.multiworld.create_item(name, self.player)]
 
-        self.multiworld.push_precollected(self.multiworld.create_item("Roxas", self.player))
+        self.multiworld.push_precollected(self.multiworld.create_item(chosen_char, self.player))
         item_pool += ([self.multiworld.create_item("Potion", self.player)]*(len(location_table) - len(item_pool)))
         self.multiworld.itempool += item_pool
 
@@ -104,4 +105,5 @@ class KHDaysWorld(World):
     def fill_slot_data(self) -> Dict[str, Any]:
         return {
             "day_requirement": self.multiworld.DayRequirement[self.player].value,
+            'starting_character': self.multiworld.StartingCharacter[self.player].current_key,
         }
