@@ -303,7 +303,7 @@ for k, v in pairs(itemIds) do
 end
 already_obtained = {}
 function handle_items(itemName)
-	local potion_count = mainmemory.read_u8(itemIds[itemName])
+    local potion_count = mainmemory.read_u8(itemIds[itemName])
     local got_checks = {}
     if obtainedCount[itemName] < potion_count then
         local i = 0
@@ -348,25 +348,8 @@ function handle_items(itemName)
     end
 end
 
-function get_item_at(checkId)
-    local lengthNum = {}
-    local i = 0
-    for k, v in pairs(itemMax) do
-        lengthNum[i] = k
-        i = i + 1
-    end
-    local chosen = lengthNum[math.random( 0, (#lengthNum) - 1)]
-    while itemMax[chosen] < 0 do
-        chosen = lengthNum[math.random( 0, (#lengthNum) - 1)]
-    end
-    local itemName = chosen
-    itemMax[chosen] = itemMax[chosen] - 1
-    return itemName
-end
-
 function recieve_item(itemName)
     mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])+1)
-    obtainedCount[itemName] = obtainedCount[itemName] + 1
 end
 
 local bizhawk_version = client.getversion()
@@ -410,15 +393,6 @@ end
 
 function processBlock(block)
     if block ~= nil then
-        local msgBlock = block['messages']
-        if msgBlock ~= nil then
-            for i, v in pairs(msgBlock) do
-                if itemMessages[i] == nil then
-                    local msg = {TTL=450, message=v, color=0xFFFF0000}
-                    itemMessages[i] = msg
-                end
-            end
-        end
         local itemsBlock = block["items"]
         isInGame = StateOKForMainLoop()
         if itemsBlock ~= nil and isInGame then
@@ -433,15 +407,17 @@ function processBlock(block)
                 if v > mainmemory.read_u8(itemIds[k]) then
                     recieve_item(k)
                 end
+                obtainedCount[k] = v
             end
         end
         local locBlock = block["checked_locs"]
-        if locBlock ~= nil then
+        if locBlock ~= nil and isInGame then
             sentCount = {}
             for k, v in pairs(itemIds) do
                 sentCount[k] = 0
             end
-            for y, u in pairs(countEntries(locBlock)) do
+            locBlockCount = countEntries(locBlock)
+            for y, u in pairs(locBlockCount) do
                 sentCount[y] = u
             end
         end
@@ -453,63 +429,6 @@ function processBlock(block)
         if char2 ~= nil then
             charId2 = char_ids[char2]
         end
-    end
-end
-
-local function getMaxMessageLength()
-    if is23Or24Or25 then
-        return client.screenwidth()/11
-    elseif is26To28 then
-        return client.screenwidth()/12
-    end
-end
-
-local function drawText(x, y, message, color)
-    if is23Or24Or25 then
-        gui.addmessage(message)
-    elseif is26To28 then
-        gui.drawText(x, y, message, color, 0xB0000000, 18, "Courier New", "middle", "bottom", nil, "client")
-    end
-end
-
-local function clearScreen()
-    if is23Or24Or25 then
-        return
-    elseif is26To28 then
-        drawText(0, 0, "", "black")
-    end
-end
-
-local function drawMessages()
-    if table.empty(itemMessages) then
-        clearScreen()
-        return
-    end
-    local y = 10
-    found = false
-    maxMessageLength = getMaxMessageLength()
-    for k, v in pairs(itemMessages) do
-        if v["TTL"] > 0 then
-            message = v["message"]
-            while true do
-                drawText(5, y, message:sub(1, maxMessageLength), v["color"])
-                y = y + 16
-
-                message = message:sub(maxMessageLength + 1, message:len())
-                if message:len() == 0 then
-                    break
-                end
-            end
-            newTTL = 0
-            if is26To28 then
-                newTTL = itemMessages[k]["TTL"] - 1
-            end
-            itemMessages[k]["TTL"] = newTTL
-            found = true
-        end
-    end
-    if found == false then
-        clearScreen()
     end
 end
 
@@ -572,29 +491,29 @@ end
 function main()
     server, error = socket.bind('localhost', 52987)
     while true do
-        gui.drawEllipse(248, 9, 6, 6, "Black", "Yellow")
         frame = frame + 1
-        drawMessages()
         if not (curstate == prevstate) then
             prevstate = curstate
         end
         if (curstate == STATE_OK) or (curstate == STATE_INITIAL_CONNECTION_MADE) or (curstate == STATE_TENTATIVELY_CONNECTED) then
             if (frame % 60 == 0) then
-                gui.drawEllipse(248, 9, 6, 6, "Black", "Blue")
                 receive()
+                frame = 0
+            end
+            if mainmemory.read_u8(0x04BD84) == 0x02 then
+                mainmemory.write_u8(0x04C65B, charId)
             else
-                gui.drawEllipse(248, 9, 6, 6, "Black", "Green")
+                mainmemory.write_u8(0x04C65B, 0x00)
+            end
+            if charId2 ~= 0x00 then
+                if mainmemory.read_u8(0x04BD84) == 0x02 then
+                    mainmemory.write_u8(0x04C75F, charId2)
+                else
+                    mainmemory.write_u8(0x04C75F, 0x00)
+                end
             end
         elseif (curstate == STATE_UNINITIALIZED) then
-            gui.drawEllipse(248, 9, 6, 6, "Black", "White")
             if  (frame % 60 == 0) then
-                gui.drawEllipse(248, 9, 6, 6, "Black", "Yellow")
-
-                drawText(5, 8, "Waiting for client", 0xFFFF0000)
-                drawText(5, 32, "Please start KHDaysClient.exe", 0xFFFF0000)
-
-                -- Advance so the messages are drawn
-                emu.frameadvance()
                 server:settimeout(2)
                 print("Attempting to connect")
                 local client, timeout = server:accept()
@@ -604,18 +523,6 @@ function main()
                     zeldaSocket = client
                     zeldaSocket:settimeout(0)
                 end
-            end
-        end
-        if mainmemory.read_u8(0x04BD84) == 0x02 then
-            mainmemory.write_u8(0x04C65B, charId)
-        else
-            mainmemory.write_u8(0x04C65B, 0x00)
-        end
-        if charId2 ~= 0x00 then
-            if mainmemory.read_u8(0x04BD84) == 0x02 then
-                mainmemory.write_u8(0x04C75F, charId2)
-            else
-                mainmemory.write_u8(0x04C75F, 0x00)
             end
         end
         emu.frameadvance()
