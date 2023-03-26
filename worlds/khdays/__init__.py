@@ -72,6 +72,10 @@ class KHDaysWorld(World):
                 item.progress_type = Location.progress_type.EXCLUDED
             if "Mega-Ether" in item.name:
                 item.progress_type = Location.progress_type.EXCLUDED
+            if "Panacea" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Limit Recharge" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
         begin_game = Entrance(self.player, "Begin Game", menu)
         menu.exits.append(begin_game)
         begin_game.connect(missions)

@@ -410,6 +410,18 @@ function processBlock(block)
                 obtainedCount[k] = v
             end
         end
+        if itemsBlock ~= nil and not isInGame then
+            tempCount = {}
+            for k, v in pairs(itemIds) do
+                tempCount[k] = 0
+            end
+            for i, item in pairs(itemsBlock) do
+                tempCount[item] = tempCount[item] + 1
+            end
+            for k, v in pairs(tempCount) do
+                obtainedCount[k] = v
+            end
+        end
         local locBlock = block["checked_locs"]
         if locBlock ~= nil and isInGame then
             sentCount = {}
