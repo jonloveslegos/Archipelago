@@ -68,10 +68,6 @@ class KHDaysWorld(World):
                 item.progress_type = Location.progress_type.EXCLUDED
             if "Megalixir" in item.name:
                 item.progress_type = Location.progress_type.EXCLUDED
-            if "Mega-Potion" in item.name:
-                item.progress_type = Location.progress_type.EXCLUDED
-            if "Mega-Ether" in item.name:
-                item.progress_type = Location.progress_type.EXCLUDED
             if "Panacea" in item.name:
                 item.progress_type = Location.progress_type.EXCLUDED
             if "Limit Recharge" in item.name:
@@ -99,7 +95,7 @@ class KHDaysWorld(World):
                 self.multiworld.get_location(name, self.player).place_locked_item(event_item)
 
         self.multiworld.push_precollected(self.create_item(chosen_char))
-        for i in range(len(location_table) - len(item_pool)):
+        for i in range(len(location_table) - len(item_pool) - len(Items.days) - len(self.multiworld.precollected_items[self.player])):
             item_pool += [self.create_item("Potion")]
         self.multiworld.itempool += item_pool
 

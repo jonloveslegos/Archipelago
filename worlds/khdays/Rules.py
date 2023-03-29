@@ -120,21 +120,22 @@ class KHDaysLogic(LogicMixin):
                 total += 1
             if self.days_shop_status(state, player) >= 4:
                 total += 2
-            if self.days_has_day_access(state, 256, player):
+            if self.days_has_day_access(state, 256, player) and self.days_shop_status(state, player) >= 1 and state.has("Thunder", player, 4):
                 total += 1
-            if self.days_has_day_access(state, 277, player):
+            if self.days_has_day_access(state, 277, player) and self.days_shop_status(state, player) >= 1 and state.has("Thunder", player, 4):
                 total += 2
-            if self.days_has_day_access(state, 355, player):
+            if self.days_has_day_access(state, 355, player) and self.days_shop_status(state, player) >= 1 and state.has("Thunder", player, 4):
                 total += 1
         elif item_name == "Thundaga":
             if self.days_has_day_access(state, 277, player):
                 total += 1
-            if self.days_has_day_access(state, 256, player):
+            if self.days_has_day_access(state, 256, player) and self.days_shop_status(state, player) >= 1 and state.has("Thundara", player, 4):
                 total += 1
-            if self.days_has_day_access(state, 300, player):
+            if self.days_has_day_access(state, 300, player) and self.days_shop_status(state, player) >= 1 and state.has("Thundara", player, 4):
                 total += 1
-            if self.days_has_day_access(state, 322, player):
+            if self.days_has_day_access(state, 351, player) and self.days_shop_status(state, player) >= 1 and state.has("Thundara", player, 4):
                 total += 2
+
         elif item_name == "Guard Unit":
             if self.days_has_day_access(state, 71, player):
                 total += 1
@@ -191,15 +192,15 @@ class KHDaysLogic(LogicMixin):
         elif item_name == "Cura":
             if self.days_has_day_access(state, 171, player):
                 total += 1
-            if self.days_has_day_access(state, 172, player):
+            if self.days_has_day_access(state, 172, player) and self.days_shop_status(state, player) >= 1 and state.has("Cure", player, 7):
                 total += 1
-            if self.days_has_day_access(state, 173, player):
+            if self.days_has_day_access(state, 173, player) and self.days_shop_status(state, player) >= 1 and state.has("Cure", player, 7):
                 total += 2
-            if self.days_has_day_access(state, 194, player):
+            if self.days_has_day_access(state, 194, player) and self.days_shop_status(state, player) >= 1 and state.has("Cure", player, 7):
                 total += 1
-            if self.days_has_day_access(state, 224, player):
+            if self.days_has_day_access(state, 224, player) and self.days_shop_status(state, player) >= 1 and state.has("Cure", player, 7):
                 total += 1
-            if self.days_has_day_access(state, 255, player):
+            if self.days_has_day_access(state, 255, player) and self.days_shop_status(state, player) >= 1 and state.has("Cure", player, 7):
                 total += 2
             if self.days_shop_status(state, player) >= 3:
                 total += 2
@@ -207,11 +208,11 @@ class KHDaysLogic(LogicMixin):
             if self.days_has_day_access(state, 256, player) and state.has("High Jump 3", player) and state.has(
                     "High Jump LV+", player) and state.has("High Jump LV+", player):
                 total += 1
-            if self.days_has_day_access(state, 256, player):
+            if self.days_has_day_access(state, 256, player) and self.days_shop_status(state, player) >= 1 and state.has("Cura", player, 3):
                 total += 1
-            if self.days_has_day_access(state, 299, player):
+            if self.days_has_day_access(state, 299, player) and self.days_shop_status(state, player) >= 1 and state.has("Cura", player, 3):
                 total += 1
-            if self.days_has_day_access(state, 322, player):
+            if self.days_has_day_access(state, 322, player) and self.days_shop_status(state, player) >= 1 and state.has("Cura", player, 3):
                 total += 2
         elif item_name == "Magic LV2 4":
             if self.days_has_day_access(state, 71, player):
@@ -314,22 +315,28 @@ class KHDaysLogic(LogicMixin):
                 total += 1
             if self.days_has_day_access(state, 193, player):
                 total += 1
-            if self.days_has_day_access(state, 256, player):
+            if self.days_has_day_access(state, 256, player) and self.days_shop_status(state, player) >= 1 and state.has("Blizzard", player, 4):
                 total += 1
             if self.days_has_day_access(state, 194, player):
                 total += 1
-            if self.days_has_day_access(state, 173, player):
+            if self.days_has_day_access(state, 173, player) and self.days_shop_status(state, player) >= 1 and state.has("Blizzard", player, 4):
+                total += 1
+            if self.days_has_day_access(state, 225, player) and self.days_shop_status(state, player) >= 1 and state.has("Blizzard", player, 4):
                 total += 1
             if self.days_has_day_access(state, 225, player):
-                total += 3
+                total += 2
+            if self.days_has_day_access(state, 322, player) and self.days_shop_status(state, player) >= 1 and state.has("Blizzard", player, 4):
+                total += 1
             if self.days_shop_status(state, player) >= 3:
                 total += 2
         elif item_name == "Blizzaga":
+            if self.days_has_day_access(state, 301, player) and self.days_shop_status(state, player) >= 1 and state.has("Blizzara", player, 4):
+                total += 1
             if self.days_has_day_access(state, 301, player):
-                total += 2
-            if self.days_has_day_access(state, 322, player):
-                total += 2
-            if self.days_has_day_access(state, 352, player):
+                total += 1
+            if self.days_has_day_access(state, 322, player) and self.days_shop_status(state, player) >= 1 and state.has("Blizzara", player, 4):
+                total += 1
+            if self.days_has_day_access(state, 352, player) and self.days_shop_status(state, player) >= 1 and state.has("Blizzara", player, 4):
                 total += 2
         elif item_name == "Pack Extender":
             if self.days_has_day_access(state, 96, player):
@@ -356,22 +363,22 @@ class KHDaysLogic(LogicMixin):
             if self.days_has_day_access(state, 255, player):
                 total += 1
         elif item_name == "Aerora":
-            if self.days_has_day_access(state, 119, player):
+            if self.days_has_day_access(state, 119, player) and self.days_shop_status(state, player) >= 1 and state.has("Aero", player, 6):
                 total += 1
-            if self.days_has_day_access(state, 321, player):
+            if self.days_has_day_access(state, 321, player) and self.days_shop_status(state, player) >= 1 and state.has("Aero", player, 6):
                 total += 1
-            if self.days_has_day_access(state, 256, player):
+            if self.days_has_day_access(state, 256, player) and self.days_shop_status(state, player) >= 1 and state.has("Aero", player, 6):
                 total += 1
-            if self.days_has_day_access(state, 225, player):
+            if self.days_has_day_access(state, 225, player) and self.days_shop_status(state, player) >= 1 and state.has("Aero", player, 6):
                 total += 1
-            if self.days_has_day_access(state, 277, player):
+            if self.days_has_day_access(state, 277, player) and self.days_shop_status(state, player) >= 1 and state.has("Aero", player, 6):
                 total += 1
-            if self.days_has_day_access(state, 355, player):
+            if self.days_has_day_access(state, 355, player) and self.days_shop_status(state, player) >= 1 and state.has("Aero", player, 6):
                 total += 1
         elif item_name == "Aeroga":
-            if self.days_has_day_access(state, 297, player):
+            if self.days_has_day_access(state, 297, player) and self.days_shop_status(state, player) >= 1 and state.has("Aerora", player, 3):
                 total += 1
-            if self.days_has_day_access(state, 322, player):
+            if self.days_has_day_access(state, 322, player) and self.days_shop_status(state, player) >= 1 and state.has("Aerora", player, 3):
                 total += 2
         elif item_name == "LV Doubler 6":
             if self.days_has_day_access(state, 149, player):
@@ -395,18 +402,18 @@ class KHDaysLogic(LogicMixin):
                 total += 1
             if self.days_has_day_access(state, 173, player):
                 total += 1
-            if self.days_has_day_access(state, 151, player):
+            if self.days_has_day_access(state, 151, player) and self.days_shop_status(state, player) >= 1 and state.has("Fire", player, 3):
                 total += 1
             if self.days_shop_status(state, player) >= 3:
                 total += 2
-            if self.days_has_day_access(state, 298, player):
+            if self.days_has_day_access(state, 298, player) and self.days_shop_status(state, player) >= 1 and state.has("Fire", player, 3):
                 total += 1
-            if self.days_has_day_access(state, 322, player):
+            if self.days_has_day_access(state, 322, player) and self.days_shop_status(state, player) >= 1 and state.has("Fire", player, 3):
                 total += 1
         elif item_name == "Firaga":
-            if self.days_has_day_access(state, 224, player):
+            if self.days_has_day_access(state, 224, player) and self.days_shop_status(state, player) >= 1 and state.has("Fira", player, 2):
                 total += 1
-            if self.days_has_day_access(state, 322, player):
+            if self.days_has_day_access(state, 322, player) and self.days_shop_status(state, player) >= 1 and state.has("Fira", player, 2):
                 total += 2
         elif item_name == "High Jump":
             if self.days_has_day_access(state, 151, player):
@@ -668,6 +675,243 @@ class KHDaysLogic(LogicMixin):
                 total += 1
         elif item_name == "Dodge Roll LV+":
             if self.days_shop_status(state, player) >= 3:
+                total += 1
+        elif item_name == "Dodge Rush":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Dodging Deflect":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Dodge Combo":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Auto-Dodge":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Perfect Block":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Block-Counter":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Block-Retreat":
+            if self.days_shop_status(state, player) >= 1 and state.has("Block-Counter", player):
+                total += 1
+        elif item_name == "Sliding Block":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Block-Jump":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Fire Block":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Blizzard Block":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Thunder Block":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Aero Block":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Block Bonus":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Round Block":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Auto-Block":
+            if self.days_shop_status(state, player) >= 1 and state.has("Round Block", player):
+                total += 1
+        elif item_name == "Quick Recovery":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Aerial Payback":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Smash Recovery":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Air Rush":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Homing Glide":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Rocket Glide":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Float":
+            if self.days_shop_status(state, player) >= 2:
+                total += 1
+        elif item_name == "Duel Gear 4":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Duel Gear++ 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Chrono Gear+ 3":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Phantom Gear++ 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Nimble Gear+ 4":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Ominous Gear+ 4":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Fearless Gear+ 3":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Prestige Gear+ 4":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Crisis Gear 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Crisis Gear+ 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Omega Gear+ 6":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Hazard Gear 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Hazard Gear+ 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Rage Gear+ 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Champion Gear 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Ultimate Gear+ 6":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Pandora's Gear+ 5":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Magic Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Fencer's Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Fire Charm":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Strike Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Lucky Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "White Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Raider's Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Thunder Charm":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Recovery Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Vitality Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Double Up":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Storm's Eye":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Fairy Circle":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Full Circle":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Charge Ring":
+            if self.days_shop_status(state, player) >= 1 and state.has("Full Circle", player):
+                total += 1
+        elif item_name == "Eternal Ring":
+            if self.days_shop_status(state, player) >= 1 and state.has("Recovery Ring", player):
+                total += 1
+        elif item_name == "Carmine Blight":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Frozen Blight":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Safety Ring":
+            if self.days_shop_status(state, player) >= 1:
+                total += 1
+        elif item_name == "Lunar Strike":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Protect Ring":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Might Crown":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Three Stars":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Imperial Crown":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Witch's Chaos":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Extreme":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Nothing to Fear":
+            if self.days_shop_status(state, player) >= 6 and state.has("Frozen Blight", player):
+                total += 1
+        elif item_name == "Space in Its Place":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Flagging Winds":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Ice Breaker":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Down to Earth":
+            if self.days_shop_status(state, player) >= 6 and state.has("Eternal Ring", player):
+                total += 1
+        elif item_name == "Lose Your Illusion":
+            if self.days_shop_status(state, player) >= 6 and state.has("Charge Ring", player):
+                total += 1
+        elif item_name == "Sighing of the Moon":
+            if self.days_shop_status(state, player) >= 6 and state.has("Strike Ring", player):
+                total += 1
+        elif item_name == "Tears of Flame":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Parting of Waters":
+            if self.days_shop_status(state, player) >= 6 and state.has("Storm's Eye", player):
+                total += 1
+        elif item_name == "Test of Time":
+            if self.days_shop_status(state, player) >= 6 and state.has("Fairy Circle", player):
+                total += 1
+        elif item_name == "Flowers Athirst":
+            if self.days_shop_status(state, player) >= 6 and state.has("Double Up", player):
+                total += 1
+        elif item_name == "Stolen Thunder":
+            if self.days_shop_status(state, player) >= 6:
+                total += 1
+        elif item_name == "Dying of the Light":
+            if self.days_shop_status(state, player) >= 6 and state.has("Imperial Crown", player):
                 total += 1
         elif item_name == "Skill Gear":
             if self.days_has_day_access(state, 13, player):
