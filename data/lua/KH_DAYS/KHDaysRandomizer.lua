@@ -295,9 +295,11 @@ itemMax["Sliding Dash LV+"] = 2
 itemMax["Haste LV+"] = 2
 itemMax["High Jump LV+"] = 2
 obtainedCount = {}
+hasCount = {}
 sentCount = {}
 for k, v in pairs(itemIds) do
     obtainedCount[k] = mainmemory.read_u8(v)
+    hasCount[k] = mainmemory.read_u8(v)
     sentCount[k] = 0
     itemMax[k] = itemMax[k]
 end
@@ -305,9 +307,9 @@ already_obtained = {}
 function handle_items(itemName)
     local potion_count = mainmemory.read_u8(itemIds[itemName])
     local got_checks = {}
-    if obtainedCount[itemName] < potion_count then
+    if hasCount[itemName] < potion_count then
         local i = 0
-        local toSend = potion_count-obtainedCount[itemName] + sentCount[itemName]
+        local toSend = potion_count-hasCount[itemName] + sentCount[itemName]
         while i < toSend do
             local temp = toSend-i
             if temp <= itemMax[itemName] then
@@ -315,7 +317,7 @@ function handle_items(itemName)
             end
             i = i + 1
         end
-        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-(potion_count-obtainedCount[itemName]))
+        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-(potion_count-hasCount[itemName]))
     end
     if already_obtained ~= nil then
         local merged = {}
@@ -348,15 +350,9 @@ function handle_items(itemName)
     end
 end
 
-function recieve_item(itemName)
+function receive_item(itemName)
     mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])+1)
 end
-
-local bizhawk_version = client.getversion()
-local is23Or24Or25 = (bizhawk_version=="2.3.1") or (bizhawk_version:sub(1,3)=="2.4") or (bizhawk_version:sub(1,3)=="2.5")
-local is26To28 =  (bizhawk_version:sub(1,3)=="2.6") or (bizhawk_version:sub(1,3)=="2.7") or (bizhawk_version:sub(1,3)=="2.8")
-local itemMessages = {}
-local frame = 0
 
 local STATE_OK = "Ok"
 local STATE_TENTATIVELY_CONNECTED = "Tentatively Connected"
@@ -364,20 +360,10 @@ local STATE_INITIAL_CONNECTION_MADE = "Initial Connection Made"
 local STATE_UNINITIALIZED = "Uninitialized"
 
 local itemMessages = {}
-local consumableStacks = nil
 local prevstate = ""
 local curstate =  STATE_UNINITIALIZED
 local zeldaSocket = nil
 local frame = 0
-local gameMode = 0
-
-local cave_index
-local triforce_byte
-local game_state
-
-local u8 = nil
-local wU8 = nil
-local isNesHawk = false
 
 function countEntries(inputTable)
     result = {} 
@@ -393,6 +379,12 @@ end
 
 function processBlock(block)
     if block ~= nil then
+        local locBlock = block["received_items"]
+        if locBlock ~= nil then
+            for y, u in pairs(locBlock) do
+                obtainedCount[y] = tonumber(u)
+            end
+        end
         local itemsBlock = block["items"]
         isInGame = StateOKForMainLoop()
         if itemsBlock ~= nil and isInGame then
@@ -404,10 +396,11 @@ function processBlock(block)
                 tempCount[item] = tempCount[item] + 1
             end
             for k, v in pairs(tempCount) do
-                if v > mainmemory.read_u8(itemIds[k]) then
-                    recieve_item(k)
+                while v > obtainedCount[k] do
+                    receive_item(k)
+                    obtainedCount[k] = obtainedCount[k] + 1
+                    hasCount[k] = mainmemory.read_u8(itemIds[k])
                 end
-                obtainedCount[k] = v
             end
         end
         if itemsBlock ~= nil and not isInGame then
@@ -473,10 +466,20 @@ function receive()
             already_obtained = handle_items(k)
         end
         retTable["checked_locs"] = already_obtained
+        local temp = {}
+        for k, v in pairs(obtainedCount) do
+            temp[k] = tostring(v)
+        end
+        retTable["received_items"] = temp
     end
     if mainmemory.read_u8(0x1A7F60) == 0x54 then
         if not (mainmemory.read_u8(0x1A4978) == 255 and mainmemory.read_u8(0x1A497C) == 255) then
             retTable["day"] = tostring(mainmemory.read_u8(0x1A497C))
+        end
+    end
+    if StateOKForMainLoop() then
+        for k, v in pairs(itemIds) do
+            hasCount[k] = mainmemory.read_u8(v)
         end
     end
     

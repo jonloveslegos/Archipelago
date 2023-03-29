@@ -6,9 +6,11 @@ import json
 import logging
 import random
 import time
+from typing import cast, Dict, Optional
 from asyncio import StreamReader, StreamWriter
 
 import Utils
+from Utils import async_start
 from NetUtils import ClientStatus
 from CommonClient import CommonContext, server_loop, gui_enabled, ClientCommandProcessor, logger, \
     get_base_parser
@@ -48,29 +50,26 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
 
     def _cmd_unlocked_characters(self):
         """Displays a list of characters that you have available."""
-        logger.info(self.ctx.valid_characters)
+        if isinstance(self.ctx, KHDaysContext):
+            logger.info(self.ctx.valid_characters)
 
     def _cmd_set_character_one(self, char_name: str = ""):
         """Sets the first character in the next mission"""
-        if char_name in self.ctx.valid_characters:
-            if isinstance(self.ctx, KHDaysContext):
+        if isinstance(self.ctx, KHDaysContext):
+            if char_name in self.ctx.valid_characters:
                 self.ctx.char_1 = char_name
                 logger.info("Character one is now "+char_name)
-        else:
-            logger.info("Invalid character, did you misspell it?")
+            else:
+                logger.info("Invalid character, did you misspell it?")
 
     def _cmd_set_character_two(self, char_name: str = ""):
-        """Sets the second character in the next mission (Do not put a name to set it to nobody)"""
-        if char_name in self.ctx.valid_characters:
-            if isinstance(self.ctx, KHDaysContext):
+        """Sets the second character in the next mission"""
+        if isinstance(self.ctx, KHDaysContext):
+            if char_name in self.ctx.valid_characters:
                 self.ctx.char_2 = char_name
                 logger.info("Character two is now "+char_name)
-        elif char_name == "":
-            if isinstance(self.ctx, KHDaysContext):
-                self.ctx.char_2 = char_name
-                logger.info("Character two is now nobody")
-        else:
-            logger.info("Invalid character, did you misspell it?")
+            else:
+                logger.info("Invalid character, did you misspell it?")
 
 
 class KHDaysContext(CommonContext):
@@ -79,6 +78,7 @@ class KHDaysContext(CommonContext):
     char_1 = "Roxas"
     char_2 = ""
     valid_characters = {"Roxas"}
+    received_items_from_game = {"Null"}
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -106,10 +106,28 @@ class KHDaysContext(CommonContext):
         if cmd == 'Connected':
             slot_data = args["slot_data"]
             self.day_requirement = slot_data["day_requirement"]
+            async_start(self.send_msgs([
+                {"cmd": "Get",
+                "keys": ["received_items"]}
+            ]))
         elif cmd == 'Print':
             msg = args['text']
             if ': !' not in msg:
                 self._set_message(msg, SYSTEM_MESSAGE_ID)
+        elif cmd == 'Retrieved':
+            if "keys" not in args:
+                logger.warning(f"invalid Retrieved packet to KingdomHeartsDaysClient: {args}")
+                return
+            keys = cast(Dict[str, Optional[str]], args["keys"])
+            if "received_items" in keys:
+                if not keys["received_items"] is None:
+                    self.received_items_from_game = keys["received_items"]
+                    print(self.received_items_from_game)
+                else:
+                    self.received_items_from_game = {}
+            else:
+                self.received_items_from_game = {}
+
 
     def on_print_json(self, args: dict):
         if self.ui:
@@ -151,12 +169,13 @@ def get_payload(ctx: KHDaysContext):
     current_time = time.time()
     return json.dumps(
         {
-            "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000],
+            "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000 and not "Null" in ctx.received_items_from_game],
             "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations],
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
             "char_1": ctx.char_1,
-            "char_2": ctx.char_2
+            "char_2": ctx.char_2,
+            "received_items": [item for item in ctx.received_items_from_game if not "Null" in ctx.received_items_from_game]
         }
     )
 
@@ -192,6 +211,15 @@ async def nds_sync_task(ctx: KHDaysContext):
                             {"cmd": "LocationChecks",
                             "locations": ctx.locations_array}
                         ])
+                    if ctx.game is not None and 'received_items' in data_decoded and not "Null" in ctx.received_items_from_game:
+                        await ctx.send_msgs([
+                            {"cmd": "Set",
+                            "key": "received_items",
+                            "default": {},
+                            "want_reply": False,
+                            "operations": [{"operation": "replace", "value": data_decoded["received_items"]}]}
+                        ])
+                        ctx.received_items_from_game = data_decoded["received_items"]
                     if ctx.game is not None and 'day' in data_decoded:
                         if not ctx.finished_game and int(data_decoded["day"]) >= ctx.day_requirement:
                             await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])

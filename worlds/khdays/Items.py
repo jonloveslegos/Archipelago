@@ -1,4 +1,6 @@
-from BaseClasses import ItemClassification, Item
+import struct
+
+from BaseClasses import ItemClassification, Item, IntFlag
 import typing
 from typing import Dict
 
