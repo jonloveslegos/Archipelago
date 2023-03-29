@@ -88,13 +88,19 @@ class KHDaysWorld(World):
         for (name) in item_table:
             if name == "Potion":
                 for i in range(item_table[name].khdaysamount - 18):
-                    item_pool += [self.multiworld.create_item(name, self.player)]
+                    item_pool += [self.create_item(name)]
             elif name != chosen_char:
                 for i in range(item_table[name].khdaysamount):
-                    item_pool += [self.multiworld.create_item(name, self.player)]
+                    item_pool += [self.create_item(name)]
+        
+        for (name) in location_table:
+            if location_table[name] is None:
+                event_item = self.create_event(name)
+                self.multiworld.get_location(name, self.player).place_locked_item(event_item)
 
-        self.multiworld.push_precollected(self.multiworld.create_item(chosen_char, self.player))
-        item_pool += ([self.multiworld.create_item("Potion", self.player)]*(len(location_table) - len(item_pool)))
+        self.multiworld.push_precollected(self.create_item(chosen_char))
+        for i in range(len(location_table) - len(item_pool)):
+            item_pool += [self.create_item("Potion")]
         self.multiworld.itempool += item_pool
 
     def set_rules(self):

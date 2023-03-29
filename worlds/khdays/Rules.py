@@ -24,6 +24,14 @@ class KHDaysLogic(LogicMixin):
             can_do = can_do and state.has_any({"Glide 3", "Glide 5"}, player)
         if day_number >= 11:
             can_do = can_do and self.days_has_magic(state, player)
+        if day_number > 7:
+            days = [7, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23, 24, 25, 26, 51, 71, 72, 73, 74, 75, 94, 95, 96, 97, 117, 118,
+                119, 149, 150, 151, 152, 171, 172, 173, 193, 194, 224, 225, 255, 256, 277, 296, 297, 298, 299, 300, 301,
+                321, 322, 352, 353, 354, 355, 357, 358]
+            temp_number = day_number
+            while temp_number not in days:
+                temp_number += 1
+            can_do = can_do and state.has("Day "+str(days[days.index(temp_number)-1]), player)
         return can_do
 
     def days_shop_status(self, state: CollectionState, player: int):
@@ -857,9 +865,13 @@ class KHDaysLogic(LogicMixin):
 
 def set_rules(world: MultiWorld, player: int):
     for loc in location_table:
-        item_string = ''.join([i+" " for i in str(loc).split(" ")[:-1]])[:-1]
-        item_count = int(str(loc).split(" ")[len(str(loc).split(" "))-1])
-        set_rule(world.get_location(loc, player), lambda state, item_string=item_string, item_count=item_count: state.days_has_count_access(state, item_string, item_count, player))
+        if location_table[loc] is None:
+            day_number = int(str(loc).split(" ")[len(str(loc).split(" "))-1])
+            set_rule(world.get_location(loc, player), lambda state, day_number=day_number: state.days_has_day_access(state, day_number, player))
+        elif location_table[loc] >= 25000:
+            item_string = ''.join([i+" " for i in str(loc).split(" ")[:-1]])[:-1]
+            item_count = int(str(loc).split(" ")[len(str(loc).split(" "))-1])
+            set_rule(world.get_location(loc, player), lambda state, item_string=item_string, item_count=item_count: state.days_has_count_access(state, item_string, item_count, player))
 
 
 def set_completion_rules(world: MultiWorld, player: int):

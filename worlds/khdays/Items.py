@@ -19,6 +19,7 @@ class ItemData(typing.NamedTuple):
     khdaysamount: int
     khdaysaddress: int
     code: int = 0
+    event: bool = False
 
 
 item_table: Dict[str, ItemData] = {
@@ -246,3 +247,8 @@ i = 0
 for name in character_list:
     item_table[name] = ItemData(useful, 1, 0, 25000-i-1)
     i += 1
+
+days = [7,8,9,10,11,12,13,14,15,22,23,24,25,26,51,71,72,73,74,75,94,95,96,97,117,118,119,149,150,151,152,171,172,173,193,194,224,225,255,256,277,296,297,298,299,300,301,321,322,352,353,354,355,357,358]
+
+for name in days:
+    item_table["Day "+str(name)] = ItemData(progression, 0, 0, None, True)
