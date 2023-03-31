@@ -241,7 +241,7 @@ for (name) in item_table:
     item_table[name] = ItemData(item_table[name].classification, item_table[name].khdaysamount, item_table[name].khdaysaddress, i+25000)
     i += 1
 
-character_list = ["Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", "Larxene", "Lexaeus", "Luxord", "Marluxia", "Riku", "Vexen", "Xemnas", "Xion", "Zexion", "Mickey", "Donald", "Goofy"]
+character_list = ["Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", "Larxene", "Lexaeus", "Luxord", "Marluxia", "Riku", "Vexen", "Xemnas", "Xion", "Zexion", "Mickey", "Donald", "Goofy", "Dual-Wield Roxas"]
 
 i = 0
 for name in character_list:

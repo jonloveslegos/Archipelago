@@ -83,7 +83,7 @@ class KHDaysWorld(World):
         chosen_char = character_list[self.multiworld.StartingCharacter[self.player]]
         for (name) in item_table:
             if name == "Potion":
-                for i in range(item_table[name].khdaysamount - 18):
+                for i in range(item_table[name].khdaysamount - 19):
                     item_pool += [self.create_item(name)]
             elif name != chosen_char:
                 for i in range(item_table[name].khdaysamount):

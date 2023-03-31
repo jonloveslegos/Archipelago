@@ -28,6 +28,7 @@ char_ids["Zexion"] = 0x0F
 char_ids["Mickey"] = 0x10
 char_ids["Donald"] = 0x11
 char_ids["Goofy"] = 0x12
+char_ids["Dual-Wield Roxas"] = 0x13
 
 itemIds = {}
 
@@ -520,12 +521,10 @@ function main()
             else
                 mainmemory.write_u8(0x04C65B, 0x00)
             end
-            if charId2 ~= 0x00 then
-                if mainmemory.read_u8(0x04BD84) == 0x02 then
-                    mainmemory.write_u8(0x04C75F, charId2)
-                else
-                    mainmemory.write_u8(0x04C75F, 0x00)
-                end
+            if mainmemory.read_u8(0x04BD84) == 0x02 then
+                mainmemory.write_u8(0x04C75F, charId2)
+            else
+                mainmemory.write_u8(0x04C75F, 0x00)
             end
         elseif (curstate == STATE_UNINITIALIZED) then
             if  (frame % 60 == 0) then
