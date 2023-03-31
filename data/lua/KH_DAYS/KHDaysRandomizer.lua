@@ -236,11 +236,11 @@ itemIds["Extreme"] = 0x194FB9
 itemIds["Master's Circle"] = 0x194FBA
 itemIds["Nothing to Fear"] = 0x194FC7
 itemIds["Space in Its Place"] = 0x194FBB
-itemIds["Flaggin Winds"] = 0x194FBC
+itemIds["Flagging Winds"] = 0x194FBC
 itemIds["Ice Breaker"] = 0x194FBD
 itemIds["Down to Earth"] = 0x194FBE
 itemIds["Lose Your Illusion"] = 0x194FBF
-itemIds["Sighting of the Moon"] = 0x194FC0
+itemIds["Sighing of the Moon"] = 0x194FC0
 itemIds["Tears of Flame"] = 0x194FC1
 itemIds["Parting of Waters"] = 0x194FC2
 itemIds["Test of Time"] = 0x194FC3
@@ -403,7 +403,7 @@ function processBlock(block)
                 end
             end
         end
-        if itemsBlock ~= nil and not isInGame then
+        if itemsBlock ~= nil and isInGame then
             tempCount = {}
             for k, v in pairs(itemIds) do
                 tempCount[k] = 0
@@ -457,7 +457,6 @@ function receive()
         curstate = STATE_UNINITIALIZED
         return
     end
-    processBlock(json.decode(l))
 
     -- Determine Message to send back
     local retTable = {}
@@ -472,6 +471,7 @@ function receive()
         end
         retTable["received_items"] = temp
     end
+    processBlock(json.decode(l))
     if mainmemory.read_u8(0x1A7F60) == 0x54 then
         if not (mainmemory.read_u8(0x1A4978) == 255 and mainmemory.read_u8(0x1A497C) == 255) then
             retTable["day"] = tostring(mainmemory.read_u8(0x1A497C))
