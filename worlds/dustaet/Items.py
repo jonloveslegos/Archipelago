@@ -144,7 +144,7 @@ item_table = {
     "ReedBox": ItemData(0, "339", False),
     "ReedBoxEvil": ItemData(0, "340", False),
     "GeehanWatch": ItemData(0, "341", False),
-    "CoolerSnow": ItemData(0, "342", False),
+    "CoolerSnow": ItemData(0, "342", True),
     "FeebleFruit Blueprint": ItemData(0, "-0", False),
     "LoutaNut Blueprint": ItemData(0, "-1", False),
     "CupCake Blueprint": ItemData(0, "-2", False),
@@ -270,7 +270,7 @@ item_table = {
 i = 0
 for itm in item_table:
     if item_table[itm].code == 0:
-        item_table[itm] = ItemData(i+3800, item_table[itm].game_id, item_table[itm].progression)
+        item_table[itm] = ItemData(i+600, item_table[itm].game_id, item_table[itm].progression)
         i += 1
 
 required_items = {

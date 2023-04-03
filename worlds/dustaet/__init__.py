@@ -77,6 +77,7 @@ class DustAETWorld(World):
 
     def create_regions(self):
         menu = Region("Menu", self.player, self.multiworld)
+        self.multiworld.regions += [menu]
         sanctuary = self.create_region("The Sanctuary")
         farm = self.create_region("Geehan's Farm")
         archer_pass = self.create_region("Archers' Pass")
@@ -94,7 +95,6 @@ class DustAETWorld(World):
         connection = Entrance(self.player, "New Game", menu)
         menu.exits.append(connection)
         connection.connect(glade1)
-        self.multiworld.regions += [menu]
 
     def fill_slot_data(self):
         slot_data = self._get_dustaet_data()
