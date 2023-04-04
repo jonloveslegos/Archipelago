@@ -295,6 +295,29 @@ itemMax["A. Recovery LV+"] = 2
 itemMax["Sliding Dash LV+"] = 2
 itemMax["Haste LV+"] = 2
 itemMax["High Jump LV+"] = 2
+
+slotIds = {}
+slotIds[0] = 0x04C712
+slotIds[1] = 0x04C716
+slotIds[2] = 0x04C71A
+slotIds[3] = 0x04C71E
+slotIds[4] = 0x04C722
+slotIds[5] = 0x04C726
+slotIds[6] = 0x04C72A
+slotIds[7] = 0x04C72E
+slotIds[8] = 0x04C732
+slotIds[9] = 0x04C736
+slotIds[10] = 0x04C73A
+slotIds[11] = 0x04C73E
+slotIds[12] = 0x04C742
+slotIds[13] = 0x04C746
+slotIds[14] = 0x04C74A
+slotIds[15] = 0x04C74E
+slotIds[16] = 0x04C752
+slotIds[17] = 0x04C756
+
+sentIds = {}
+
 obtainedCount = {}
 hasCount = {}
 sentCount = {}
@@ -304,6 +327,7 @@ for k, v in pairs(itemIds) do
     sentCount[k] = 0
     itemMax[k] = itemMax[k]
 end
+
 already_obtained = {}
 function handle_items(itemName)
     local potion_count = mainmemory.read_u8(itemIds[itemName])
@@ -313,7 +337,7 @@ function handle_items(itemName)
         local toSend = potion_count-hasCount[itemName] + sentCount[itemName]
         while i < toSend do
             local temp = toSend-i
-            if temp <= itemMax[itemName] then
+            if temp <= 200 then
                 got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+500000+temp
             end
             i = i + 1
@@ -404,7 +428,7 @@ function processBlock(block)
                 end
             end
         end
-        if itemsBlock ~= nil and isInGame then
+        if itemsBlock ~= nil then
             tempCount = {}
             for k, v in pairs(itemIds) do
                 tempCount[k] = 0
@@ -417,7 +441,7 @@ function processBlock(block)
             end
         end
         local locBlock = block["checked_locs"]
-        if locBlock ~= nil and isInGame then
+        if locBlock ~= nil then
             sentCount = {}
             for k, v in pairs(itemIds) do
                 sentCount[k] = 0
@@ -465,13 +489,13 @@ function receive()
         for k, v in pairs(itemIds) do
             already_obtained = handle_items(k)
         end
-        retTable["checked_locs"] = already_obtained
         local temp = {}
         for k, v in pairs(obtainedCount) do
             temp[k] = tostring(v)
         end
         retTable["received_items"] = temp
     end
+    retTable["checked_locs"] = already_obtained
     processBlock(json.decode(l))
     if mainmemory.read_u8(0x1A7F60) == 0x54 then
         if not (mainmemory.read_u8(0x1A4978) == 255 and mainmemory.read_u8(0x1A497C) == 255) then
@@ -512,6 +536,42 @@ function main()
             prevstate = curstate
         end
         if (curstate == STATE_OK) or (curstate == STATE_INITIAL_CONNECTION_MADE) or (curstate == STATE_TENTATIVELY_CONNECTED) then
+            if mainmemory.read_u8(0x04BD84) == 0x02 then
+                for a,b in pairs(slotIds) do
+                    if mainmemory.read_u16_le(b) ~= 0x0000 then
+                        local index={}
+                        for k,v in pairs(itemIds) do
+                            index[tostring(v)]=k
+                        end
+                        local itemName = index[tostring(0x194DC9+mainmemory.read_u16_le(b)-1)]
+                        if itemName ~= nil then
+                            local temp = 1 + sentCount[itemName]
+                            if temp <= 200 and sentIds[tostring(mainmemory.read_u16_le(b+2))] == nil then
+                                local merged = {}
+                                local e = 0
+                                for k, v in pairs(already_obtained) do
+                                    if countEntries(merged)[v] == nil then
+                                        merged[tostring(e)] = v
+                                        e = e + 1
+                                    else
+                                        if countEntries(merged)[v] <= 0 then
+                                            merged[tostring(e)] = v
+                                            e = e + 1
+                                        end
+                                    end
+                                end
+                                sentIds[tostring(mainmemory.read_u16_le(b+2))] = "done"
+                                merged[tostring(e)] = ((itemIds[itemName])*1000)-1654784000+500000+temp
+                                already_obtained = merged
+                            end
+                            mainmemory.write_u16_le(b, 0x0000)
+                        end
+                    end
+                end
+            end
+            if StateOKForMainLoop() then
+                sentIds = {}
+            end
             if (frame % 60 == 0) then
                 receive()
                 frame = 0

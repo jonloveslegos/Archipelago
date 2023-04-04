@@ -25,15 +25,15 @@ class ItemData(typing.NamedTuple):
 item_table: Dict[str, ItemData] = {
     "Potion": ItemData(filler, 95, 0x194DCA),
     "Panel Slot": ItemData(useful, 105,0x194DC9),
-    "Hi-Potion": ItemData(filler, 54,0x194DCB),
-    "Mega-Potion": ItemData(filler, 15,0x194DCC),
+    "Hi-Potion": ItemData(useful, 54,0x194DCB),
+    "Mega-Potion": ItemData(useful, 15,0x194DCC),
     "Ether": ItemData(filler, 56,0x194DCD),
-    "Hi-Ether": ItemData(filler, 30,0x194DCE),
-    "Mega-Ether": ItemData(filler, 15,0x194DCF),
-    "Elixir": ItemData(filler, 10, 0x194DD0),
-    "Megalixir": ItemData(filler, 5, 0x194DD1),
+    "Hi-Ether": ItemData(useful, 30,0x194DCE),
+    "Mega-Ether": ItemData(useful, 15,0x194DCF),
+    "Elixir": ItemData(useful, 10, 0x194DD0),
+    "Megalixir": ItemData(useful, 5, 0x194DD1),
     "Panacea": ItemData(filler, 30,0x194DD2),
-    "Limit Recharge": ItemData(filler, 30,0x194DD3),
+    "Limit Recharge": ItemData(useful, 30,0x194DD3),
     "Level Up": ItemData(useful, 39,0x194E07),
     "LV Doubler 5": ItemData(useful, 1, 0x194E08),
     "LV Doubler 6": ItemData(useful, 1, 0x194E09),
@@ -87,10 +87,10 @@ item_table: Dict[str, ItemData] = {
     "Block-Retreat": ItemData(useful, 1, 0x194E48),
     "Sliding Block": ItemData(useful, 1, 0x194E49),
     "Block-Jump": ItemData(useful, 1, 0x194E4A),
-    "Fire Block": ItemData(filler, 1, 0x194E4B),
-    "Blizzard Block": ItemData(filler, 1, 0x194E4C),
-    "Thunder Block": ItemData(filler, 1, 0x194E4D),
-    "Aero Block": ItemData(filler, 1, 0x194E4E),
+    "Fire Block": ItemData(useful, 1, 0x194E4B),
+    "Blizzard Block": ItemData(useful, 1, 0x194E4C),
+    "Thunder Block": ItemData(useful, 1, 0x194E4D),
+    "Aero Block": ItemData(useful, 1, 0x194E4E),
     "Block Bonus": ItemData(useful, 1, 0x194E4F),
     "Round Block": ItemData(useful, 1, 0x194E50),
     "Auto-Block": ItemData(useful, 1, 0x194E51),
@@ -175,11 +175,11 @@ item_table: Dict[str, ItemData] = {
     "Zero Gear 5": ItemData(useful, 1, 0x194EAE),
     "Casual Gear 2": ItemData(useful, 1, 0x194E8E),
     "Mystery Gear 3": ItemData(useful, 1, 0x194E99),
-    "Ability Unit": ItemData(filler,3,0x194EB9),
-    "Power Unit": ItemData(filler,5,0x194EBF),
-    "Magic Unit": ItemData(filler,5,0x194EC1),
-    "Guard Unit": ItemData(filler,5,0x194EC0),
-    "Sight Unit": ItemData(filler,5,0x194EC2),
+    "Ability Unit": ItemData(useful,3,0x194EB9),
+    "Power Unit": ItemData(useful,5,0x194EBF),
+    "Magic Unit": ItemData(useful,5,0x194EC1),
+    "Guard Unit": ItemData(useful,5,0x194EC0),
+    "Sight Unit": ItemData(useful,5,0x194EC2),
     "Sign of Resolve": ItemData(useful, 1, 0x194F92),
     "Brawl Ring": ItemData(useful, 1, 0x194F93),
     "Magic Ring": ItemData(useful, 1, 0x194F94),
@@ -245,7 +245,7 @@ character_list = ["Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", 
 
 i = 0
 for name in character_list:
-    item_table[name] = ItemData(filler, 1, 0, 25000-i-1)
+    item_table[name] = ItemData(useful, 1, 0, 25000-i-1)
     i += 1
 
 days = [7,8,9,10,11,12,13,14,15,22,23,24,25,26,51,71,72,73,74,75,94,95,96,97,117,118,119,149,150,151,152,171,172,173,193,194,224,225,255,256,277,296,297,298,299,300,301,321,322,352,353,354,355,357,358]

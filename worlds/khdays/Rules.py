@@ -141,8 +141,6 @@ class KHDaysLogic(LogicMixin):
                 total += 2
             if self.days_shop_status(state, player) >= 1:
                 total += 20
-            else:
-                total = 0
             if self.days_has_day_access(state, 358, player):
                 total += 10
         elif item_name == "Thunder":
@@ -343,8 +341,6 @@ class KHDaysLogic(LogicMixin):
                 total += 1
             if self.days_shop_status(state, player) >= 3:
                 total += 10
-            else:
-                total = 0
             if self.days_has_day_access(state, 358, player):
                 total += 10
         elif item_name == "Hi-Ether":
@@ -362,15 +358,11 @@ class KHDaysLogic(LogicMixin):
                 total += 3
             if self.days_shop_status(state, player) >= 3:
                 total += 10
-            else:
-                total = 0
             if self.days_has_day_access(state, 358, player):
                 total += 10
         elif item_name == "Mega-Ether":
             if self.days_shop_status(state, player) >= 5:
                 total += 5
-            else:
-                total = 0
             if self.days_has_day_access(state, 358, player):
                 total += 10
         elif item_name == "Megalixir":
@@ -381,8 +373,6 @@ class KHDaysLogic(LogicMixin):
         elif item_name == "Mega-Potion":
             if self.days_shop_status(state, player) >= 5:
                 total += 5
-            else:
-                total = 0
             if self.days_has_day_access(state, 358, player):
                 total += 10
         elif item_name == "Blizzara":
@@ -756,8 +746,6 @@ class KHDaysLogic(LogicMixin):
                 total += 10
             if self.days_shop_status(state, player) >= 1:
                 total += 20
-            else:
-                total = 0
         elif item_name == "Scan":
             if self.days_has_day_access(state, 11, player):
                 total += 1
@@ -1174,8 +1162,6 @@ class KHDaysLogic(LogicMixin):
                 total += 2
             if self.days_shop_status(state, player) >= 1:
                 total += 15
-            else:
-                total = 0
             if self.days_has_day_access(state, 358, player):
                 total += 10
         elif item_name == "Loaded Gear+ 2":
