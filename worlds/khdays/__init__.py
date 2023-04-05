@@ -63,6 +63,31 @@ class KHDaysWorld(World):
 
         missions.locations = [KHDaysLocation(self.player, loc_name, loc_data, missions)
                            for loc_name, loc_data in location_table.items()]
+        for item in missions.locations:
+            if "Block-Retreat" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Auto-Block" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Charge Ring" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Eternal Ring" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Nothing to Fear" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Down to Earth" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Lose Your Illusion" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Sighing of the Moon" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Parting of Waters" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Test of Time" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Flowers Athirst" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
+            if "Dying of the Light" in item.name:
+                item.progress_type = Location.progress_type.EXCLUDED
         begin_game = Entrance(self.player, "Begin Game", menu)
         menu.exits.append(begin_game)
         begin_game.connect(missions)

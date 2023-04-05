@@ -321,6 +321,18 @@ slotIds[15] = 0x04C74E
 slotIds[16] = 0x04C752
 slotIds[17] = 0x04C756
 
+equipSlotIds = {}
+equipSlotIds[0] = 0x04C694
+equipSlotIds[1] = 0x04C698
+equipSlotIds[2] = 0x04C69C
+equipSlotIds[3] = 0x04C6A0
+equipSlotIds[4] = 0x04C6A4
+equipSlotIds[5] = 0x04C6A8
+equipSlotIds[6] = 0x04C6AC
+equipSlotIds[7] = 0x04C6B0
+equipSlotIds[8] = 0x04C6B4
+equipSlotIds[9] = 0x04C6B8
+
 sentIds = {}
 
 obtainedCount = {}
@@ -473,6 +485,16 @@ function StateOKForMainLoop()
     return mainmemory.read_u8(0x1A7F60) == 0x0C or ((mainmemory.read_u8(0x1A7F60) == 0x07 or mainmemory.read_u8(0x1A7F60) == 0x08 or mainmemory.read_u8(0x1A7F60) == 0x0D) and (mainmemory.read_u8(0x04BD84) ~= 0x80))
 end
 
+local pastBattleItems = {}
+for k, v in pairs(equipSlotIds) do
+    pastBattleItems[k] = 0
+end
+
+local pastBattleIds = {}
+for k, v in pairs(equipSlotIds) do
+    pastBattleIds[k] = 0
+end
+
 function receive()
     l, e = zeldaSocket:receive()
     if e == 'closed' then
@@ -520,6 +542,20 @@ function receive()
     if StateOKForMainLoop() then
         for k, v in pairs(itemIds) do
             hasCount[k] = mainmemory.read_u8(v)
+        end
+    end
+    if mainmemory.read_u8(0x04BD84) == 0x02 then
+        for k, v in pairs(equipSlotIds) do
+            local index={}
+            for b,c in pairs(itemIds) do
+                index[tostring(c)]=b
+            end
+            local itemName = index[tostring(0x194DC9+pastBattleIds[k]-1)]
+            if pastBattleItems[k] > mainmemory.read_u16_le(v+2) and pastBattleIds[k] > 1 then
+                hasCount[itemName] = hasCount[itemName] - (pastBattleItems[k]-mainmemory.read_u16_le(v+2))
+            end
+            pastBattleItems[k] = mainmemory.read_u16_le(v+2)
+            pastBattleIds[k] = mainmemory.read_u16_le(v)
         end
     end
     
