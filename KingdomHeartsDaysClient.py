@@ -78,6 +78,7 @@ class KHDaysContext(CommonContext):
     char_1 = "Roxas"
     char_2 = ""
     valid_characters = {"Roxas"}
+    connected = "false"
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -105,6 +106,7 @@ class KHDaysContext(CommonContext):
         if cmd == 'Connected':
             slot_data = args["slot_data"]
             self.day_requirement = slot_data["day_requirement"]
+            self.connected = "true"
             async_start(self.send_msgs([
                 {"cmd": "Get",
                 "keys": ["received_items"]}
@@ -119,6 +121,9 @@ class KHDaysContext(CommonContext):
                 return
             keys = cast(Dict[str, Optional[str]], args["keys"])
 
+    async def connection_closed(self):
+        self.connected = "false"
+        await super(KHDaysContext, self).connection_closed()
 
     def on_print_json(self, args: dict):
         if self.ui:
@@ -173,7 +178,8 @@ def get_payload(ctx: KHDaysContext):
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
             "char_1": ctx.char_1,
-            "char_2": ctx.char_2
+            "char_2": ctx.char_2,
+            "connection": ctx.connected
         }
     )
 

@@ -342,7 +342,6 @@ for k, v in pairs(itemIds) do
     obtainedCount[k] = 0
     hasCount[k] = 0
     sentCount[k] = 0
-    itemMax[k] = itemMax[k]
 end
 
 already_obtained = {}
@@ -423,6 +422,10 @@ end
 
 function processBlock(block)
     if block ~= nil then
+        local connected_to_server = block["connection"]
+        if connected_to_server == "false" then
+            reset_variables()
+        end
         local itemsBlock = block["items"]
         isInGame = StateOKForMainLoop()
         if itemsBlock ~= nil and isInGame then
@@ -570,6 +573,23 @@ function table.empty (self)
     return true
 end
 
+function reset_variables()
+    hasEnteredGame = false
+
+    sentIds = {}
+    
+    obtainedCount = {}
+    hasCount = {}
+    sentCount = {}
+    for k, v in pairs(itemIds) do
+        obtainedCount[k] = 0
+        hasCount[k] = 0
+        sentCount[k] = 0
+    end
+    
+    already_obtained = {}
+end
+
 function main()
     server, error = socket.bind('localhost', 52987)
     while true do
@@ -634,6 +654,7 @@ function main()
                 print("Attempting to connect")
                 local client, timeout = server:accept()
                 if timeout == nil then
+                    reset_variables()
                     -- print('Initial Connection Made')
                     curstate = STATE_INITIAL_CONNECTION_MADE
                     zeldaSocket = client
