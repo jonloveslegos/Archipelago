@@ -194,6 +194,7 @@ itemIds["Magic Unit"] = 0x194EC1
 itemIds["Guard Unit"] = 0x194EC0
 itemIds["Sight Unit"] = 0x194EC2
 
+
 itemIds["Sign of Resolve"] = 0x194F92
 itemIds["Brawl Ring"] = 0x194F93
 itemIds["Magic Ring"] = 0x194F94
@@ -248,37 +249,42 @@ itemIds["Test of Time"] = 0x194FC3
 itemIds["Flowers Athirst"] = 0x194FC4
 itemIds["Stolen Thunder"] = 0x194FC5
 itemIds["Dying of the Light"] = 0x194FC6
+
+synth = {}
+for k, v in pairs(itemIds) do
+    synth[k] = 0
+end
 itemMax = {}
 for k, v in pairs(itemIds) do
     itemMax[k] = 1
 end
 itemMax["Panel Slot"] = 105
-itemMax["Potion"] = 99
-itemMax["Hi-Potion"] = 99
-itemMax["Mega-Potion"] = 99
-itemMax["Ether"] = 99
-itemMax["Hi-Ether"] = 99
-itemMax["Mega-Ether"] = 99
-itemMax["Elixir"] = 99
-itemMax["Megalixir"] = 99
-itemMax["Panacea"] = 99
-itemMax["Limit Recharge"] = 99
+itemMax["Potion"] = 95
+itemMax["Hi-Potion"] = 54
+itemMax["Mega-Potion"] = 15
+itemMax["Ether"] = 56
+itemMax["Hi-Ether"] = 30
+itemMax["Mega-Ether"] = 15
+itemMax["Elixir"] = 10
+itemMax["Megalixir"] = 5
+itemMax["Panacea"] = 30
+itemMax["Limit Recharge"] = 30
 itemMax["Level Up"] = 39
 itemMax["Backpack"] = 3
-itemMax["Fire"] = 20
+itemMax["Fire"] = 24
 itemMax["Fira"] = 10
-itemMax["Firaga"] = 5
+itemMax["Firaga"] = 3
 itemMax["Blizzard"] = 20
-itemMax["Blizzara"] = 10
+itemMax["Blizzara"] = 13
 itemMax["Blizzaga"] = 5
-itemMax["Thunder"] = 20
-itemMax["Thundara"] = 10
+itemMax["Thunder"] = 23
+itemMax["Thundara"] = 9
 itemMax["Thundaga"] = 5
-itemMax["Aero"] = 20
-itemMax["Aerora"] = 10
-itemMax["Aeroga"] = 5
-itemMax["Cure"] = 20
-itemMax["Cura"] = 10
+itemMax["Aero"] = 19
+itemMax["Aerora"] = 9
+itemMax["Aeroga"] = 4
+itemMax["Cure"] = 22
+itemMax["Cura"] = 12
 itemMax["Curaga"] = 5
 itemMax["Glide LV+"] = 4
 itemMax["Treasure Magnet LV+"] = 2
@@ -289,7 +295,6 @@ itemMax["Power Unit"] = 5
 itemMax["Guard Unit"] = 5
 itemMax["Magic Unit"] = 5
 itemMax["Sight Unit"] = 5
-itemMax["Dodge Roll LV+"] = 2
 itemMax["Block LV+"] = 3
 itemMax["A. Recovery LV+"] = 2
 itemMax["Sliding Dash LV+"] = 2
@@ -322,8 +327,8 @@ obtainedCount = {}
 hasCount = {}
 sentCount = {}
 for k, v in pairs(itemIds) do
-    obtainedCount[k] = mainmemory.read_u8(v)
-    hasCount[k] = mainmemory.read_u8(v)
+    obtainedCount[k] = 0
+    hasCount[k] = 0
     sentCount[k] = 0
     itemMax[k] = itemMax[k]
 end
@@ -337,7 +342,7 @@ function handle_items(itemName)
         local toSend = potion_count-hasCount[itemName] + sentCount[itemName]
         while i < toSend do
             local temp = toSend-i
-            if temp <= 200 then
+            if temp <= itemMax[itemName] then
                 got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+500000+temp
             end
             i = i + 1
@@ -389,6 +394,8 @@ local prevstate = ""
 local curstate =  STATE_UNINITIALIZED
 local zeldaSocket = nil
 local frame = 0
+
+local hasEnteredGame = false
 
 function countEntries(inputTable)
     result = {} 
@@ -463,7 +470,7 @@ function processBlock(block)
 end
 
 function StateOKForMainLoop()
-    return (mainmemory.read_u8(0x1A7F60) == 0x07 or mainmemory.read_u8(0x1A7F60) == 0x08 or mainmemory.read_u8(0x1A7F60) == 0x0D) and (mainmemory.read_u8(0x04BD84) ~= 0x80)
+    return mainmemory.read_u8(0x1A7F60) == 0x0C or ((mainmemory.read_u8(0x1A7F60) == 0x07 or mainmemory.read_u8(0x1A7F60) == 0x08 or mainmemory.read_u8(0x1A7F60) == 0x0D) and (mainmemory.read_u8(0x04BD84) ~= 0x80))
 end
 
 function receive()
@@ -485,9 +492,17 @@ function receive()
 
     -- Determine Message to send back
     local retTable = {}
-    if StateOKForMainLoop() then
+    if StateOKForMainLoop() and hasEnteredGame then
         for k, v in pairs(itemIds) do
             already_obtained = handle_items(k)
+        end
+    end
+    if StateOKForMainLoop() then
+        if not hasEnteredGame then
+            for k, v in pairs(itemIds) do
+                obtainedCount[k] = mainmemory.read_u8(v)
+                hasCount[k] = mainmemory.read_u8(v)
+            end
         end
         local temp = {}
         for k, v in pairs(obtainedCount) do
@@ -518,6 +533,9 @@ function receive()
         print("Connected!")
         itemMessages["(0,0)"] = {TTL=240, message="Connected", color="green"}
         curstate = STATE_OK
+    end
+    if not hasEnteredGame then
+        hasEnteredGame = StateOKForMainLoop()
     end
 end
 
@@ -572,9 +590,14 @@ function main()
             if StateOKForMainLoop() then
                 sentIds = {}
             end
-            if (frame % 60 == 0) then
+            if (frame % 10 == 0 and mainmemory.read_u8(0x1A7F60) == 0x0C) then
                 receive()
                 frame = 0
+            else
+                if (frame % 60 == 0) then
+                    receive()
+                    frame = 0
+                end
             end
             if mainmemory.read_u8(0x04BD84) == 0x02 then
                 mainmemory.write_u8(0x04C65B, charId)
