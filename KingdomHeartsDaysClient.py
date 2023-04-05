@@ -78,7 +78,6 @@ class KHDaysContext(CommonContext):
     char_1 = "Roxas"
     char_2 = ""
     valid_characters = {"Roxas"}
-    received_items_from_game = {"Null"}
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -119,14 +118,6 @@ class KHDaysContext(CommonContext):
                 logger.warning(f"invalid Retrieved packet to KingdomHeartsDaysClient: {args}")
                 return
             keys = cast(Dict[str, Optional[str]], args["keys"])
-            if "received_items" in keys:
-                if not keys["received_items"] is None:
-                    self.received_items_from_game = keys["received_items"]
-                    print(self.received_items_from_game)
-                else:
-                    self.received_items_from_game = {}
-            else:
-                self.received_items_from_game = {}
 
 
     def on_print_json(self, args: dict):
@@ -167,17 +158,22 @@ class KHDaysContext(CommonContext):
 
 def get_payload(ctx: KHDaysContext):
     current_time = time.time()
-    print([''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(int("".join(filter(str.isdigit, str(locations_by_id[item]))))-1) for item in ctx.checked_locations])
-    print([''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations if location_table[(''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(max(1, int("".join(locations_by_id[item].split(" ")[len(locations_by_id[item].split(" "))-1]))-1)))] in ctx.checked_locations or int("".join(filter(str.isdigit, str(locations_by_id[item])))) == 1])
+    check_locs_count = {}
+    check_locs = [''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations if location_table[(''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(max(1, int("".join(locations_by_id[item].split(" ")[len(locations_by_id[item].split(" "))-1]))-1)))] in ctx.checked_locations or int("".join(filter(str.isdigit, str(locations_by_id[item])))) == 1]
+    for i in check_locs:
+        if not check_locs_count.keys().__contains__(i):
+            check_locs_count[i] = 1
+        else:
+            check_locs_count[i] = check_locs_count[i] + 1
+    print(check_locs_count)
     return json.dumps(
         {
-            "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000 and not "Null" in ctx.received_items_from_game],
-            "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations if location_table[(''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(max(1, int("".join(locations_by_id[item].split(" ")[len(locations_by_id[item].split(" "))-1]))-1)))] in ctx.checked_locations or int("".join(filter(str.isdigit, str(locations_by_id[item])))) == 1],
+            "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000],
+            "checked_locs": check_locs_count,
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
             "char_1": ctx.char_1,
-            "char_2": ctx.char_2,
-            "received_items": [item for item in ctx.received_items_from_game if not "Null" in ctx.received_items_from_game]
+            "char_2": ctx.char_2
         }
     )
 
@@ -213,15 +209,6 @@ async def nds_sync_task(ctx: KHDaysContext):
                             {"cmd": "LocationChecks",
                             "locations": ctx.locations_array}
                         ])
-                    if ctx.game is not None and 'received_items' in data_decoded and not "Null" in ctx.received_items_from_game:
-                        await ctx.send_msgs([
-                            {"cmd": "Set",
-                            "key": "received_items",
-                            "default": {},
-                            "want_reply": False,
-                            "operations": [{"operation": "replace", "value": data_decoded["received_items"]}]}
-                        ])
-                        ctx.received_items_from_game = data_decoded["received_items"]
                     if ctx.game is not None and 'day' in data_decoded:
                         if not ctx.finished_game and int(data_decoded["day"]) >= ctx.day_requirement:
                             await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])

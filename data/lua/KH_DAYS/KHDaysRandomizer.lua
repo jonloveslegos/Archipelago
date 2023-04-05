@@ -423,12 +423,6 @@ end
 
 function processBlock(block)
     if block ~= nil then
-        local locBlock = block["received_items"]
-        if locBlock ~= nil then
-            for y, u in pairs(locBlock) do
-                obtainedCount[y] = tonumber(u)
-            end
-        end
         local itemsBlock = block["items"]
         isInGame = StateOKForMainLoop()
         if itemsBlock ~= nil and isInGame then
@@ -465,8 +459,7 @@ function processBlock(block)
             for k, v in pairs(itemIds) do
                 sentCount[k] = 0
             end
-            locBlockCount = countEntries(locBlock)
-            for y, u in pairs(locBlockCount) do
+            for y, u in pairs(locBlock) do
                 sentCount[y] = u
             end
         end
@@ -526,11 +519,6 @@ function receive()
                 hasCount[k] = mainmemory.read_u8(v)
             end
         end
-        local temp = {}
-        for k, v in pairs(obtainedCount) do
-            temp[k] = tostring(v)
-        end
-        retTable["received_items"] = temp
     end
     retTable["checked_locs"] = already_obtained
     processBlock(json.decode(l))
@@ -626,14 +614,9 @@ function main()
             if StateOKForMainLoop() then
                 sentIds = {}
             end
-            if (frame % 10 == 0 and mainmemory.read_u8(0x1A7F60) == 0x0C) then
+            if (frame % 60 == 0) then
                 receive()
                 frame = 0
-            else
-                if (frame % 60 == 0) then
-                    receive()
-                    frame = 0
-                end
             end
             if mainmemory.read_u8(0x04BD84) == 0x02 then
                 mainmemory.write_u8(0x04C65B, charId)
