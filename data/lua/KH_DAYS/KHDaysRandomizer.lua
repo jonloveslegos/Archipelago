@@ -428,7 +428,7 @@ function processBlock(block)
                 end
             end
         end
-        if itemsBlock ~= nil then
+        if itemsBlock ~= nil and isInGame then
             tempCount = {}
             for k, v in pairs(itemIds) do
                 tempCount[k] = 0

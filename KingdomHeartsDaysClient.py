@@ -168,11 +168,11 @@ class KHDaysContext(CommonContext):
 def get_payload(ctx: KHDaysContext):
     current_time = time.time()
     print([''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(int("".join(filter(str.isdigit, str(locations_by_id[item]))))-1) for item in ctx.checked_locations])
-    print([''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations if location_table[(''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(max(1, int("".join(filter(str.isdigit, str(locations_by_id[item]))))-1)))] in ctx.checked_locations or int("".join(filter(str.isdigit, str(locations_by_id[item])))) == 1])
+    print([''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations if location_table[(''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(max(1, int("".join(locations_by_id[item].split(" ")[len(locations_by_id[item].split(" "))-1]))-1)))] in ctx.checked_locations or int("".join(filter(str.isdigit, str(locations_by_id[item])))) == 1])
     return json.dumps(
         {
             "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000 and not "Null" in ctx.received_items_from_game],
-            "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations if location_table[(''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(max(1, int("".join(filter(str.isdigit, str(locations_by_id[item]))))-1)))] in ctx.checked_locations or int("".join(filter(str.isdigit, str(locations_by_id[item])))) == 1],
+            "checked_locs": [''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations if location_table[(''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(max(1, int("".join(locations_by_id[item].split(" ")[len(locations_by_id[item].split(" "))-1]))-1)))] in ctx.checked_locations or int("".join(filter(str.isdigit, str(locations_by_id[item])))) == 1],
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
             "char_1": ctx.char_1,
