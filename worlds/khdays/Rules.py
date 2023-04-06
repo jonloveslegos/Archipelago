@@ -254,33 +254,33 @@ class KHDaysLogic(LogicMixin):
             if self.days_has_day_access(state, 117, player):
                 total += 2
             if self.days_has_day_access(state, 301, player):
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 277, player):
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 119, player):
                 total += 1
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 3
             if self.days_has_day_access(state, 152, player):
                 total += 1
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 2
             if self.days_has_day_access(state, 151, player):
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 173, player):
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 2
             if self.days_has_day_access(state, 193, player):
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 2
             if self.days_has_day_access(state, 194, player):
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 225, player):
-                if self.days_can_get_materials(state, "Lightning Shard", player):
+                if self.days_can_get_materials(state, "Lightning Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_shop_status(state, player) >= 2:
                 total += 2
@@ -342,33 +342,33 @@ class KHDaysLogic(LogicMixin):
                 total += 1
             if self.days_has_day_access(state, 152, player):
                 total += 1
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 2
             if self.days_has_day_access(state, 150, player):
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 255, player):
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 194, player):
                 total += 1
             if self.days_has_day_access(state, 74, player):
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 225, player):
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 119, player):
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 2
             if self.days_has_day_access(state, 149, player):
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 171, player):
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 173, player):
-                if self.days_can_get_materials(state, "Shining Shard", player):
+                if self.days_can_get_materials(state, "Shining Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_shop_status(state, player) >= 2:
                 total += 2
@@ -540,31 +540,31 @@ class KHDaysLogic(LogicMixin):
             if self.days_has_day_access(state, 97, player):
                 total += 1
             if self.days_has_day_access(state, 225, player):
-                if self.days_can_get_materials(state, "Gust Shard", player):
+                if self.days_can_get_materials(state, "Gust Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 2
             if self.days_has_day_access(state, 256, player):
-                if self.days_can_get_materials(state, "Gust Shard", player):
+                if self.days_can_get_materials(state, "Gust Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 2
             if self.days_has_day_access(state, 119, player):
                 total += 1
-                if self.days_can_get_materials(state, "Gust Shard", player):
+                if self.days_can_get_materials(state, "Gust Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 3
             if self.days_shop_status(state, player) >= 2:
                 total += 2
             if self.days_has_day_access(state, 150, player):
-                if self.days_can_get_materials(state, "Gust Shard", player):
+                if self.days_can_get_materials(state, "Gust Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 152, player):
-                if self.days_can_get_materials(state, "Gust Shard", player):
+                if self.days_can_get_materials(state, "Gust Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 172, player):
-                if self.days_can_get_materials(state, "Gust Shard", player):
+                if self.days_can_get_materials(state, "Gust Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 194, player):
-                if self.days_can_get_materials(state, "Gust Shard", player):
+                if self.days_can_get_materials(state, "Gust Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 255, player):
-                if self.days_can_get_materials(state, "Gust Shard", player):
+                if self.days_can_get_materials(state, "Gust Shard", player) and self.days_shop_status(state, player) >= 1:
                     total += 1
             if self.days_has_day_access(state, 358, player):
                 total += 3
@@ -805,19 +805,19 @@ class KHDaysLogic(LogicMixin):
                 total += 2
             if self.days_has_day_access(state, 51, player):
                 total += 1
-            if self.days_has_day_access(state, 95, player) and self.days_can_get_materials(state, "Frost Shard", player):
+            if self.days_has_day_access(state, 95, player) and self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Frost Shard", player):
                 total += 1
-            if self.days_has_day_access(state, 225, player) and self.days_can_get_materials(state, "Frost Shard", player):
+            if self.days_has_day_access(state, 225, player) and self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Frost Shard", player):
                 total += 1
             if self.days_has_day_access(state, 75, player):
                 total += 1
-            if self.days_has_day_access(state, 97, player) and self.days_can_get_materials(state, "Frost Shard", player):
+            if self.days_has_day_access(state, 97, player) and self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Frost Shard", player):
                 total += 2
-            if self.days_has_day_access(state, 149, player) and self.days_can_get_materials(state, "Frost Shard", player):
+            if self.days_has_day_access(state, 149, player) and self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Frost Shard", player):
                 total += 1
-            if self.days_has_day_access(state, 152, player) and self.days_can_get_materials(state, "Frost Shard", player):
+            if self.days_has_day_access(state, 152, player) and self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Frost Shard", player):
                 total += 5
-            if self.days_has_day_access(state, 256, player) and self.days_can_get_materials(state, "Frost Shard", player):
+            if self.days_has_day_access(state, 256, player) and self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Frost Shard", player):
                 total += 2
             if self.days_has_day_access(state, 358, player):
                 total += 3
