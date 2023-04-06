@@ -21,6 +21,8 @@ class KHDaysLogic(LogicMixin):
         return state.has_any({"Fire"}, player)
 
     def days_can_get_materials(self, state: CollectionState, material_name: str, player: int):
+        if material_name == "Gold":
+            return self.days_has_day_access(state, self.days_mission_to_day(73), player)
         if material_name == "Blazing Shard":
             return self.days_has_day_access(state, 14, player)
         if material_name == "Blazing Gem":
@@ -125,6 +127,7 @@ class KHDaysLogic(LogicMixin):
             return self.days_has_day_access(state, self.days_mission_to_day(16), player)
         if material_name == "Ankharite":
             return self.days_has_day_access(state, self.days_mission_to_day(73), player)
+        print("not found: "+material_name)
         return False
 
     def days_crowns_obatianable(self, state: CollectionState, player: int):
@@ -1432,8 +1435,9 @@ class KHDaysLogic(LogicMixin):
         elif item_name == "Master's Circle":
             if self.days_has_day_access(state, 358, player):
                 total += 1
-        if total > req_count:
+        if total > worlds.khdays.Items.item_table[item_name].khdaysamount:
             print(item_name)
+            print(total-worlds.khdays.Items.item_table[item_name].khdaysamount)
         return total >= req_count
 
 
