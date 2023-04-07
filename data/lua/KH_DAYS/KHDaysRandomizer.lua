@@ -350,15 +350,17 @@ function handle_items(itemName)
     local got_checks = {}
     if hasCount[itemName] < potion_count then
         local i = 0
+        local sent_item_count = 0
         local toSend = potion_count-hasCount[itemName] + sentCount[itemName]
         while i < toSend do
             local temp = toSend-i
             if temp <= itemMax[itemName] then
                 got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+500000+temp
+                sent_item_count = sent_item_count + 1
             end
             i = i + 1
         end
-        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-(potion_count-hasCount[itemName]))
+        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-(sent_item_count))
     end
     if already_obtained ~= nil then
         local merged = {}
@@ -438,8 +440,10 @@ function processBlock(block)
             end
             for k, v in pairs(tempCount) do
                 while v > obtainedCount[k] do
-                    receive_item(k)
-                    obtainedCount[k] = obtainedCount[k] + 1
+                    if hasCount[k] < itemMax[itemName] then
+                        receive_item(k)
+                        obtainedCount[k] = obtainedCount[k] + 1
+                    end
                     hasCount[k] = mainmemory.read_u8(itemIds[k])
                 end
             end
