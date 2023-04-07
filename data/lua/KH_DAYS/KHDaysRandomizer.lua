@@ -350,7 +350,7 @@ function handle_items(itemName)
     local got_checks = {}
     if hasCount[itemName] < potion_count then
         local i = 0
-        local sent_item_count = 0
+        local sent_item_count = -sentCount[itemName]
         local toSend = potion_count-hasCount[itemName] + sentCount[itemName]
         while i < toSend do
             local temp = toSend-i
@@ -440,10 +440,8 @@ function processBlock(block)
             end
             for k, v in pairs(tempCount) do
                 while v > obtainedCount[k] do
-                    if hasCount[k] < itemMax[itemName] then
-                        receive_item(k)
-                        obtainedCount[k] = obtainedCount[k] + 1
-                    end
+                    receive_item(k)
+                    obtainedCount[k] = obtainedCount[k] + 1
                     hasCount[k] = mainmemory.read_u8(itemIds[k])
                 end
             end
