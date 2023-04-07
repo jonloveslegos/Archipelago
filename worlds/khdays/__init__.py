@@ -14,6 +14,9 @@ from .Options import khdays_options
 from .Rules import set_rules, set_completion_rules
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import add_rule
+from worlds.LauncherComponents import Component, components
+
+components.append(Component("KHDays Client", "KingdomHeartsDaysClient"))
 
 
 class KHDaysWeb(WebWorld):
