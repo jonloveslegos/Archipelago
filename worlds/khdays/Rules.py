@@ -186,13 +186,13 @@ class KHDaysLogic(LogicMixin):
         if day_number >= 11:
             can_do = can_do and self.days_has_magic(state, player)
         if day_number > 7:
-            days = [7, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23, 24, 25, 26, 51, 71, 72, 73, 74, 75, 94, 95, 96, 97, 117, 118,
-                119, 149, 150, 151, 152, 171, 172, 173, 193, 194, 224, 225, 255, 256, 277, 296, 297, 298, 299, 300, 301,
-                321, 322, 352, 353, 354, 355, 357, 358]
+            days = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25, 26, 51, 52, 53, 54, 71, 72, 73, 74, 75, 76, 77, 78, 79, 94, 95, 96, 97, 98, 99, 100, 117, 118,
+                119, 120, 121, 122, 149, 150, 151, 152, 153, 154, 155, 156, 171, 172, 173, 174, 175, 176, 193, 194, 195, 196, 197, 224, 225, 226, 227, 255, 256, 257, 258, 277, 278, 279, 280, 296, 297, 298, 299, 300, 301, 302, 303, 304,
+                321, 322, 323, 324, 325, 326, 352, 353, 354, 355, 357, 358]
             temp_number = day_number
             while temp_number not in days:
                 temp_number += 1
-            can_do = can_do and state.has("Day "+str(days[days.index(temp_number)-1]), player)
+            can_do = can_do and state.has("Mission "+str(days.index(temp_number)), player)
         return can_do
 
     def days_shop_status(self, state: CollectionState, player: int):
@@ -430,7 +430,7 @@ class KHDaysLogic(LogicMixin):
             if self.days_has_day_access(state, 297, player):
                 total += 1
         elif item_name == "Hi-Potion":
-            if self.days_has_day_access(state, 15, player):
+            if self.days_has_day_access(state, 15, player):  # Implement some logic for difficulty
                 total += 1
             if self.days_has_day_access(state, 354, player):
                 total += 2
@@ -806,7 +806,7 @@ class KHDaysLogic(LogicMixin):
                 total += 1
             if self.days_shop_status(state, player) >= 1:
                 total += 2
-            if self.days_has_day_access(state, 51, player):
+            if self.days_has_day_access(state, 51, player):  # Requires Haste for convenience
                 total += 1
             if self.days_has_day_access(state, 95, player) and self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Frost Shard", player):
                 total += 1
@@ -924,7 +924,7 @@ class KHDaysLogic(LogicMixin):
             if self.days_has_day_access(state, 11, player):
                 total += 1
         elif item_name == "Elixir":
-            if self.days_has_day_access(state, 51, player) and state.has_any({"High Jump", "High Jump 3", "Air Slide 2", "Air Slide 5"}, player):
+            if self.days_has_day_access(state, 51, player) and ((state.has("Air Slide LV+", player) and state.has_any({"Air Slide 5", "Air Slide 2"}, player) and state.has("High Jump", player)) or (state.has("High Jump 3", player) and state.has("High Jump LV+", player)) or (state.has("Glide 3", player) and state.has("Glide 5", player))):
                 total += 1
             if self.days_has_day_access(state, 119, player):
                 total += 1
@@ -1444,8 +1444,8 @@ class KHDaysLogic(LogicMixin):
 def set_rules(world: MultiWorld, player: int):
     for loc in location_table:
         if location_table[loc] is None:
-            day_number = int(str(loc).split(" ")[len(str(loc).split(" "))-1])
-            set_rule(world.get_location(loc, player), lambda state, day_number=day_number: state.days_has_day_access(state, day_number, player))
+            mission_number = int(str(loc).split(" ")[len(str(loc).split(" "))-1])
+            set_rule(world.get_location(loc, player), lambda state, mission_number=mission_number: state.days_has_day_access(state, state.days_mission_to_day(max(0, mission_number-1)), player))
         elif location_table[loc] >= 25000:
             item_string = ''.join([i+" " for i in str(loc).split(" ")[:-1]])[:-1]
             item_count = int(str(loc).split(" ")[len(str(loc).split(" "))-1])

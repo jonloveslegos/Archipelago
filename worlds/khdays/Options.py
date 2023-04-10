@@ -23,6 +23,7 @@ class StartingCharacter(Choice):
     option_Mickey = 16
     option_Donald = 17
     option_Goofy = 18
+    option_Dual_Wield_Roxas = 19
     default = 0
 
 

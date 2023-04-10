@@ -241,14 +241,18 @@ for (name) in item_table:
     item_table[name] = ItemData(item_table[name].classification, item_table[name].khdaysamount, item_table[name].khdaysaddress, i+25000)
     i += 1
 
-character_list = ["Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", "Larxene", "Lexaeus", "Luxord", "Marluxia", "Riku", "Vexen", "Xemnas", "Xion", "Zexion", "Mickey", "Donald", "Goofy", "Dual-Wield Roxas"]
+character_list = ["Roxas", "Axel", "Xigbar", "Saix", "Xaldin", "Sora", "Demyx", "Larxene", "Lexaeus", "Luxord", "Marluxia", "Riku", "Vexen", "Xemnas", "Xion", "Zexion", "Mickey", "Donald", "Goofy", "Dual-Wield_Roxas"]
 
 i = 0
 for name in character_list:
     item_table[name] = ItemData(useful, 1, 0, 25000-i-1)
     i += 1
 
-days = [7,8,9,10,11,12,13,14,15,22,23,24,25,26,51,71,72,73,74,75,94,95,96,97,117,118,119,149,150,151,152,171,172,173,193,194,224,225,255,256,277,296,297,298,299,300,301,321,322,352,353,354,355,357,358]
+days = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25, 26, 51, 52, 53, 54, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+        94, 95, 96, 97, 98, 99, 100, 117, 118,
+        119, 120, 121, 122, 149, 150, 151, 152, 153, 154, 155, 156, 171, 172, 173, 174, 175, 176, 193, 194, 195, 196,
+        197, 224, 225, 226, 227, 255, 256, 257, 258, 277, 278, 279, 280, 296, 297, 298, 299, 300, 301, 302, 303, 304,
+        321, 322, 323, 324, 325, 326, 352, 353, 354, 355, 357, 358]
 
 for name in days:
-    item_table["Day "+str(name)] = ItemData(progression, 0, 0, None, True)
+    item_table["Mission "+str(days.index(name))] = ItemData(progression, 0, 0, None, True)

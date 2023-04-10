@@ -28,7 +28,7 @@ char_ids["Zexion"] = 0x0F
 char_ids["Mickey"] = 0x10
 char_ids["Donald"] = 0x11
 char_ids["Goofy"] = 0x12
-char_ids["Dual-Wield Roxas"] = 0x13
+char_ids["Dual-Wield_Roxas"] = 0x13
 
 itemIds = {}
 
@@ -636,9 +636,14 @@ function main()
             if StateOKForMainLoop() then
                 sentIds = {}
             end
-            if (frame % 60 == 0) then
+            if (frame % 20 == 0) and mainmemory.read_u8(0x1A7F60) == 0x0C then
                 receive()
                 frame = 0
+            else
+                if (frame % 60 == 0) then
+                    receive()
+                    frame = 0
+                end
             end
             if mainmemory.read_u8(0x04BD84) == 0x02 then
                 mainmemory.write_u8(0x04C65B, charId)
