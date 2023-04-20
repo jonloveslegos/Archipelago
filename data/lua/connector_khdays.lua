@@ -2,6 +2,7 @@ console.clear()
 
 local socket = require("socket")
 local json = require('json')
+require("common")
 
 charId = 0x00
 charId2 = 0x00
@@ -402,7 +403,6 @@ local STATE_TENTATIVELY_CONNECTED = "Tentatively Connected"
 local STATE_INITIAL_CONNECTION_MADE = "Initial Connection Made"
 local STATE_UNINITIALIZED = "Uninitialized"
 
-local itemMessages = {}
 local prevstate = ""
 local curstate =  STATE_UNINITIALIZED
 local zeldaSocket = nil
@@ -510,7 +510,6 @@ function receive()
         return
     end
 
-    -- Determine Message to send back
     local retTable = {}
     if StateOKForMainLoop() and hasEnteredGame then
         for k, v in pairs(itemIds) do
@@ -560,19 +559,11 @@ function receive()
         curstate = STATE_TENTATIVELY_CONNECTED
     elseif curstate == STATE_TENTATIVELY_CONNECTED then
         print("Connected!")
-        itemMessages["(0,0)"] = {TTL=240, message="Connected", color="green"}
         curstate = STATE_OK
     end
     if not hasEnteredGame then
         hasEnteredGame = StateOKForMainLoop()
     end
-end
-
-function table.empty (self)
-    for _, _ in pairs(self) do
-        return false
-    end
-    return true
 end
 
 function reset_variables()
@@ -593,6 +584,9 @@ function reset_variables()
 end
 
 function main()
+    if not checkBizhawkVersion() then
+        return
+    end
     server, error = socket.bind('localhost', 52987)
     while true do
         frame = frame + 1
