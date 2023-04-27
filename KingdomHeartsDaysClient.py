@@ -68,7 +68,7 @@ class KHDaysContext(CommonContext):
     command_processor = KHDaysCommandProcessor
     items_handling = 0b111  # full remote
     char_1 = "Roxas"
-    char_2 = ""
+    char_2 = "Xion"
     valid_characters = {"Roxas"}
     connected = "false"
 
@@ -163,6 +163,11 @@ async def nds_sync_task(ctx: KHDaysContext):
                     ctx.char_1 = random.choice(tuple(ctx.valid_characters))
                 if ctx.char_2 not in ctx.valid_characters:
                     ctx.char_2 = random.choice(tuple(ctx.valid_characters))
+            if ctx.char_2 == ctx.char_1:
+                if ctx.char_1 == "Xion":
+                    ctx.char_2 = "Roxas"
+                else:
+                    ctx.char_2 = "Xion"
             msg = get_payload(ctx).encode()
             writer.write(msg)
             writer.write(b'\n')
