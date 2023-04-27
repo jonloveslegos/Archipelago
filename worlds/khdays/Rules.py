@@ -224,7 +224,9 @@ class KHDaysLogic(LogicMixin):
             if self.days_has_day_access(state, 11, player):
                 total += 1
             if self.days_has_day_access(state, 15, player):
-                total += 6
+                total += 5
+                if state.has("Level Up", player):
+                    total += 1
             if self.days_has_day_access(state, 22, player):
                 total += 3
             if self.days_has_day_access(state, 23, player):
@@ -431,7 +433,8 @@ class KHDaysLogic(LogicMixin):
                 total += 1
         elif item_name == "Hi-Potion":
             if self.days_has_day_access(state, 15, player):  # Implement some logic for difficulty
-                total += 1
+                if state.has("Level Up", player, 5):
+                    total += 1
             if self.days_has_day_access(state, 354, player):
                 total += 2
             if self.days_has_day_access(state, 353, player):
@@ -710,10 +713,14 @@ class KHDaysLogic(LogicMixin):
             if self.days_has_day_access(state, 14, player):
                 total += 2
             if self.days_has_day_access(state, 15, player):
-                total += 1
                 if self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Blazing Shard",
                                                                                              player):
-                    total += 2
+                    total += 1
+                if state.has("Level Up", player):
+                    total += 1
+                    if self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Blazing Shard",
+                                                                                                 player):
+                        total += 1
             if self.days_has_day_access(state, 23, player):
                 if self.days_shop_status(state, player) >= 1 and self.days_can_get_materials(state, "Blazing Shard",
                                                                                              player):

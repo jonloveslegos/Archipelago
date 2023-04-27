@@ -27,8 +27,6 @@ CONNECTION_TENTATIVE_STATUS = "Initial Connection Made"
 CONNECTION_CONNECTED_STATUS = "Connected"
 CONNECTION_INITIAL_STATUS = "Connection has not been initiated"
 
-DISPLAY_MSGS = True
-
 item_ids = {item: id.code for item, id in item_table.items()}
 location_ids = location_table
 items_by_id = {id: item for item, id in item_ids.items()}
@@ -41,12 +39,6 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
         """Check NDS Connection State"""
         if isinstance(self.ctx, KHDaysContext):
             logger.info(f"NDS Status: {self.ctx.nds_status}")
-
-    def _cmd_toggle_msgs(self):
-        """Toggle displaying messages in bizhawk"""
-        global DISPLAY_MSGS
-        DISPLAY_MSGS = not DISPLAY_MSGS
-        logger.info(f"Messages are now {'enabled' if DISPLAY_MSGS else 'disabled'}")
 
     def _cmd_unlocked_characters(self):
         """Displays a list of characters that you have available."""
@@ -98,10 +90,6 @@ class KHDaysContext(CommonContext):
         await self.get_username()
         await self.send_connect()
 
-    def _set_message(self, msg: str, msg_id: int):
-        if DISPLAY_MSGS:
-            self.messages[(time.time(), msg_id)] = msg
-
     def on_package(self, cmd: str, args: dict):
         if cmd == 'Connected':
             slot_data = args["slot_data"]
@@ -111,10 +99,6 @@ class KHDaysContext(CommonContext):
                 {"cmd": "Get",
                 "keys": ["received_items"]}
             ]))
-        elif cmd == 'Print':
-            msg = args['text']
-            if ': !' not in msg:
-                self._set_message(msg, SYSTEM_MESSAGE_ID)
         elif cmd == 'Retrieved':
             if "keys" not in args:
                 logger.warning(f"invalid Retrieved packet to KingdomHeartsDaysClient: {args}")
@@ -131,22 +115,6 @@ class KHDaysContext(CommonContext):
         else:
             text = self.jsontotextparser(copy.deepcopy(args["data"]))
             logger.info(text)
-        relevant = args.get("type", None) in {"Hint", "ItemSend"}
-        if relevant:
-            item = args["item"]
-            # goes to this world
-            if self.slot_concerns_self(args["receiving"]):
-                relevant = True
-            # found in this world
-            elif self.slot_concerns_self(item.player):
-                relevant = True
-            # not related
-            else:
-                relevant = False
-            if relevant:
-                item = args["item"]
-                msg = self.raw_text_parser(copy.deepcopy(args["data"]))
-                self._set_message(msg, item.item)
 
     def run_gui(self):
         from kvui import GameManager
