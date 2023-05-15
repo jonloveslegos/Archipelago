@@ -5,7 +5,136 @@ local json = require('json')
 require("common")
 
 charId = 0x00
-charId2 = 0x00
+charId2 = 0x0E
+
+mission_address = {}
+
+start_mission_address = 0x194AE4
+
+mission_address["1"] = 8
+mission_address["2"] = 11
+mission_address["3"] = 14
+mission_address["4"] = 17
+mission_address["5"] = 20
+
+local i = 0
+while i < 93 do
+    mission_address[tostring(i+1)] = 9 + (3 * i)
+    i = i + 1
+end
+
+function hex2bin(str)
+    local map = {
+        ['0'] = '0000',
+        ['1'] = '0001',
+        ['2'] = '0010',
+        ['3'] = '0011',
+        ['4'] = '0100',
+        ['5'] = '0101',
+        ['6'] = '0110',
+        ['7'] = '0111',
+        ['8'] = '1000',
+        ['9'] = '1001',
+        ['A'] = '1010',
+        ['B'] = '1011',
+        ['C'] = '1100',
+        ['D'] = '1101',
+        ['E'] = '1110',
+        ['F'] = '1111'
+    }
+    return str:gsub('[0-9A-F]', map)
+end
+
+function bin2hex(str)
+    local map = {
+        ['0000'] = '0',
+        ['0001'] = '1',
+        ['0010'] = '2',
+        ['0011'] = '3',
+        ['0100'] = '4',
+        ['0101'] = '5',
+        ['0110'] = '6',
+        ['0111'] = '7',
+        ['1000'] = '8',
+        ['1001'] = '9',
+        ['1010'] = 'A',
+        ['1011'] = 'B',
+        ['1100'] = 'C',
+        ['1101'] = 'D',
+        ['1110'] = 'E',
+        ['1111'] = 'F',
+        [' '] = ' '
+    }
+    local mystr = ""
+    local i = 0
+    while i < string.len(str) do
+        local e = 0
+        local temptemp = ""
+        while e < 4 do
+            i = i + 1
+            local c = str:sub(i,i)
+            if c ~= " " then
+                temptemp = temptemp..c
+                e = e + 1
+            else
+                mystr = mystr.." "
+            end
+        end
+        mystr = mystr..map[temptemp]
+    end
+    return mystr
+end
+
+function strhex2array(str)
+    local myarr = {}
+    local i = 0
+    local e = 1
+    local temptemp = ""
+    while i < string.len(str) do
+        i = i + 1
+        local c = str:sub(i,i)
+        if c ~= " " then
+            temptemp = temptemp..c
+        else
+            myarr[e] = tonumber(temptemp, 16)
+            e = e + 1
+            temptemp = ""
+        end
+    end
+    myarr[e] = tonumber(temptemp, 16)
+    e = e + 1
+    temptemp = ""
+    return myarr
+end
+
+function replace_str_ind(str, ind, char)
+    return str:sub(1,ind-1)..char..str:sub(ind+1)
+end
+
+function read_mission_values()
+    local hex_string = ""
+    local mem = mainmemory.read_bytes_as_array(0x194AE4, 0x24)
+    local myarr = {}
+    local i = 1
+    local e = 1
+    local temptemp = ""
+    while i < #mem do
+        local e = 3
+        local a = 0
+        local temptemp = ""
+        while e >= 0 do
+            myarr[i+a] = mem[i+e]
+            e = e - 1
+            a = a + 1
+        end
+        i = i + 4
+    end
+    for _, v in ipairs(myarr) do
+        hex_string = hex_string .. string.format("%02X ", v)
+    end
+    hex_string = hex_string:sub(1, -2) -- Hang head in shame, remove last " "
+    return hex_string
+end
 
 char_ids = {}
 
@@ -338,30 +467,42 @@ sentIds = {}
 
 obtainedCount = {}
 hasCount = {}
-sentCount = {}
-for k, v in pairs(itemIds) do
-    obtainedCount[k] = 0
-    hasCount[k] = 0
-    sentCount[k] = 0
+sentMissionCount = {}
+ipsc = 1
+while ipsc <= 93 do
+    sentMissionCount[ipsc] = 0
+    ipsc = ipsc + 1
 end
-
+moogleBuyCount = {}
+moogleBuyCount = {}
+for k, v in pairs(itemIds) do
+    obtainedCount[k] = itemMax[k]
+    hasCount[k] = 0
+    moogleBuyCount[k] = 0
+end
 already_obtained = {}
 function handle_items(itemName)
     local potion_count = mainmemory.read_u8(itemIds[itemName])
     local got_checks = {}
     if hasCount[itemName] < potion_count then
         local i = 0
-        local sent_item_count = -sentCount[itemName]
-        local toSend = potion_count-hasCount[itemName] + sentCount[itemName]
+        local toSend = potion_count-hasCount[itemName]
         while i < toSend do
-            local temp = toSend-i
-            if temp <= itemMax[itemName] then
-                got_checks[tostring(i)] = (itemIds[itemName]*1000)-1654784000+500000+temp
-                sent_item_count = sent_item_count + 1
+            if moogleBuyCount[itemName] < 99 then
+                if mainmemory.read_u8(0x1A7F60) == 0x0C then
+                    print("Moogle: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).." = "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]))
+                    got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
+                    moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
+                    mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
+                else
+                    print("Hub: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).." = "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]))
+                    got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
+                    moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
+                    mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
+                end
             end
             i = i + 1
         end
-        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-(sent_item_count))
     end
     if already_obtained ~= nil then
         local merged = {}
@@ -460,12 +601,12 @@ function processBlock(block)
         end
         local locBlock = block["checked_locs"]
         if locBlock ~= nil then
-            sentCount = {}
+            moogleBuyCount = {}
             for k, v in pairs(itemIds) do
-                sentCount[k] = 0
+                moogleBuyCount[k] = 0
             end
             for y, u in pairs(locBlock) do
-                sentCount[y] = u
+                moogleBuyCount[y] = u
             end
         end
         local char1 = block["char_1"]
@@ -511,6 +652,75 @@ function receive()
     end
 
     local retTable = {}
+    if StateOKForMainLoop() then
+        local hex_string = read_mission_values()
+        local tempbin = hex2bin(hex_string)
+        tempbin = tempbin:gsub(" ","")
+        for _, i in pairs(mission_address) do
+            if tempbin:sub(i+1, i+1) == "1" and sentMissionCount[tonumber(_)] < 2 then
+                local it = 1
+                local merged = {}
+                local e = 0
+                for k, v in pairs(already_obtained) do
+                    if countEntries(merged)[v] == nil then
+                        merged[tostring(e)] = v
+                        e = e + 1
+                    else
+                        if countEntries(merged)[v] <= 0 then
+                            merged[tostring(e)] = v
+                            e = e + 1
+                        end
+                    end
+                end
+                if sentMissionCount[tonumber(_)] == 1 then
+                    it = 4
+                end
+                while it <= 5 do
+                    merged[tostring(e)] = it+520000+(tonumber(_)*100)
+                    print("Mission "..tostring(_)..": Reward "..tostring(it).." = "..tostring(merged[tostring(e)]))
+                    e = e + 1
+                    it = it + 1
+                end
+                already_obtained = merged
+                for itemName, __ in pairs(itemIds) do
+                    if itemName ~= "Level Up" then
+                        mainmemory.write_u8(itemIds[itemName], hasCount[itemName])
+                    end
+                end
+                sentMissionCount[tonumber(_)] = 2
+            else
+                if tempbin:sub(i, i) == "1" and sentMissionCount[tonumber(_)] < 1 then
+                    local it = 1
+                    local merged = {}
+                    local e = 0
+                    for k, v in pairs(already_obtained) do
+                        if countEntries(merged)[v] == nil then
+                            merged[tostring(e)] = v
+                            e = e + 1
+                        else
+                            if countEntries(merged)[v] <= 0 then
+                                merged[tostring(e)] = v
+                                e = e + 1
+                            end
+                        end
+                    end
+                    while it <= 3 do
+                        merged[tostring(e)] = it+520000+(tonumber(_)*100)
+                        print("Mission "..tostring(_)..": Reward "..tostring(it).." = "..tostring(merged[tostring(e)]))
+                        e = e + 1
+                        it = it + 1
+                    end
+                    already_obtained = merged
+                    for itemName, __ in pairs(itemIds) do
+                        if itemName ~= "Level Up" then
+                            mainmemory.write_u8(itemIds[itemName], hasCount[itemName])
+                        end
+                    end
+                    sentMissionCount[tonumber(_)] = 1
+                end
+            end
+        end
+    end
     if StateOKForMainLoop() and hasEnteredGame then
         for k, v in pairs(itemIds) do
             already_obtained = handle_items(k)
@@ -531,6 +741,7 @@ function receive()
             retTable["day"] = tostring(mainmemory.read_u8(0x1A497C))
         end
     end
+    retTable["special_counts"] = moogleBuyCount
     if StateOKForMainLoop() then
         for k, v in pairs(itemIds) do
             hasCount[k] = mainmemory.read_u8(v)
@@ -573,15 +784,19 @@ function reset_variables()
     
     obtainedCount = {}
     hasCount = {}
-    sentCount = {}
+    moogleBuyCount = {}
     for k, v in pairs(itemIds) do
         obtainedCount[k] = 0
         hasCount[k] = 0
-        sentCount[k] = 0
+        moogleBuyCount[k] = 0
     end
     
     already_obtained = {}
 end
+
+currentMission = 1
+
+sentMissionStuff = false
 
 function main()
     if not checkBizhawkVersion() then
@@ -603,8 +818,7 @@ function main()
                         end
                         local itemName = index[tostring(0x194DC9+mainmemory.read_u16_le(b)-1)]
                         if itemName ~= nil then
-                            local temp = 1 + sentCount[itemName]
-                            if temp <= 200 and sentIds[tostring(mainmemory.read_u16_le(b+2))] == nil then
+                            if sentIds[tostring(mainmemory.read_u16_le(b+2))] == nil then
                                 local merged = {}
                                 local e = 0
                                 for k, v in pairs(already_obtained) do
@@ -618,8 +832,10 @@ function main()
                                         end
                                     end
                                 end
+                                temp = mainmemory.read_u16_le(0x04C21C)*100
                                 sentIds[tostring(mainmemory.read_u16_le(b+2))] = "done"
-                                merged[tostring(e)] = ((itemIds[itemName])*1000)-1654784000+500000+temp
+                                merged[tostring(e)] = mainmemory.read_u16_le(b+2)+500000+temp
+                                print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": "..itemName.." "..tostring(mainmemory.read_u16_le(b+2)+1).." = "..tostring(merged[tostring(e)]))
                                 already_obtained = merged
                             end
                             mainmemory.write_u16_le(b, 0x0000)

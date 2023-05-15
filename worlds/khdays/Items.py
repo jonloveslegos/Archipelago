@@ -25,16 +25,16 @@ class ItemData(typing.NamedTuple):
 item_table: Dict[str, ItemData] = {
     "Potion": ItemData(filler, 95, 0x194DCA),
     "Panel Slot": ItemData(useful, 105,0x194DC9),
-    "Hi-Potion": ItemData(useful, 54,0x194DCB),
-    "Mega-Potion": ItemData(useful, 15,0x194DCC),
+    "Hi-Potion": ItemData(filler, 54,0x194DCB),
+    "Mega-Potion": ItemData(filler, 15,0x194DCC),
     "Ether": ItemData(filler, 56,0x194DCD),
-    "Hi-Ether": ItemData(useful, 30,0x194DCE),
-    "Mega-Ether": ItemData(useful, 15,0x194DCF),
-    "Elixir": ItemData(useful, 20, 0x194DD0),
-    "Megalixir": ItemData(useful, 6, 0x194DD1),
-    "Panacea": ItemData(filler, 31,0x194DD2),
+    "Hi-Ether": ItemData(filler, 30,0x194DCE),
+    "Mega-Ether": ItemData(filler, 15,0x194DCF),
+    "Elixir": ItemData(filler, 20, 0x194DD0),
+    "Megalixir": ItemData(filler, 6, 0x194DD1),
+    "Panacea": ItemData(filler, 31, 0x194DD2),
     "Limit Recharge": ItemData(useful, 10,0x194DD3),
-    "Level Up": ItemData(useful, 39,0x194E07),
+    "Level Up": ItemData(progression, 39,0x194E07),
     "LV Doubler 5": ItemData(useful, 1, 0x194E08),
     "LV Doubler 6": ItemData(useful, 1, 0x194E09),
     "LV Doubler 6B": ItemData(useful, 1, 0x194F8D),
@@ -253,6 +253,3 @@ days = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25, 26, 51, 52, 53,
         119, 120, 121, 122, 149, 150, 151, 152, 153, 154, 155, 156, 171, 172, 173, 174, 175, 176, 193, 194, 195, 196,
         197, 224, 225, 226, 227, 255, 256, 257, 258, 277, 278, 279, 280, 296, 297, 298, 299, 300, 301, 302, 303, 304,
         321, 322, 323, 324, 325, 326, 352, 353, 354, 355, 357, 358]
-
-for name in days:
-    item_table["Mission "+str(days.index(name))] = ItemData(progression, 0, 0, None, True)

@@ -101,10 +101,7 @@ class KHDaysWorld(World):
         item_pool = []
         chosen_char = character_list[self.multiworld.StartingCharacter[self.player]]
         for (name) in item_table:
-            if name == "Potion":
-                for i in range(item_table[name].khdaysamount - 19):
-                    item_pool += [self.create_item(name)]
-            elif name != chosen_char:
+            if item_table[name].classification != ItemClassification.filler and name != chosen_char:
                 for i in range(item_table[name].khdaysamount):
                     item_pool += [self.create_item(name)]
         
@@ -114,8 +111,8 @@ class KHDaysWorld(World):
                 self.multiworld.get_location(name, self.player).place_locked_item(event_item)
 
         self.multiworld.push_precollected(self.create_item(chosen_char))
-        for i in range(len(location_table) - len(item_pool) - len(Items.days) - len(self.multiworld.precollected_items[self.player])):
-            item_pool += [self.create_item("Potion")]
+        for i in range(len(location_table) - len(item_pool)):
+            item_pool += [self.create_item(self.get_filler_item_name())]
         self.multiworld.itempool += item_pool
 
     def set_rules(self):

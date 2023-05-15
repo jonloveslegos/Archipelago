@@ -83,6 +83,7 @@ class KHDaysContext(CommonContext):
         self.game = 'Kingdom Hearts Days'
         self.awaiting_rom = False
         self.day_requirement = 358
+        self.check_locs_count = {}
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -131,18 +132,10 @@ class KHDaysContext(CommonContext):
 
 def get_payload(ctx: KHDaysContext):
     current_time = time.time()
-    check_locs_count = {}
-    check_locs = [''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1] for item in ctx.checked_locations if location_table[(''.join([i+" " for i in str(locations_by_id[item]).split(" ")[:-1]])[:-1]+" "+str(max(1, int("".join(locations_by_id[item].split(" ")[len(locations_by_id[item].split(" "))-1]))-1)))] in ctx.checked_locations or int("".join(filter(str.isdigit, str(locations_by_id[item])))) == 1]
-    for i in check_locs:
-        if not check_locs_count.keys().__contains__(i):
-            check_locs_count[i] = 1
-        else:
-            check_locs_count[i] = check_locs_count[i] + 1
-    print(check_locs_count)
     return json.dumps(
         {
             "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000],
-            "checked_locs": check_locs_count,
+            "checked_locs": ctx.check_locs_count,
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
             "char_1": ctx.char_1,
@@ -180,10 +173,14 @@ async def nds_sync_task(ctx: KHDaysContext):
                     data = await asyncio.wait_for(reader.readline(), timeout=5)
                     data_decoded = json.loads(data.decode())
                     ctx.valid_characters = {items_by_id[item.item] for item in ctx.items_received if item.item < 25000}
+                    if ctx.game is not None and 'special_counts' in data_decoded:
+                        ctx.check_locs_count = data_decoded["special_counts"]
                     if ctx.game is not None and 'checked_locs' in data_decoded:
                         ctx.locations_array = []
                         for i in data_decoded["checked_locs"]:
                             ctx.locations_array.append(data_decoded["checked_locs"][i])
+                            if data_decoded["checked_locs"][i] not in ctx.server_locations:
+                                print("Unknown location: "+str(data_decoded["checked_locs"][i]))
                         await ctx.send_msgs([
                             {"cmd": "LocationChecks",
                             "locations": ctx.locations_array}
