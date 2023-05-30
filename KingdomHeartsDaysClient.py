@@ -132,6 +132,16 @@ class KHDaysContext(CommonContext):
 
 def get_payload(ctx: KHDaysContext):
     current_time = time.time()
+    ctx.check_locs_count = {}
+    for item in item_table:
+        ctx.check_locs_count[item] = 0
+    for item in ctx.checked_locations:
+        if locations_by_id[item].startswith("Moogle: "):
+            temp_view = locations_by_id[item].removeprefix("Moogle: ").split(" ")
+            ctx.check_locs_count["".join([i+" " for i in temp_view[:-1]]).removesuffix(" ")] += 1
+        if locations_by_id[item].startswith("Hub: "):
+            temp_view = locations_by_id[item].removeprefix("Hub: ").split(" ")
+            ctx.check_locs_count["".join([i+" " for i in temp_view[:-1]]).removesuffix(" ")] += 1
     return json.dumps(
         {
             "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000],
@@ -173,14 +183,13 @@ async def nds_sync_task(ctx: KHDaysContext):
                     data = await asyncio.wait_for(reader.readline(), timeout=5)
                     data_decoded = json.loads(data.decode())
                     ctx.valid_characters = {items_by_id[item.item] for item in ctx.items_received if item.item < 25000}
-                    if ctx.game is not None and 'special_counts' in data_decoded:
-                        ctx.check_locs_count = data_decoded["special_counts"]
                     if ctx.game is not None and 'checked_locs' in data_decoded:
                         ctx.locations_array = []
                         for i in data_decoded["checked_locs"]:
-                            ctx.locations_array.append(data_decoded["checked_locs"][i])
-                            if data_decoded["checked_locs"][i] not in ctx.server_locations:
-                                print("Unknown location: "+str(data_decoded["checked_locs"][i]))
+                            if not ctx.locations_array.__contains__(data_decoded["checked_locs"][i]):
+                                ctx.locations_array.append(data_decoded["checked_locs"][i])
+                                if data_decoded["checked_locs"][i] not in ctx.server_locations:
+                                    print("Unknown location: "+str(data_decoded["checked_locs"][i]))
                         await ctx.send_msgs([
                             {"cmd": "LocationChecks",
                             "locations": ctx.locations_array}

@@ -162,6 +162,24 @@ char_ids["Dual-Wield_Roxas"] = 0x13
 
 itemIds = {}
 
+itemIds["Fire Recipe"] = 0x194EC3
+itemIds["Fira Recipe"] = 0x194EC4
+itemIds["Firaga Recipe"] = 0x194EC5
+itemIds["Blizzard Recipe"] = 0x194EC6
+itemIds["Blizzara Recipe"] = 0x194EC7
+itemIds["Blizzaga Recipe"] = 0x194EC8
+itemIds["Thunder Recipe"] = 0x194EC9
+itemIds["Thundara Recipe"] = 0x194ECA
+itemIds["Thundaga Recipe"] = 0x194ECB
+itemIds["Aero Recipe"] = 0x194ECC
+itemIds["Aerora Recipe"] = 0x194ECD
+itemIds["Aeroga Recipe"] = 0x194ECE
+itemIds["Cure Recipe"] = 0x194ECF
+itemIds["Cura Recipe"] = 0x194ED0
+itemIds["Curaga Recipe"] = 0x194ED1
+itemIds["Elixir Recipe"] = 0x194EF9
+itemIds["Megalixir Recipe"] = 0x194EFA
+
 itemIds["Panel Slot"] = 0x194DC9
 itemIds["Potion"] = 0x194DCA
 itemIds["Hi-Potion"] = 0x194DCB
@@ -388,48 +406,65 @@ itemMax = {}
 for k, v in pairs(itemIds) do
     itemMax[k] = 1
 end
-itemMax["Panel Slot"] = 105
-itemMax["Potion"] = 95
-itemMax["Hi-Potion"] = 54
-itemMax["Mega-Potion"] = 15
-itemMax["Ether"] = 56
-itemMax["Hi-Ether"] = 30
-itemMax["Mega-Ether"] = 15
-itemMax["Elixir"] = 20
-itemMax["Megalixir"] = 6
-itemMax["Panacea"] = 31
-itemMax["Limit Recharge"] = 10
-itemMax["Level Up"] = 39
-itemMax["Backpack"] = 3
-itemMax["Fire"] = 24
-itemMax["Fira"] = 10
-itemMax["Firaga"] = 3
-itemMax["Blizzard"] = 22
-itemMax["Blizzara"] = 13
-itemMax["Blizzaga"] = 5
-itemMax["Thunder"] = 23
-itemMax["Thundara"] = 9
-itemMax["Thundaga"] = 5
-itemMax["Aero"] = 19
-itemMax["Aerora"] = 9
-itemMax["Aeroga"] = 4
-itemMax["Cure"] = 22
-itemMax["Cura"] = 12
-itemMax["Curaga"] = 5
-itemMax["Glide LV+"] = 4
-itemMax["Treasure Magnet LV+"] = 2
-itemMax["Auto-Life LV+"] = 2
-itemMax["Air Slide LV+"] = 4
-itemMax["Ability Unit"] = 3
-itemMax["Power Unit"] = 5
-itemMax["Guard Unit"] = 5
-itemMax["Magic Unit"] = 5
-itemMax["Sight Unit"] = 5
-itemMax["Block LV+"] = 3
-itemMax["A. Recovery LV+"] = 2
-itemMax["Sliding Dash LV+"] = 2
-itemMax["Haste LV+"] = 2
-itemMax["High Jump LV+"] = 2
+itemMax["Panel Slot"] = 1
+itemMax["Potion"] = 20
+itemMax["Hi-Potion"] = 99
+itemMax["Mega-Potion"] = 99
+itemMax["Ether"] = 20
+itemMax["Hi-Ether"] = 99
+itemMax["Mega-Ether"] = 99
+itemMax["Elixir"] = 99
+itemMax["Megalixir"] = 99
+itemMax["Panacea"] = 99
+itemMax["Limit Recharge"] = 99
+itemMax["Level Up"] = 1
+itemMax["Backpack"] = 99
+itemMax["Fire"] = 2
+itemMax["Fira"] = 99
+itemMax["Firaga"] = 99
+itemMax["Blizzard"] = 2
+itemMax["Blizzara"] = 99
+itemMax["Blizzaga"] = 99
+itemMax["Thunder"] = 99
+itemMax["Thundara"] = 99
+itemMax["Thundaga"] = 99
+itemMax["Aero"] = 99
+itemMax["Aerora"] = 99
+itemMax["Aeroga"] = 99
+itemMax["Cure"] = 99
+itemMax["Cura"] = 99
+itemMax["Curaga"] = 99
+itemMax["Glide LV+"] = 99
+itemMax["Treasure Magnet LV+"] = 99
+itemMax["Auto-Life LV+"] = 99
+itemMax["Air Slide LV+"] = 99
+itemMax["Ability Unit"] = 99
+itemMax["Power Unit"] = 99
+itemMax["Guard Unit"] = 99
+itemMax["Magic Unit"] = 99
+itemMax["Sight Unit"] = 99
+itemMax["Block LV+"] = 99
+itemMax["A. Recovery LV+"] = 99
+itemMax["Sliding Dash LV+"] = 99
+itemMax["Haste LV+"] = 99
+itemMax["High Jump LV+"] = 99
+itemMax["Fire Recipe"] = 99
+itemMax["Fira Recipe"] = 99
+itemMax["Firaga Recipe"] = 99
+itemMax["Blizzard Recipe"] = 99
+itemMax["Blizzara Recipe"] = 99
+itemMax["Blizzaga Recipe"] = 99
+itemMax["Thunder Recipe"] = 99
+itemMax["Thundara Recipe"] = 99
+itemMax["Thundaga Recipe"] = 99
+itemMax["Aero Recipe"] = 99
+itemMax["Aerora Recipe"] = 99
+itemMax["Aeroga Recipe"] = 99
+itemMax["Cure Recipe"] = 99
+itemMax["Cura Recipe"] = 99
+itemMax["Curaga Recipe"] = 99
+itemMax["Elixir Recipe"] = 99
+itemMax["Megalixir Recipe"] = 99
 
 slotIds = {}
 slotIds[0] = 0x04C712
@@ -488,18 +523,20 @@ function handle_items(itemName)
         local i = 0
         local toSend = potion_count-hasCount[itemName]
         while i < toSend do
-            if moogleBuyCount[itemName] < 99 then
+            if moogleBuyCount[itemName] < 99 then--itemMax[itemName] then
                 if mainmemory.read_u8(0x1A7F60) == 0x0C then
-                    print("Moogle: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).." = "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]))
+                    print("\"Moogle: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).."\": "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName])..",")
                     got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
                     moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
                     mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
                 else
-                    print("Hub: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).." = "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]))
+                    print("\"Hub: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).."\": "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName])..",")
                     got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
                     moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
                     mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
                 end
+            else
+                hasCount[itemName] = hasCount[itemName] + 1
             end
             i = i + 1
         end
@@ -550,6 +587,8 @@ local zeldaSocket = nil
 local frame = 0
 
 local hasEnteredGame = false
+
+local hasSetup = false
 
 function countEntries(inputTable)
     result = {} 
@@ -621,7 +660,7 @@ function processBlock(block)
 end
 
 function StateOKForMainLoop()
-    return mainmemory.read_u8(0x1A7F60) == 0x0C or ((mainmemory.read_u8(0x1A7F60) == 0x07 or mainmemory.read_u8(0x1A7F60) == 0x08 or mainmemory.read_u8(0x1A7F60) == 0x0D) and (mainmemory.read_u8(0x04BD84) ~= 0x80))
+    return ((mainmemory.read_u8(0x1A7F60) == 0x07 or mainmemory.read_u8(0x1A7F60) == 0x08 or mainmemory.read_u8(0x1A7F60) == 0x0D) and (mainmemory.read_u8(0x04BD84) ~= 0x80))
 end
 
 local pastBattleItems = {}
@@ -676,8 +715,8 @@ function receive()
                     it = 4
                 end
                 while it <= 5 do
-                    merged[tostring(e)] = it+520000+(tonumber(_)*100)
-                    print("Mission "..tostring(_)..": Reward "..tostring(it).." = "..tostring(merged[tostring(e)]))
+                    merged[tostring(e)] = it+570000+(tonumber(_)*100)
+                    print("\"Mission "..tostring(_)..": Reward "..tostring(it).."\": "..tostring(merged[tostring(e)])..",")
                     e = e + 1
                     it = it + 1
                 end
@@ -705,8 +744,8 @@ function receive()
                         end
                     end
                     while it <= 3 do
-                        merged[tostring(e)] = it+520000+(tonumber(_)*100)
-                        print("Mission "..tostring(_)..": Reward "..tostring(it).." = "..tostring(merged[tostring(e)]))
+                        merged[tostring(e)] = it+570000+(tonumber(_)*100)
+                        print("\"Mission "..tostring(_)..": Reward "..tostring(it).."\": "..tostring(merged[tostring(e)])..",")
                         e = e + 1
                         it = it + 1
                     end
@@ -721,7 +760,7 @@ function receive()
             end
         end
     end
-    if StateOKForMainLoop() and hasEnteredGame then
+    if (StateOKForMainLoop() or mainmemory.read_u8(0x1A7F60) == 0x0C) and hasEnteredGame then
         for k, v in pairs(itemIds) do
             already_obtained = handle_items(k)
         end
@@ -741,7 +780,6 @@ function receive()
             retTable["day"] = tostring(mainmemory.read_u8(0x1A497C))
         end
     end
-    retTable["special_counts"] = moogleBuyCount
     if StateOKForMainLoop() then
         for k, v in pairs(itemIds) do
             hasCount[k] = mainmemory.read_u8(v)
@@ -796,7 +834,10 @@ end
 
 currentMission = 1
 
+inShop = false
+
 sentMissionStuff = false
+past_money = 0
 
 function main()
     if not checkBizhawkVersion() then
@@ -809,6 +850,27 @@ function main()
             prevstate = curstate
         end
         if (curstate == STATE_OK) or (curstate == STATE_INITIAL_CONNECTION_MADE) or (curstate == STATE_TENTATIVELY_CONNECTED) then
+            if mainmemory.read_u8(0x1A7F60) == 0x0C then
+                for itemName, __ in pairs(itemIds) do
+                    if mainmemory.read_u8(itemIds[itemName]) > hasCount[itemName] then
+                        past_money = mainmemory.read_u16_le(0x1945C0)
+                    end
+                end
+                for itemName, __ in pairs(itemIds) do
+                    if mainmemory.read_u8(itemIds[itemName]) < hasCount[itemName] then
+                        mainmemory.write_u16_le(0x1945C0, past_money)
+                    end
+                end
+                past_money = mainmemory.read_u16_le(0x1945C0)
+                inShop = true
+            else
+                if inShop then
+                    for itemName, __ in pairs(itemIds) do
+                        mainmemory.write_u8(itemIds[itemName], hasCount[itemName])
+                    end
+                end
+                inShop = false
+            end
             if mainmemory.read_u8(0x04BD84) == 0x02 then
                 for a,b in pairs(slotIds) do
                     if mainmemory.read_u16_le(b) ~= 0x0000 then
@@ -835,7 +897,7 @@ function main()
                                 temp = mainmemory.read_u16_le(0x04C21C)*100
                                 sentIds[tostring(mainmemory.read_u16_le(b+2))] = "done"
                                 merged[tostring(e)] = mainmemory.read_u16_le(b+2)+500000+temp
-                                print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": "..itemName.." "..tostring(mainmemory.read_u16_le(b+2)+1).." = "..tostring(merged[tostring(e)]))
+                                print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": "..itemName.." "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(merged[tostring(e)])..",")
                                 already_obtained = merged
                             end
                             mainmemory.write_u16_le(b, 0x0000)

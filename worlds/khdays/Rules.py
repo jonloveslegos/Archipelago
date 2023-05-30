@@ -130,7 +130,65 @@ class KHDaysLogic(LogicMixin):
         print("not found: "+material_name)
         return False
 
-    def days_crowns_obatianable(self, state: CollectionState, player: int):
+    def days_check_panels(self, state: CollectionState, player: int):
+        panel_count = state.count("Panel Slot", player)
+        slot_space_1 = [[1 for y in range(8)] for x in range(5)]
+        slot_space_2 = [[1 for y in range(8)] for x in range(5)]
+        slot_space_3 = [[1 for y in range(8)] for x in range(5)]
+        for y in range(3):
+            for x in range(5):
+                slot_space_1[x][y] = 0
+        x = 0
+        y = 3
+        space = 0
+        for i in range(panel_count):
+            if space == 0:
+                slot_space_1[x][y] = 0
+            elif space == 1:
+                slot_space_2[x][y] = 0
+            elif space == 2:
+                slot_space_3[x][y] = 0
+            x += 1
+            if x >= 5:
+                x = 0
+                y += 1
+            if y >= 8:
+                y = 0
+                x = 0
+                space += 1
+            if space >= 3:
+                break
+        return slot_space_1, slot_space_2, slot_space_3
+
+    def days_levels_obtainable(self, state: CollectionState, player: int):
+        obtainable = 0
+        if self.days_has_day_access(state, self.days_mission_to_day(10), player):
+            obtainable += 5
+        if self.days_has_day_access(state, self.days_mission_to_day(25), player):
+            obtainable += 6
+        if self.days_has_day_access(state, self.days_mission_to_day(50), player):
+            obtainable += 6
+        if self.days_has_day_access(state, self.days_mission_to_day(75), player):
+            obtainable += 7
+        if self.days_has_day_access(state, self.days_mission_to_day(90), player):
+            obtainable += 8
+        if self.days_shop_status(state, player) >= 1:
+            obtainable += 1
+        if self.days_shop_status(state, player) >= 2:
+            obtainable += 1
+        if self.days_shop_status(state, player) >= 4:
+            obtainable += 1
+        if self.days_challenges_completable(state, player) >= 90:
+            obtainable += 1
+        if self.days_challenges_completable(state, player) >= 140:
+            obtainable += 1
+        if self.days_challenges_completable(state, player) >= 210:
+            obtainable += 1
+        if self.days_challenges_completable(state, player) >= 230:
+            obtainable += 1
+        return obtainable
+
+    def days_crowns_obtainable(self, state: CollectionState, player: int):
         obtainable = 0
         if self.days_has_day_access(state, self.days_mission_to_day(93), player):
             obtainable += 1
@@ -179,13 +237,52 @@ class KHDaysLogic(LogicMixin):
                 day_number += 1
         return day_number
 
+    def days_day_to_mission(self, day_number_2: int):
+        day_number = 7
+        mission_number = 0
+        while day_number_2 > day_number:
+            mission_number += 1
+            if 17 <= day_number < 22:
+                day_number = 22
+            elif 26 <= day_number < 51:
+                day_number = 51
+            elif 54 <= day_number < 71:
+                day_number = 71
+            elif 79 <= day_number < 94:
+                day_number = 94
+            elif 100 <= day_number < 117:
+                day_number = 117
+            elif 122 <= day_number < 149:
+                day_number = 149
+            elif 156 <= day_number < 171:
+                day_number = 171
+            elif 176 <= day_number < 193:
+                day_number = 193
+            elif 197 <= day_number < 224:
+                day_number = 224
+            elif 227 <= day_number < 255:
+                day_number = 255
+            elif 258 <= day_number < 277:
+                day_number = 277
+            elif 280 <= day_number < 296:
+                day_number = 296
+            elif 304 <= day_number < 321:
+                day_number = 321
+            elif 326 <= day_number < 352:
+                day_number = 352
+            elif 355 <= day_number < 357:
+                day_number = 357
+            else:
+                day_number += 1
+        return mission_number
+
     def days_has_day_access(self, state: CollectionState, day_number: int, player: int):
         can_do = True
         if day_number >= 193:
             can_do = can_do and state.has_any({"Glide 3", "Glide 5"}, player)
         if day_number >= 11:
             can_do = can_do and self.days_has_magic(state, player)
-        return can_do
+        return can_do and state.has("Panel Slot", player, max(0, self.days_day_to_mission(day_number)-5))
 
     def days_shop_status(self, state: CollectionState, player: int):
         if self.days_has_day_access(state, 358, player):
@@ -205,32 +302,45 @@ class KHDaysLogic(LogicMixin):
 
 def set_rules(world: MultiWorld, player: int):
     for i in world.get_locations(player):
-        set_rule(i, lambda state: state.days_has_day_access(state, 11, player))
-    for i in range(36):
-        if i < 5:
-            set_rule(world.get_location("Level Up "+str(i+2), player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(10), player))
-        elif i < 10:
-            set_rule(world.get_location("Level Up "+str(i+2), player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(25), player))
-        elif i < 20:
-            set_rule(world.get_location("Level Up "+str(i+2), player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(50), player))
-        elif i < 30:
-            set_rule(world.get_location("Level Up "+str(i+2), player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(75), player))
+        if i.name.startswith("Mission "):
+            set_rule(i, lambda state, i=i: state.days_has_day_access(state, max(11, state.days_mission_to_day(int(i.name.removeprefix("Mission ").split(":")[0]))), player))
         else:
-            set_rule(world.get_location("Level Up "+str(i+2), player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(90), player))
-    for i in range(4):
-        set_rule(world.get_location("Mission "+str(i+1)+": Reward 1", player), lambda state: True)
-        set_rule(world.get_location("Mission "+str(i+1)+": Reward 2", player), lambda state: True)
-        set_rule(world.get_location("Mission "+str(i+1)+": Reward 3", player), lambda state: True)
-        set_rule(world.get_location("Mission "+str(i+1)+": Reward 4", player), lambda state: True)
-        set_rule(world.get_location("Mission "+str(i+1)+": Reward 5", player), lambda state: True)
-        set_rule(world.get_location("Mission 1: Potion 1", player), lambda state: True)
-    set_rule(world.get_location("Mission 3: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(7), player))
-    set_rule(world.get_location("Mission 3: Reward 5", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(7), player))
-    set_rule(world.get_location("Mission 5: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(7), player))
-    set_rule(world.get_location("Mission 5: Reward 5", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(7), player))
-    set_rule(world.get_location("Mission 9: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(7), player) and state.has("Level Up", player, 5))
-    set_rule(world.get_location("Mission 9: Reward 5", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(7), player))
+            set_rule(i, lambda state: state.days_has_day_access(state, 11, player))
+    for i in range(93):
+        set_rule(world.get_location("Mission "+str(i+1)+": Reward 1", player), lambda state, i=i: state.days_has_day_access(state, state.days_mission_to_day(i+1), player))
+        set_rule(world.get_location("Mission "+str(i+1)+": Reward 2", player), lambda state, i=i: state.days_has_day_access(state, state.days_mission_to_day(i+1), player))
+        set_rule(world.get_location("Mission "+str(i+1)+": Reward 3", player), lambda state, i=i: state.days_has_day_access(state, state.days_mission_to_day(i+1), player))
+        set_rule(world.get_location("Mission "+str(i+1)+": Reward 4", player), lambda state, i=i: state.days_has_day_access(state, max(11, state.days_mission_to_day(i+1)), player))
+        set_rule(world.get_location("Mission "+str(i+1)+": Reward 5", player), lambda state, i=i: state.days_has_day_access(state, max(11, state.days_mission_to_day(i+1)), player))
+    set_rule(world.get_location("Mission 1: Potion 1", player), lambda state: True)
+    for i in range(20):
+        set_rule(world.get_location("Moogle: Potion "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 1)
+        set_rule(world.get_location("Moogle: Ether "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 1)
+    for i in range(39):
+        set_rule(world.get_location("Hub: Level Up "+str(i+1), player), lambda state: state.days_levels_obtainable(state, player) >= i+1)
+    set_rule(world.get_location("Moogle: Panel Slot 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Aerial Recovery 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Power Unit 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Brawl Ring 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Fire 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Fire 2", player), lambda state: state.days_shop_status(state, player) >= 1)
+    for i in range(10):
+        set_rule(world.get_location("Moogle: Fire "+str(i+3), player), lambda state: state.days_shop_status(state, player) >= 1 and state.has("Fire Recipe", player, i+1) and state.days_can_get_materials(state, "Blazing Shard", player))
+    for i in range(10):
+        set_rule(world.get_location("Moogle: Limit Recharge " + str(i + 1), player),
+                 lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Blazing Shard", player) and state.days_can_get_materials(state, "Shining Shard", player) and state.days_can_get_materials(state, "Moonstone", player))
+
+    set_rule(world.get_location("Moogle: Blizzard 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Blizzard 2", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Soldier Ring 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Wild Gear 3 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Lift Gear 3 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Chrono Gear 3 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Technical Gear 3 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Moogle: Triplecast 3 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    add_rule(world.get_location("Mission 9: Reward 4", player), lambda state: state.has("Level Up", player, 5))
+    add_rule(world.get_location("Mission 9: Reward 5", player), lambda state: state.has("Level Up", player, 5))
 
 
 def set_completion_rules(world: MultiWorld, player: int):
-    world.completion_condition[player] = lambda state, world=world, player=player: state.days_has_day_access(state, world.DayRequirement[player].value, player)
+    world.completion_condition[player] = lambda state, world=world: state.days_has_day_access(state, world.DayRequirement[player].value, player)
