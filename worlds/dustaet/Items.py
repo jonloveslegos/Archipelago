@@ -13,6 +13,7 @@ class DustAETItem(Item):
 
 
 item_table = {
+    "Victory": ItemData(None, "", True),
     "Dust Storm": ItemData(0, "~0", True),
     "Fire Projectile": ItemData(0, "~1", True),
     "Lightning Projectile": ItemData(0, "~2", True),

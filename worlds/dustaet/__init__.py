@@ -2,7 +2,7 @@ from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
 from .Items import DustAETItem, item_table, required_items
 from .Locations import DustAETAdvancement, advancement_table, exclusion_table
 from .Options import dustaet_options
-from .Rules import set_rules, set_completion_rules
+from .Rules import set_rules
 from ..AutoWorld import World, WebWorld
 
 client_version = 7
@@ -51,33 +51,38 @@ class DustAETWorld(World):
         itempool = []
         # Add all required progression items
         for name in Locations.advancement_table:
-            itempool += [Items.lookup_game_id_to_name[Locations.advancement_table[name].vanilla_item_id]]
+            if Locations.advancement_table[name].id is not None:
+                itempool += [Items.lookup_game_id_to_name[Locations.advancement_table[name].vanilla_item_id]]
         # Convert itempool into real items
         itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
-
         self.multiworld.itempool += itempool
 
-    def set_rules(self):
-        set_rules(self.multiworld, self.player)
-        set_completion_rules(self.multiworld, self.player)
+    def create_event(self, name: str, classification: ItemClassification) -> Item:
+        return DustAETItem(name, classification, None, self.player)
+
+    def generate_basic(self) -> None:
+        self.multiworld.get_location("General Gaius", self.player).place_locked_item(
+            self.create_event("Victory", ItemClassification.progression))
+        self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
+
+    set_rules = set_rules
 
     def create_region(self, name: str, to=None):
         if to is None:
             to = []
         reg = Region(name, self.player, self.multiworld)
-        reg.locations = [DustAETAdvancement(self.player, loc_name, loc_data.id, reg)
-                           for loc_name, loc_data in advancement_table.items() if loc_data.region == reg.name]
-        for item in to:
-            connection = Entrance(self.player, "To "+item.name+" from "+name, reg)
-            print("To "+item.name+" from "+name)
-            reg.exits.append(connection)
-            connection.connect(item)
-        self.multiworld.regions += [reg]
+        for item_name, location_data in advancement_table.items():
+            if str(location_data.region) == name:
+                reg.locations.append(DustAETAdvancement(self.player, item_name, location_data.id, reg))
+        for itm in to:
+            reg.exits.append(Entrance(self.player, "To "+itm.name+" from "+name, reg))
+        self.multiworld.regions.append(reg)
+        for itm in to:
+            self.multiworld.get_entrance("To "+itm.name+" from "+name, self.player) \
+                .connect(self.multiworld.get_region(itm.name, self.player))
         return reg
 
     def create_regions(self):
-        menu = Region("Menu", self.player, self.multiworld)
-        self.multiworld.regions += [menu]
         sanctuary = self.create_region("The Sanctuary")
         farm = self.create_region("Geehan's Farm")
         archer_pass = self.create_region("Archers' Pass")
@@ -92,9 +97,7 @@ class DustAETWorld(World):
         village = self.create_region("Aurora Village", [forest, farm, archer_pass, sanctuary])
         glade2 = self.create_region("The Glade P2", [village])
         glade1 = self.create_region("The Glade P1", [glade2])
-        connection = Entrance(self.player, "New Game", menu)
-        menu.exits.append(connection)
-        connection.connect(glade1)
+        menu = self.create_region("Menu", [glade1])
 
     def fill_slot_data(self):
         slot_data = self._get_dustaet_data()

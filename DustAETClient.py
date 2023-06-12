@@ -87,19 +87,20 @@ class DustAETContext(CommonContext):
         if cmd in {"Connected"}:
             if not os.path.exists(self.game_communication_path):
                 os.makedirs(self.game_communication_path)
-            filename = f"received"
-            with open(os.path.join(self.game_communication_path, filename), 'w') as f:
-                for ss in self.checked_locations:
-                    f.write(Items.item_table[Items.lookup_id_to_name[ss]].game_id)
-                f.close()
         if cmd in {"ReceivedItems"}:
             start_index = args["index"]
             if start_index != len(self.items_received):
-                for item in args['items']:
-                    filename = f"AP_{str(NetworkItem(*item).location)}PLR{str(NetworkItem(*item).player)}.item"
-                    with open(os.path.join(self.game_communication_path, filename), 'w') as f:
-                        f.write(Items.item_table[Items.lookup_id_to_name[NetworkItem(*item).item]].game_id)
-                        f.close()
+                filename = f"received"
+                success = False
+                while not success:
+                    try:
+                        with open(os.path.join(self.game_communication_path, filename), 'a') as f:
+                            for item in args['items']:
+                                f.write(Items.item_table[Items.lookup_id_to_name[NetworkItem(*item).item]].game_id+"\n")
+                            f.close()
+                        success = True
+                    except Exception as msg:
+                        success = False
 
     def run_gui(self):
         """Import kivy UI system and start running it as self.ui_task."""
@@ -128,6 +129,10 @@ async def game_watcher(ctx: DustAETContext):
         victory = False
         for root, dirs, files in os.walk(ctx.game_communication_path):
             for file in files:
+                if file.find("added") > -1:
+                    os.remove(os.path.join(ctx.game_communication_path, file))
+                    message = [{"cmd": 'Set', "key": "ItemsAdded", "operations": [{"operation": "replace", "value": ctx.items_received}]}]
+                    await ctx.send_msgs(message)
                 if file.find("sent") > -1:
                     with open(os.path.join(ctx.game_communication_path, file), 'r') as f:
                         for i in f.readlines():
