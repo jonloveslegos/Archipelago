@@ -75,6 +75,7 @@ Name: "client/sni/smw";   Description: "SNI Client - Super Mario World Patch Set
 Name: "client/sni/l2ac";  Description: "SNI Client - Lufia II Ancient Cave Patch Setup"; Types: full playing; Flags: disablenouninstallwarning
 Name: "client/factorio";  Description: "Factorio"; Types: full playing
 Name: "client/kh2";       Description: "Kingdom Hearts 2"; Types: full playing
+Name: "client/dustaet";       Description: "Dust AET"; Types: full playing
 Name: "client/minecraft"; Description: "Minecraft"; Types: full playing; ExtraDiskSpaceRequired: 226894278
 Name: "client/oot";       Description: "Ocarina of Time"; Types: full playing
 Name: "client/ff1";       Description: "Final Fantasy 1"; Types: full playing
@@ -130,6 +131,7 @@ Source: "{#source_path}\ArchipelagoStarcraft2Client.exe"; DestDir: "{app}"; Flag
 Source: "{#source_path}\ArchipelagoZelda1Client.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: client/tloz
 Source: "{#source_path}\ArchipelagoWargrooveClient.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: client/wargroove
 Source: "{#source_path}\ArchipelagoKH2Client.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: client/kh2
+Source: "{#source_path}\ArchipelagoDustAETClient.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: client/dustaet
 Source: "{#source_path}\ArchipelagoAdventureClient.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: client/advn
 Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
@@ -148,6 +150,7 @@ Name: "{group}\{#MyAppName} ChecksFinder Client"; Filename: "{app}\ArchipelagoCh
 Name: "{group}\{#MyAppName} Starcraft 2 Client"; Filename: "{app}\ArchipelagoStarcraft2Client.exe"; Components: client/sc2
 Name: "{group}\{#MyAppName} The Legend of Zelda Client"; Filename: "{app}\ArchipelagoZelda1Client.exe"; Components: client/tloz
 Name: "{group}\{#MyAppName} Kingdom Hearts 2 Client"; Filename: "{app}\ArchipelagoKH2Client.exe"; Components: client/kh2
+Name: "{group}\{#MyAppName} Dust AET Client"; Filename: "{app}\ArchipelagoDustAETClient.exe"; Components: client/dustaet
 Name: "{group}\{#MyAppName} Adventure Client"; Filename: "{app}\ArchipelagoAdventureClient.exe"; Components: client/advn
 Name: "{group}\{#MyAppName} Wargroove Client"; Filename: "{app}\ArchipelagoWargrooveClient.exe"; Components: client/wargroove
 
@@ -165,6 +168,7 @@ Name: "{commondesktop}\{#MyAppName} Starcraft 2 Client"; Filename: "{app}\Archip
 Name: "{commondesktop}\{#MyAppName} The Legend of Zelda Client"; Filename: "{app}\ArchipelagoZelda1Client.exe"; Tasks: desktopicon; Components: client/tloz
 Name: "{commondesktop}\{#MyAppName} Wargroove Client"; Filename: "{app}\ArchipelagoWargrooveClient.exe"; Tasks: desktopicon; Components: client/wargroove
 Name: "{commondesktop}\{#MyAppName} Kingdom Hearts 2 Client"; Filename: "{app}\ArchipelagoKH2Client.exe"; Tasks: desktopicon; Components: client/kh2
+Name: "{commondesktop}\{#MyAppName} Dust AET Client"; Filename: "{app}\ArchipelagoDustAETClient.exe"; Tasks: desktopicon; Components: client/dustaet
 Name: "{commondesktop}\{#MyAppName} Adventure Client"; Filename: "{app}\ArchipelagoAdventureClient.exe"; Tasks: desktopicon; Components: client/advn
 
 [Run]

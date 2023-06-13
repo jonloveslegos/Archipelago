@@ -1,11 +1,16 @@
 from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
 from .Items import DustAETItem, item_table, required_items
+import Items
+import Locations
 from .Locations import DustAETAdvancement, advancement_table, exclusion_table
 from .Options import dustaet_options
 from .Rules import set_rules
 from ..AutoWorld import World, WebWorld
+from worlds.LauncherComponents import Component, components
 
 client_version = 7
+
+components.append(Component("Dust AET Client", "DustAETClient"))
 
 
 class DustAETWeb(WebWorld):
