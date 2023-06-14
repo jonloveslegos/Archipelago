@@ -3,6 +3,8 @@ import os
 import sys
 import asyncio
 import shutil
+import bsdiff4
+import typing
 
 import ModuleUpdate
 
@@ -13,10 +15,39 @@ import Utils
 from NetUtils import NetworkItem, ClientStatus
 from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProcessor, \
     CommonContext, server_loop
-from worlds.dustaet import Items
+from worlds.dustaet import Items, data_path
+from MultiServer import mark_raw
 
 
 class DustAETClientCommandProcessor(ClientCommandProcessor):
+
+    def _cmd_patch(self):
+        """Patch the game."""
+        if isinstance(self.ctx, DustAETContext):
+            self.ctx.patch_game()
+            self.output("Patched.")
+
+    @mark_raw
+    def _cmd_auto_patch(self, steaminstall: typing.Optional[str] = None):
+        """Patch the game automatically."""
+        if isinstance(self.ctx, DustAETContext):
+            tempInstall = steaminstall
+            if tempInstall is None:
+                tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dust An Elysian Tail"
+                if not os.path.exists("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dust An Elysian Tail"):
+                    tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\Dust An Elysian Tail"
+            elif not os.path.exists(tempInstall):
+                tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dust An Elysian Tail"
+                if not os.path.exists("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Dust An Elysian Tail"):
+                    tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\Dust An Elysian Tail"
+            if not os.path.exists(tempInstall) or not os.path.exists(tempInstall):
+                self.output("ERROR: Cannot find Dust AET. Please rerun the command with the correct folder."
+                            " command. \"/auto_patch (Game directory)\".")
+            else:
+                shutil.copytree(tempInstall+"\\", os.getcwd() + "\\Dust An Elysian Tail\\", dirs_exist_ok=True)
+                self.ctx.patch_game()
+                self.output("Patching successful!")
+
     def _cmd_resync(self):
         """Manually trigger a resync."""
         self.output(f"Syncing items.")
@@ -53,6 +84,12 @@ class DustAETContext(CommonContext):
                 wineprefix,
                 "drive_c",
                 os.path.expandvars("users/$USER/Local Settings/Application Data/DustAET"))
+
+    def patch_game(self):
+        with open(os.getcwd() + "/Dust An Elysian Tail/DustAET.exe", "rb") as f:
+            patchedFile = bsdiff4.patch(f.read(), data_path("patch.bsdiff"))
+        with open(os.getcwd() + "/Dust An Elysian Tail/DustAET.exe", "wb") as f:
+            f.write(patchedFile)
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:

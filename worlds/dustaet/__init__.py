@@ -12,6 +12,11 @@ import Utils
 client_version = 7
 
 
+def data_path(file_name: str):
+    import pkgutil
+    return pkgutil.get_data(__name__, "data/" + file_name)
+
+
 def run_client():
     print('running dust aet client')
     from .DustAETClient import main  # lazy import
