@@ -5,14 +5,10 @@ import asyncio
 import shutil
 
 import ModuleUpdate
-import worlds.dustaet.Items
 
 ModuleUpdate.update()
 
 import Utils
-
-if __name__ == "__main__":
-    Utils.init_logging("DustAETClient", exception_logger="Client")
 
 from NetUtils import NetworkItem, ClientStatus
 from CommonClient import gui_enabled, logger, get_base_parser, ClientCommandProcessor, \
@@ -151,9 +147,11 @@ async def game_watcher(ctx: DustAETContext):
         await asyncio.sleep(0.1)
 
 
-if __name__ == '__main__':
-    async def main(args):
-        ctx = DustAETContext(args.connect, args.password)
+def main():
+    Utils.init_logging("DustAETClient", exception_logger="Client")
+
+    async def _main():
+        ctx = DustAETContext(None, None)
         ctx.server_task = asyncio.create_task(server_loop(ctx), name="server loop")
         if gui_enabled:
             ctx.run_gui()
@@ -170,9 +168,12 @@ if __name__ == '__main__':
 
     import colorama
 
-    parser = get_base_parser(description="DustAET Client, for text interfacing.")
-
-    args, rest = parser.parse_known_args()
     colorama.init()
-    asyncio.run(main(args))
+    asyncio.run(_main())
     colorama.deinit()
+
+
+if __name__ == '__main__':
+    parser = get_base_parser()
+    args = parser.parse_args()
+    main()

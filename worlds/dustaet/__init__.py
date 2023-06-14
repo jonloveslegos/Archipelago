@@ -1,16 +1,27 @@
 from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
 from .Items import DustAETItem, item_table, required_items
-import Items
-import Locations
+import worlds.dustaet.Items
+import worlds.dustaet.Locations
 from .Locations import DustAETAdvancement, advancement_table, exclusion_table
 from .Options import dustaet_options
 from .Rules import set_rules
 from ..AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components
+from multiprocessing import Process
+
+import Utils
 
 client_version = 7
 
-components.append(Component("Dust AET Client", "DustAETClient"))
+
+def run_client():
+    print('running dust aet client')
+    from .DustAETClient import main  # lazy import
+    p = Process(target=main)
+    p.start()
+
+
+components.append(Component("Dust AET Client", func=run_client))
 
 
 class DustAETWeb(WebWorld):
