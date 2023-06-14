@@ -1,7 +1,5 @@
 from BaseClasses import Region, Entrance, Item, Tutorial, ItemClassification
-from .Items import DustAETItem, item_table, required_items
-import worlds.dustaet.Items
-import worlds.dustaet.Locations
+from .Items import DustAETItem, item_table, required_items, lookup_game_id_to_name
 from .Locations import DustAETAdvancement, advancement_table, exclusion_table
 from .Options import dustaet_options
 from .Rules import set_rules
@@ -66,9 +64,9 @@ class DustAETWorld(World):
         # Generate item pool
         itempool = []
         # Add all required progression items
-        for name in Locations.advancement_table:
-            if Locations.advancement_table[name].id is not None:
-                itempool += [Items.lookup_game_id_to_name[Locations.advancement_table[name].vanilla_item_id]]
+        for name in advancement_table:
+            if advancement_table[name].id is not None:
+                itempool += [lookup_game_id_to_name[advancement_table[name].vanilla_item_id]]
         # Convert itempool into real items
         itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
         self.multiworld.itempool += itempool
