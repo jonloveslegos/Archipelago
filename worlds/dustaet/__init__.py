@@ -61,6 +61,8 @@ class DustAETWorld(World):
             'player_name': self.multiworld.get_player_name(self.player),
             'player_id': self.player,
             'client_version': client_version,
+            'randomize_starting_abilities': bool(self.multiworld.randomize_starting_abilities[self.player].value),
+            'randomize_fidget': bool(self.multiworld.randomize_fidget[self.player].value),
             'race': self.multiworld.is_race,
         }
 
@@ -83,6 +85,12 @@ class DustAETWorld(World):
         self.multiworld.get_location("General Gaius", self.player).place_locked_item(
             self.create_event("Victory", ItemClassification.progression))
         self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
+        if not self.multiworld.randomize_starting_abilities[self.player]:
+            self.multiworld.get_location("Starting Ability 2", self.player).place_locked_item(self.create_item("Slash"))
+            self.multiworld.get_location("Starting Ability 3", self.player).place_locked_item(self.create_item("Jump"))
+        if not self.multiworld.randomize_fidget[self.player]:
+            self.multiworld.get_location("Starting Ability 1", self.player).place_locked_item(self.create_item("Basic Projectile"))
+
 
     set_rules = set_rules
 
