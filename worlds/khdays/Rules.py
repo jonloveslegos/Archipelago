@@ -338,6 +338,12 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Moogle: Chrono Gear 3 1", player), lambda state: state.days_shop_status(state, player) >= 1)
     set_rule(world.get_location("Moogle: Technical Gear 3 1", player), lambda state: state.days_shop_status(state, player) >= 1)
     set_rule(world.get_location("Moogle: Triplecast 3 1", player), lambda state: state.days_shop_status(state, player) >= 1)
+    set_rule(world.get_location("Mission 1: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(1), player))
+    set_rule(world.get_location("Mission 1: Reward 5", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(1), player))
+    set_rule(world.get_location("Mission 2: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(2), player))
+    set_rule(world.get_location("Mission 2: Reward 5", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(2), player))
+    set_rule(world.get_location("Mission 4: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(4), player))
+    set_rule(world.get_location("Mission 4: Reward 5", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(4), player))
     add_rule(world.get_location("Mission 9: Reward 4", player), lambda state: state.has("Level Up", player, 5))
     add_rule(world.get_location("Mission 9: Reward 5", player), lambda state: state.has("Level Up", player, 5))
 

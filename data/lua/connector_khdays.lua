@@ -696,7 +696,7 @@ function receive()
         local tempbin = hex2bin(hex_string)
         tempbin = tempbin:gsub(" ","")
         for _, i in pairs(mission_address) do
-            if tempbin:sub(i+1, i+1) == "1" and sentMissionCount[tonumber(_)] < 2 then
+            if tempbin:sub(i, i) == "1" and tempbin:sub(i+1, i+1) == "1" and sentMissionCount[tonumber(_)] < 2 then
                 local it = 1
                 local merged = {}
                 local e = 0

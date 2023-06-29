@@ -17,6 +17,7 @@ location_table = {
     "Mission 4: Ether 3": 500402,
     "Mission 7: Potion 1": 500700,
     "Mission 7: Potion 2": 500701,
+    "Mission 9: Fire Recipe 1": 500900,
     "Mission 9: Potion 2": 500901,
     "Mission 9: Potion 4": 500903,
     "Mission 9: Potion 6": 500905,
