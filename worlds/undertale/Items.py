@@ -69,7 +69,7 @@ item_table = {
     "Undyne Letter EX": ItemData(77057, ItemClassification.progression),
     "Popato Chisps": ItemData(77058, ItemClassification.filler),
     "Junk Food": ItemData(77059, ItemClassification.filler),
-    "Mystery Key": ItemData(77060, ItemClassification.filler),
+    "Mystery Key": ItemData(77060, ItemClassification.progression),
     "Face Steak": ItemData(77061, ItemClassification.filler),
     "Hush Puppy": ItemData(77062, ItemClassification.filler),
     "Snail Pie": ItemData(77063, ItemClassification.filler),
@@ -160,6 +160,7 @@ key_items = {
     "Waterfall Key": 1,
     "Hotland Key": 1,
     "Core Key": 1,
+    "Mystery Key": 1,
 }
 
 junk_weights_all = {

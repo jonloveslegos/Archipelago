@@ -91,10 +91,22 @@ def set_rules(multiworld: MultiWorld, player: int):
                  lambda state: state.has("Alphys Date", player) and _undertale_has_plot(state, player, "DT Extractor"))
         set_rule(multiworld.get_location("Alphys Date", player),
                  lambda state: state.has("Undyne Letter EX", player) and state.has("Undyne Date", player))
-        set_rule(multiworld.get_location("Papyrus Plot", player),
+        set_rule(multiworld.get_location("Papyrus Hangout", player),
                  lambda state: state.can_reach("Snowdin Town", "Region", player))
-        set_rule(multiworld.get_location("Undyne Plot", player),
+        set_rule(multiworld.get_location("Undyne Cook-off", player),
                  lambda state: state.can_reach("Waterfall", "Region", player))
+        set_rule(multiworld.get_location("Diary 1", player),
+                 lambda state: state.can_reach("Waterfall", "Region", player) and state.has("Mystery Key", player, 1))
+        set_rule(multiworld.get_location("Diary 2", player),
+                 lambda state: state.can_reach("Waterfall", "Region", player) and state.has("Mystery Key", player, 1))
+        set_rule(multiworld.get_location("Diary 3", player),
+                 lambda state: state.can_reach("Waterfall", "Region", player) and state.has("Mystery Key", player, 1))
+        set_rule(multiworld.get_location("Diary 4", player),
+                 lambda state: state.can_reach("Waterfall", "Region", player) and state.has("Mystery Key", player, 1))
+        set_rule(multiworld.get_location("Diary 5", player),
+                 lambda state: state.can_reach("Waterfall", "Region", player) and state.has("Mystery Key", player, 1))
+        set_rule(multiworld.get_location("Diary 6", player),
+                 lambda state: state.can_reach("Waterfall", "Region", player) and state.has("Mystery Key", player, 1))
         set_rule(multiworld.get_location("True Lab Plot", player),
                  lambda state: state.can_reach("New Home", "Region", player)
                                and state.can_reach("Letter Quest", "Location", player))
@@ -234,7 +246,7 @@ def set_rules(multiworld: MultiWorld, player: int):
                 exp = 99999
     set_rule(multiworld.get_location("Snowman", player),
              lambda state: state.can_reach("Snowdin Town", "Region", player))
-    set_rule(multiworld.get_location("Mettaton Plot", player),
+    set_rule(multiworld.get_location("Mettaton Fight", player),
              lambda state: state.can_reach("Core Exit", "Entrance", player))
     set_rule(multiworld.get_location("Bunny 1", player),
              lambda state: state.can_reach("Snowdin Town", "Region", player))
