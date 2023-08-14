@@ -114,16 +114,20 @@ def set_rules(multiworld: MultiWorld, player: int):
                                and state.can_reach("Letter Quest", "Location", player))
         set_rule(multiworld.get_location("Chisps Machine", player),
                  lambda state: state.can_reach("True Lab", "Region", player))
+        set_rule(multiworld.get_location("Donut Sale", player),
+                 lambda state: state.can_reach("Ruins", "Region", player) and state.can_reach("Waterfall", "Region", player))
+        set_rule(multiworld.get_location("Cider Sale", player),
+                 lambda state: state.can_reach("Ruins", "Region", player) and state.can_reach("Waterfall", "Region", player))
         set_rule(multiworld.get_location("Dog Sale 1", player),
-                 lambda state: state.can_reach("Cooking Show", "Region", player))
+                 lambda state: state.can_reach("Cooking Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
         set_rule(multiworld.get_location("Cat Sale", player),
-                 lambda state: state.can_reach("Cooking Show", "Region", player))
+                 lambda state: state.can_reach("Cooking Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
         set_rule(multiworld.get_location("Dog Sale 2", player),
-                 lambda state: state.can_reach("Cooking Show", "Region", player))
+                 lambda state: state.can_reach("Cooking Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
         set_rule(multiworld.get_location("Dog Sale 3", player),
-                 lambda state: state.can_reach("Cooking Show", "Region", player))
+                 lambda state: state.can_reach("Cooking Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
         set_rule(multiworld.get_location("Dog Sale 4", player),
-                 lambda state: state.can_reach("Cooking Show", "Region", player))
+                 lambda state: state.can_reach("Cooking Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
         set_rule(multiworld.get_location("Hush Trade", player),
                  lambda state: state.can_reach("News Show", "Region", player) and state.has("Hot Dog...?", player, 1))
         set_rule(multiworld.get_location("Letter Quest", player),
@@ -269,13 +273,13 @@ def set_rules(multiworld: MultiWorld, player: int):
     set_rule(multiworld.get_location("Mettaton Fight", player),
              lambda state: state.can_reach("Core Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40)))
     set_rule(multiworld.get_location("Bunny 1", player),
-             lambda state: state.can_reach("Snowdin Town", "Region", player))
+             lambda state: state.can_reach("Snowdin Town", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Bunny 2", player),
-             lambda state: state.can_reach("Snowdin Town", "Region", player))
+             lambda state: state.can_reach("Snowdin Town", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Bunny 3", player),
-             lambda state: state.can_reach("Snowdin Town", "Region", player))
+             lambda state: state.can_reach("Snowdin Town", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Bunny 4", player),
-             lambda state: state.can_reach("Snowdin Town", "Region", player))
+             lambda state: state.can_reach("Snowdin Town", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Astro 1", player),
              lambda state: state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Astro 2", player),
@@ -317,21 +321,21 @@ def set_rules(multiworld: MultiWorld, player: int):
     set_rule(multiworld.get_location("Pan Hidden", player),
              lambda state: state.can_reach("Hotland", "Region", player))
     set_rule(multiworld.get_location("Bratty Catty 1", player),
-             lambda state: state.can_reach("News Show", "Region", player))
+             lambda state: state.can_reach("News Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Bratty Catty 2", player),
-             lambda state: state.can_reach("News Show", "Region", player))
+             lambda state: state.can_reach("News Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Bratty Catty 3", player),
-             lambda state: state.can_reach("News Show", "Region", player))
+             lambda state: state.can_reach("News Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Bratty Catty 4", player),
-             lambda state: state.can_reach("News Show", "Region", player))
+             lambda state: state.can_reach("News Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Burgerpants 1", player),
-             lambda state: state.can_reach("News Show", "Region", player))
+             lambda state: state.can_reach("News Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Burgerpants 2", player),
-             lambda state: state.can_reach("News Show", "Region", player))
+             lambda state: state.can_reach("News Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Burgerpants 3", player),
-             lambda state: state.can_reach("News Show", "Region", player))
+             lambda state: state.can_reach("News Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Burgerpants 4", player),
-             lambda state: state.can_reach("News Show", "Region", player))
+             lambda state: state.can_reach("News Show", "Region", player) and state.can_reach("Waterfall", "Region", player))
 
 
 # Sets rules on completion condition

@@ -93,7 +93,7 @@ class RandoBattleOptions(Toggle):
 
 
 class EncounterSanity(Toggle):
-    """Makes every genocide encounter an item you need to receive to allow it to happen."""
+    """Makes every random encounter an item you need to receive to allow it to happen, also makes every kill from a random encounter a check. Only matters if your goal includes Genocide route"""
     display_name = "Encounter Sanity"
     default = 0
 
@@ -105,12 +105,12 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "key_pieces":                               KeyPieces,
     "rando_love":                               RandomizeLove,
     "rando_stats":                              RandomizeStats,
+    "rando_item_button":                        RandoBattleOptions,
+    "rando_jump":                               RandomizeJump,
+    "encounter_sanity":                         EncounterSanity,
     "temy_include":                             IncludeTemy,
     "no_equips":                                NoEquips,
     "only_flakes":                              OnlyFlakes,
     "prog_armor":                               ProgressiveArmor,
     "prog_weapons":                             ProgressiveWeapons,
-    "rando_item_button":                        RandoBattleOptions,
-    "rando_jump":                               RandomizeJump,
-    "encounter_sanity":                         EncounterSanity,
 }
