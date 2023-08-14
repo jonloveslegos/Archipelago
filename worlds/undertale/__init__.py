@@ -73,10 +73,12 @@ class UndertaleWorld(World):
             "rando_stats": bool(self.multiworld.rando_stats[self.player].value),
             "prog_armor": bool(self.multiworld.prog_armor[self.player].value),
             "prog_weapons": bool(self.multiworld.prog_weapons[self.player].value),
-            "rando_item_button": bool(self.multiworld.rando_item_button[self.player].value)
+            "rando_item_button": bool(self.multiworld.rando_item_button[self.player].value),
+            "encounter_sanity": bool(self.multiworld.encounter_sanity[self.player].value)
         }
 
     def create_items(self):
+        exclusion_pool = set()
         self.multiworld.get_location("Undyne Date", self.player).place_locked_item(self.create_item("Undyne Date"))
         self.multiworld.get_location("Alphys Date", self.player).place_locked_item(self.create_item("Alphys Date"))
         self.multiworld.get_location("Papyrus Date", self.player).place_locked_item(self.create_item("Papyrus Date"))
@@ -105,6 +107,9 @@ class UndertaleWorld(World):
             itempool += ["ITEM"]
         else:
             self.multiworld.push_precollected(self.create_item("ITEM"))
+        if not self.multiworld.rando_jump[self.player]:
+            itempool.remove("Jump")
+            self.multiworld.push_precollected(self.create_item("Jump"))
         self.multiworld.push_precollected(self.create_item("FIGHT"))
         self.multiworld.push_precollected(self.create_item("ACT"))
         self.multiworld.push_precollected(self.create_item("MERCY"))
@@ -131,6 +136,15 @@ class UndertaleWorld(World):
                 (self.multiworld.route_required[self.player] != "genocide" and
                  self.multiworld.route_required[self.player] != "all_routes"):
             itempool = [item for item in itempool if not item == "LOVE"]
+        if not self.multiworld.encounter_sanity[self.player] or \
+                (self.multiworld.route_required[self.player] != "genocide" and
+                 self.multiworld.route_required[self.player] != "all_routes"):
+            itempool = [item for item in itempool if not (item == "Progressive Ruins Encounter" or item == "Progressive Snowdin Encounter" or item == "Progressive Waterfall Encounter" or item == "Progressive Hotland Encounter")]
+            self.multiworld.precollected_items[self.player] += ([self.create_item("Progressive Ruins Encounter")]*20)
+            self.multiworld.precollected_items[self.player] += ([self.create_item("Progressive Snowdin Encounter")]*16)
+            self.multiworld.precollected_items[self.player] += ([self.create_item("Progressive Waterfall Encounter")]*18)
+            self.multiworld.precollected_items[self.player] += ([self.create_item("Progressive Hotland Encounter")]*40)
+            exclusion_pool.update(exclusion_table["NoKills"])
         if not self.multiworld.rando_stats[self.player] or \
                 (self.multiworld.route_required[self.player] != "genocide" and
                  self.multiworld.route_required[self.player] != "all_routes"):
@@ -159,7 +173,6 @@ class UndertaleWorld(World):
         itempool.remove(starting_key)
         self.multiworld.push_precollected(self.create_item(starting_key))
         # Choose locations to automatically exclude based on settings
-        exclusion_pool = set()
         exclusion_pool.update(exclusion_table[self.multiworld.route_required[self.player].current_key])
         if not self.multiworld.rando_love[self.player] or \
                 (self.multiworld.route_required[self.player] != "genocide" and
@@ -216,7 +229,7 @@ class UndertaleWorld(World):
         slot_data = self._get_undertale_data()
         for option_name in undertale_options:
             option = getattr(self.multiworld, option_name)[self.player]
-            if (option_name == "rando_love" or option_name == "rando_stats") and \
+            if (option_name == "rando_love" or option_name == "rando_stats" or option_name == "encounter_sanity") and \
                     self.multiworld.route_required[self.player] != "genocide" and \
                     self.multiworld.route_required[self.player] != "all_routes":
                 option.value = False

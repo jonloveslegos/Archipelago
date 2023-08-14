@@ -148,6 +148,9 @@ class UndertaleContext(CommonContext):
 
     async def connection_closed(self):
         self.clear_undertale_files()
+        filename = f"disconnected"
+        with open(os.path.join(self.save_game_folder, filename), "w") as f:
+            f.close()
         await super().connection_closed()
 
     async def shutdown(self):

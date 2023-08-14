@@ -12,6 +12,12 @@ class RouteRequired(Choice):
     default = 0
 
 
+class RandomizeJump(Toggle):
+    """Adds the ability to jump with the blue soul to the item pool."""
+    display_name = "Randomize Blue Soul jump"
+    default = 0
+
+
 class StartingArea(Choice):
     """Which area to start with access to."""
     display_name = "Starting Area"
@@ -86,6 +92,12 @@ class RandoBattleOptions(Toggle):
     default = 0
 
 
+class EncounterSanity(Toggle):
+    """Makes every genocide encounter an item you need to receive to allow it to happen."""
+    display_name = "Encounter Sanity"
+    default = 0
+
+
 undertale_options: typing.Dict[str, type(Option)] = {
     "route_required":                           RouteRequired,
     "starting_area":                            StartingArea,
@@ -98,5 +110,7 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "only_flakes":                              OnlyFlakes,
     "prog_armor":                               ProgressiveArmor,
     "prog_weapons":                             ProgressiveWeapons,
-    "rando_item_button":                     RandoBattleOptions,
+    "rando_item_button":                        RandoBattleOptions,
+    "rando_jump":                               RandomizeJump,
+    "encounter_sanity":                         EncounterSanity,
 }

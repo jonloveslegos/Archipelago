@@ -97,6 +97,11 @@ item_table = {
     "Waterfall Key": ItemData(77083, ItemClassification.progression),
     "Hotland Key": ItemData(77084, ItemClassification.progression),
     "Core Key": ItemData(77085, ItemClassification.progression),
+    "Jump": ItemData(77086, ItemClassification.progression),
+    "Progressive Ruins Encounter": ItemData(77087, ItemClassification.progression),
+    "Progressive Snowdin Encounter": ItemData(77088, ItemClassification.progression),
+    "Progressive Waterfall Encounter": ItemData(77089, ItemClassification.progression),
+    "Progressive Hotland Encounter": ItemData(77090, ItemClassification.progression),
     "Undyne Date": ItemData(None, ItemClassification.progression),
     "Alphys Date": ItemData(None, ItemClassification.progression),
     "Papyrus Date": ItemData(None, ItemClassification.progression),
@@ -161,6 +166,11 @@ key_items = {
     "Hotland Key": 1,
     "Core Key": 1,
     "Mystery Key": 1,
+    "Jump": 1,
+    "Progressive Ruins Encounter": 20,
+    "Progressive Snowdin Encounter": 16,
+    "Progressive Waterfall Encounter": 18,
+    "Progressive Hotland Encounter": 40,
 }
 
 junk_weights_all = {
