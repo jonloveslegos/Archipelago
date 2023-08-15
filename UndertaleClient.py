@@ -132,11 +132,14 @@ class UndertaleContext(CommonContext):
         self.finished_game = False
         for root, dirs, files in os.walk(path):
             for file in files:
-                if "check.spot" == file or "scout" == file:
-                    os.remove(os.path.join(root, file))
-                elif file.endswith((".item", ".victory", ".route", ".playerspot", ".mad", 
-                                            ".youDied", ".LV", ".mine", ".flag", ".hint")):
-                    os.remove(os.path.join(root, file))
+                try:
+                    if "check.spot" == file or "scout" == file:
+                        os.remove(os.path.join(root, file))
+                    elif file.endswith((".item", ".victory", ".route", ".playerspot", ".mad",
+                                                ".youDied", ".LV", ".flag", ".hint")):
+                        os.remove(os.path.join(root, file))
+                except Exception as error:
+                    print(str(error))
 
     async def connect(self, address: typing.Optional[str] = None):
         self.clear_undertale_files()
@@ -439,8 +442,9 @@ async def game_watcher(ctx: UndertaleContext):
                                 sending = sending + [int(l.rstrip('\n'))+12000]
                         await ctx.send_msgs([{"cmd": "LocationScouts", "locations": sending,
                                                           "create_as_hint": int(2)}])
-                    finally:
                         os.remove(root+"/"+file)
+                    except Exception as error:
+                        print(str(error))
                 if "check.spot" in file:
                     sending = []
                     try:
@@ -450,8 +454,8 @@ async def game_watcher(ctx: UndertaleContext):
                             sending = sending+[(int(l.rstrip('\n')))+12000]
                         message = [{"cmd": "LocationChecks", "locations": sending}]
                         await ctx.send_msgs(message)
-                    finally:
-                        pass
+                    except Exception as error:
+                        print(str(error))
                 if "victory" in file and str(ctx.route) in file:
                     victory = True
                 if ".playerspot" in file and "Online" not in ctx.tags:
