@@ -92,9 +92,24 @@ class RandoBattleOptions(Toggle):
     default = 0
 
 
-class EncounterSanity(Toggle):
+class KillSanity(Toggle):
     """Makes every random encounter an item you need to receive to allow it to happen, also makes every kill from a random encounter a check. Only matters if your goal includes Genocide route"""
-    display_name = "Encounter Sanity"
+    display_name = "Kill Sanity"
+    default = 0
+
+
+class KillSanityPackSize(Range):
+    """How many encounters do you unlock per item in Kill Sanity. Only matters if your goal includes Genocide route, and has Kill Sanity enabled"""
+    """Rounds down when you get a pack with more encounters than there are left to unlock in the area"""
+    display_name = "Kill Sanity Pack Size"
+    default = 5
+    range_start = 1
+    range_end = 40
+
+
+class CutItems(Toggle):
+    """Adds a chance of having cut items in the pool. (Rock Candy, Puppydough Icecream, etc)"""
+    display_name = "Cut Items"
     default = 0
 
 
@@ -103,14 +118,16 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "starting_area":                            StartingArea,
     "key_hunt":                                 KeyHunt,
     "key_pieces":                               KeyPieces,
-    "rando_love":                               RandomizeLove,
-    "rando_stats":                              RandomizeStats,
     "rando_item_button":                        RandoBattleOptions,
     "rando_jump":                               RandomizeJump,
-    "encounter_sanity":                         EncounterSanity,
+    "rando_love":                               RandomizeLove,
+    "rando_stats":                              RandomizeStats,
+    "kill_sanity":                              KillSanity,
+    "kill_sanity_pack_size":                    KillSanityPackSize,
     "temy_include":                             IncludeTemy,
-    "no_equips":                                NoEquips,
-    "only_flakes":                              OnlyFlakes,
+    "cut_items":                                CutItems,
     "prog_armor":                               ProgressiveArmor,
     "prog_weapons":                             ProgressiveWeapons,
+    "no_equips":                                NoEquips,
+    "only_flakes":                              OnlyFlakes,
 }

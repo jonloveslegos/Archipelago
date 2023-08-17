@@ -1,5 +1,6 @@
 from worlds.generic.Rules import set_rule, add_rule, add_item_rule
 from BaseClasses import MultiWorld, CollectionState
+import math
 
 
 def _undertale_is_route(state: CollectionState, player: int, route: int):
@@ -16,57 +17,77 @@ def _undertale_is_route(state: CollectionState, player: int, route: int):
     return False
 
 
-def _undertale_has_plot(state: CollectionState, player: int, item: str):
-    if item == "Complete Skeleton":
-        return state.has("Complete Skeleton", player)
-    elif item == "Fish":
-        return state.has("Fish", player)
-    elif item == "Mettaton Plush":
-        return state.has("Mettaton Plush", player)
-    elif item == "DT Extractor":
-        return state.has("DT Extractor", player)
+def _undertale_exp_available(state: CollectionState, player: int):
+    exp = 0
+    pack_size = state.multiworld.kill_sanity_pack_size[player].value
+    if state.has("Ruins Key", player):
+        exp += (min(20, state.count("Ruins Population Pack", player) * pack_size) * 2)
+        if state.count("Ruins Population Pack", player) * pack_size >= 20:
+            exp += 150
+    if state.has("Snowdin Key", player):
+        exp += (min(15, state.count("Snowdin Population Pack", player) * pack_size) * 1)
+        exp += 170
+        if state.count("Snowdin Population Pack", player) * pack_size >= 16:
+            exp += 222
+    if state.has("Waterfall Key", player):
+        exp += (min(18, state.count("Waterfall Population Pack", player) * pack_size) * 3)
+        exp += 52
+        if state.count("Waterfall Population Pack", player) * pack_size >= 18:
+            exp += 1500
+    if state.has("Hotland Key", player) or state.has("Core Key", player):
+        exp += (min(40, state.count("Hotland Population Pack", player) * pack_size) * 70)
+    if state.has("Hotland Key", player):
+        exp += 520
+    if state.has("Core Key", player):
+        exp += 1100
+        if state.count("Hotland Population Pack", player) * pack_size >= 40 and state.has("Mettaton Plush", player):
+            exp = 50000
+        if state.count("Hotland Population Pack", player) * pack_size >= 40 and state.can_reach("New Home Exit", "Entrance", player):
+            exp = 99999
+    return exp
 
 
-def _undertale_can_level(state: CollectionState, exp: int, lvl: int):
+def _undertale_return_reachable_level(state: CollectionState, exp: int):
+    lvl = 1
     if exp >= 10 and lvl == 1:
-        return True
-    elif exp >= 30 and lvl == 2:
-        return True
-    elif exp >= 70 and lvl == 3:
-        return True
-    elif exp >= 120 and lvl == 4:
-        return True
-    elif exp >= 200 and lvl == 5:
-        return True
-    elif exp >= 300 and lvl == 6:
-        return True
-    elif exp >= 500 and lvl == 7:
-        return True
-    elif exp >= 800 and lvl == 8:
-        return True
-    elif exp >= 1200 and lvl == 9:
-        return True
-    elif exp >= 1700 and lvl == 10:
-        return True
-    elif exp >= 2500 and lvl == 11:
-        return True
-    elif exp >= 3500 and lvl == 12:
-        return True
-    elif exp >= 5000 and lvl == 13:
-        return True
-    elif exp >= 7000 and lvl == 14:
-        return True
-    elif exp >= 10000 and lvl == 15:
-        return True
-    elif exp >= 15000 and lvl == 16:
-        return True
-    elif exp >= 25000 and lvl == 17:
-        return True
-    elif exp >= 50000 and lvl == 18:
-        return True
-    elif exp >= 99999 and lvl == 19:
-        return True
-    return False
+        lvl += 1
+    if exp >= 30 and lvl == 2:
+        lvl += 1
+    if exp >= 70 and lvl == 3:
+        lvl += 1
+    if exp >= 120 and lvl == 4:
+        lvl += 1
+    if exp >= 200 and lvl == 5:
+        lvl += 1
+    if exp >= 300 and lvl == 6:
+        lvl += 1
+    if exp >= 500 and lvl == 7:
+        lvl += 1
+    if exp >= 800 and lvl == 8:
+        lvl += 1
+    if exp >= 1200 and lvl == 9:
+        lvl += 1
+    if exp >= 1700 and lvl == 10:
+        lvl += 1
+    if exp >= 2500 and lvl == 11:
+        lvl += 1
+    if exp >= 3500 and lvl == 12:
+        lvl += 1
+    if exp >= 5000 and lvl == 13:
+        lvl += 1
+    if exp >= 7000 and lvl == 14:
+        lvl += 1
+    if exp >= 10000 and lvl == 15:
+        lvl += 1
+    if exp >= 15000 and lvl == 16:
+        lvl += 1
+    if exp >= 25000 and lvl == 17:
+        lvl += 1
+    if exp >= 50000 and lvl == 18:
+        lvl += 1
+    if exp >= 99999 and lvl == 19:
+        lvl += 1
+    return lvl
 
 
 # Sets rules on entrances and advancements that are always applied
@@ -77,18 +98,18 @@ def set_rules(multiworld: MultiWorld, player: int):
     set_rule(multiworld.get_entrance("Hotland Hub", player), lambda state: state.has("Hotland Key", player))
     set_rule(multiworld.get_entrance("Core Hub", player), lambda state: state.has("Core Key", player))
     set_rule(multiworld.get_entrance("Core Exit", player),
-             lambda state: _undertale_has_plot(state, player, "Mettaton Plush") and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40)))
+             lambda state: state.has("Mettaton Plush", player) and (not bool(state.multiworld.kill_sanity[player].value) or state.has("Hotland Population Pack", player, math.ceil(40/multiworld.kill_sanity_pack_size[player].value))))
     set_rule(multiworld.get_entrance("New Home Exit", player),
              lambda state: ((state.has("Left Home Key", player) and
                             state.has("Right Home Key", player)) or
-                           state.has("Key Piece", player, state.multiworld.key_pieces[player])) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40)) and (state.has("Jump", player) or not _undertale_is_route(multiworld.state, player, 2)))
+                           state.has("Key Piece", player, state.multiworld.key_pieces[player])) and (not bool(state.multiworld.kill_sanity[player].value) or state.has("Hotland Population Pack", player, math.ceil(40/multiworld.kill_sanity_pack_size[player].value))) and (state.has("Jump", player) or not _undertale_is_route(multiworld.state, player, 2)))
     if _undertale_is_route(multiworld.state, player, 1):
         set_rule(multiworld.get_entrance("Papyrus\" Home Entrance", player),
-                 lambda state: _undertale_has_plot(state, player, "Complete Skeleton"))
+                 lambda state: state.has("Complete Skeleton", player))
         set_rule(multiworld.get_entrance("Undyne\"s Home Entrance", player),
-                 lambda state: _undertale_has_plot(state, player, "Fish") and state.has("Papyrus Date", player))
+                 lambda state: state.has("Fish", player) and state.has("Papyrus Date", player))
         set_rule(multiworld.get_entrance("Lab Elevator", player),
-                 lambda state: state.has("Alphys Date", player) and _undertale_has_plot(state, player, "DT Extractor") and ((state.has("Left Home Key", player) and
+                 lambda state: state.has("Alphys Date", player) and state.has("DT Extractor", player) and ((state.has("Left Home Key", player) and
                             state.has("Right Home Key", player)) or
                            state.has("Key Piece", player, state.multiworld.key_pieces[player])))
         set_rule(multiworld.get_location("Alphys Date", player),
@@ -143,135 +164,44 @@ def set_rules(multiworld: MultiWorld, player: int):
                  lambda state: state.can_reach("Waterfall", "Region", player))
         set_rule(multiworld.get_location("Apron Hidden", player),
                  lambda state: state.can_reach("Cooking Show", "Region", player))
-    if _undertale_is_route(multiworld.state, player, 2) and multiworld.encounter_sanity[player]:
-        set_rule(multiworld.get_location("Toriel Fight", player), lambda state: state.has("Progressive Ruins Encounter", player, 20))
-        set_rule(multiworld.get_location("Papyrus Fight", player), lambda state: state.has("Progressive Snowdin Encounter", player, 16))
-        set_rule(multiworld.get_location("Undyne Fight", player), lambda state: state.has("Progressive Waterfall Encounter", player, 18))
+    if _undertale_is_route(multiworld.state, player, 2) and bool(multiworld.kill_sanity[player].value):
+        set_rule(multiworld.get_location("Toriel Fight", player), lambda state: state.has("Ruins Population Pack", player, math.ceil(20/multiworld.kill_sanity_pack_size[player].value)))
+        set_rule(multiworld.get_location("Papyrus Fight", player), lambda state: state.has("Snowdin Population Pack", player, math.ceil(16/multiworld.kill_sanity_pack_size[player].value)))
+        set_rule(multiworld.get_location("Undyne Fight", player), lambda state: state.has("Waterfall Population Pack", player, math.ceil(18/multiworld.kill_sanity_pack_size[player].value)))
         for i in range(0, 16):
-            set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Ruins Encounter", player, i+1))
-            set_rule(multiworld.get_location("Snowdin Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Snowdin Encounter", player, i+1))
-            set_rule(multiworld.get_location("Waterfall Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Waterfall Encounter", player, i+1))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Hotland Encounter", player, i+1))
+            set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Snowdin Kill "+str(i+1), player), lambda state, i=i: state.has("Snowdin Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Waterfall Kill "+str(i+1), player), lambda state, i=i: state.has("Waterfall Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
         for i in range(16, 18):
-            set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Ruins Encounter", player, i+1))
-            set_rule(multiworld.get_location("Waterfall Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Waterfall Encounter", player, i+1))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Hotland Encounter", player, i+1))
+            set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Waterfall Kill "+str(i+1), player), lambda state, i=i: state.has("Waterfall Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
         for i in range(18, 20):
-            set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Ruins Encounter", player, i+1))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Hotland Encounter", player, i+1))
+            set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
         for i in range(20, 40):
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Progressive Hotland Encounter", player, i+1))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
     if _undertale_is_route(multiworld.state, player, 2) and \
             (multiworld.rando_love[player] or multiworld.rando_stats[player]):
         maxlv = 1
-        exp = 190
-        curarea = "Old Home"
-
         while maxlv < 20:
             maxlv += 1
-            if multiworld.rando_love[player]:
-                set_rule(multiworld.get_location(("LOVE " + str(maxlv)), player), lambda state: False)
             if multiworld.rando_stats[player]:
-                set_rule(multiworld.get_location(("ATK "+str(maxlv)), player), lambda state: False)
-                set_rule(multiworld.get_location(("HP "+str(maxlv)), player), lambda state: False)
-                if maxlv in {5, 9, 13, 17}:
-                    set_rule(multiworld.get_location(("DEF "+str(maxlv)), player), lambda state: False)
-        maxlv = 1
-        while maxlv < 20:
-            while _undertale_can_level(multiworld.state, exp, maxlv):
-                maxlv += 1
-                if multiworld.rando_stats[player]:
-                    if curarea == "Old Home":
-                        add_rule(multiworld.get_location(("ATK "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Old Home", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Ruins Encounter", player, 20))), combine="or")
-                        add_rule(multiworld.get_location(("HP "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Old Home", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Ruins Encounter", player, 20))), combine="or")
-                        if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17:
-                            add_rule(multiworld.get_location(("DEF "+str(maxlv)), player),
-                                     lambda state: (state.can_reach("Old Home", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Ruins Encounter", player, 20))), combine="or")
-                    elif curarea == "Snowdin Town":
-                        add_rule(multiworld.get_location(("ATK "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Snowdin Town", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Snowdin Encounter", player, 16))), combine="or")
-                        add_rule(multiworld.get_location(("HP "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Snowdin Town", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Snowdin Encounter", player, 16))), combine="or")
-                        if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17:
-                            add_rule(multiworld.get_location(("DEF "+str(maxlv)), player),
-                                     lambda state: (state.can_reach("Snowdin Town", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Snowdin Encounter", player, 16))), combine="or")
-                    elif curarea == "Waterfall":
-                        add_rule(multiworld.get_location(("ATK "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Waterfall", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Waterfall Encounter", player, 18))), combine="or")
-                        add_rule(multiworld.get_location(("HP "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Waterfall", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Waterfall Encounter", player, 18))), combine="or")
-                        if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17:
-                            add_rule(multiworld.get_location(("DEF "+str(maxlv)), player),
-                                     lambda state: (state.can_reach("Waterfall", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Waterfall Encounter", player, 18))), combine="or")
-                    elif curarea == "News Show":
-                        add_rule(multiworld.get_location(("ATK "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("News Show", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                        add_rule(multiworld.get_location(("HP "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("News Show", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                        if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17:
-                            add_rule(multiworld.get_location(("DEF "+str(maxlv)), player),
-                                     lambda state: (state.can_reach("News Show", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                    elif curarea == "Core":
-                        add_rule(multiworld.get_location(("ATK "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Core Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                        add_rule(multiworld.get_location(("HP "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Core Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                        if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17:
-                            add_rule(multiworld.get_location(("DEF "+str(maxlv)), player),
-                                     lambda state: (state.can_reach("Core Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                    elif curarea == "Sans":
-                        add_rule(multiworld.get_location(("ATK "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("New Home Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                        add_rule(multiworld.get_location(("HP "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("New Home Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                        if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17:
-                            add_rule(multiworld.get_location(("DEF "+str(maxlv)), player),
-                                     lambda state: (state.can_reach("New Home Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                if multiworld.rando_love[player]:
-                    if curarea == "Old Home":
-                        add_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Old Home", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Ruins Encounter", player, 20))), combine="or")
-                    elif curarea == "Snowdin Town":
-                        add_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Snowdin Town", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Snowdin Encounter", player, 16))), combine="or")
-                    elif curarea == "Waterfall":
-                        add_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Waterfall", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Waterfall Encounter", player, 18))), combine="or")
-                    elif curarea == "News Show":
-                        add_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("News Show", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                    elif curarea == "Core":
-                        add_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("Core Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-                    elif curarea == "Sans":
-                        add_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
-                                 lambda state: (state.can_reach("New Home Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40))), combine="or")
-            if curarea == "Old Home":
-                curarea = "Snowdin Town"
-                maxlv = 1
-                exp = 407
-            elif curarea == "Snowdin Town":
-                curarea = "Waterfall"
-                maxlv = 1
-                exp = 1643
-            elif curarea == "Waterfall":
-                curarea = "News Show"
-                maxlv = 1
-                exp = 3320
-            elif curarea == "News Show":
-                curarea = "Core"
-                maxlv = 1
-                exp = 50000
-            elif curarea == "Core":
-                curarea = "Sans"
-                maxlv = 1
-                exp = 99999
+                set_rule(multiworld.get_location(("ATK "+str(maxlv)), player),
+                                 lambda state, maxlv=maxlv: _undertale_return_reachable_level(state, _undertale_exp_available(state, player)) >= maxlv)
+                set_rule(multiworld.get_location(("HP "+str(maxlv)), player),
+                                 lambda state, maxlv=maxlv: _undertale_return_reachable_level(state, _undertale_exp_available(state, player)) >= maxlv)
+                if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17:
+                    set_rule(multiworld.get_location(("DEF "+str(maxlv)), player),
+                                     lambda state, maxlv=maxlv: _undertale_return_reachable_level(state, _undertale_exp_available(state, player)) >= maxlv)
+            if multiworld.rando_love[player]:
+                add_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
+                                 lambda state, maxlv=maxlv: _undertale_return_reachable_level(state, _undertale_exp_available(state, player)) >= maxlv)
     set_rule(multiworld.get_location("Snowman", player),
              lambda state: state.can_reach("Snowdin Town", "Region", player))
     set_rule(multiworld.get_location("Mettaton Fight", player),
-             lambda state: state.can_reach("Core Exit", "Entrance", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40)))
+             lambda state: state.can_reach("Core Exit", "Entrance", player) and (not bool(state.multiworld.kill_sanity[player].value) or state.has("Hotland Population Pack", player, math.ceil(40/multiworld.kill_sanity_pack_size[player].value))))
     set_rule(multiworld.get_location("Bunny 1", player),
              lambda state: state.can_reach("Snowdin Town", "Region", player) and state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Bunny 2", player),
@@ -293,13 +223,13 @@ def set_rules(multiworld: MultiWorld, player: int):
     set_rule(multiworld.get_location("Gerson 4", player),
              lambda state: state.can_reach("Waterfall", "Region", player))
     set_rule(multiworld.get_location("Present Knife", player),
-             lambda state: state.can_reach("New Home", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40)))
+             lambda state: state.can_reach("New Home", "Region", player) and (not bool(state.multiworld.kill_sanity[player].value) or state.has("Hotland Population Pack", player, math.ceil(40/multiworld.kill_sanity_pack_size[player].value))))
     set_rule(multiworld.get_location("Present Locket", player),
-             lambda state: state.can_reach("New Home", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40)))
+             lambda state: state.can_reach("New Home", "Region", player) and (not bool(state.multiworld.kill_sanity[player].value) or state.has("Hotland Population Pack", player, math.ceil(40/multiworld.kill_sanity_pack_size[player].value))))
     set_rule(multiworld.get_location("Left New Home Key", player),
-             lambda state: state.can_reach("New Home", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40)))
+             lambda state: state.can_reach("New Home", "Region", player) and (not bool(state.multiworld.kill_sanity[player].value) or state.has("Hotland Population Pack", player, math.ceil(40/multiworld.kill_sanity_pack_size[player].value))))
     set_rule(multiworld.get_location("Right New Home Key", player),
-             lambda state: state.can_reach("New Home", "Region", player) and (not state.multiworld.encounter_sanity[player] or state.has("Progressive Hotland Encounter", player, 40)))
+             lambda state: state.can_reach("New Home", "Region", player) and (not bool(state.multiworld.kill_sanity[player].value) or state.has("Hotland Population Pack", player, math.ceil(40/multiworld.kill_sanity_pack_size[player].value))))
     set_rule(multiworld.get_location("Trash Burger", player),
              lambda state: state.can_reach("Core", "Region", player))
     set_rule(multiworld.get_location("Quiche Bench", player),

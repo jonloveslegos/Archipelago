@@ -94,11 +94,13 @@ class UndertaleContext(CommonContext):
     pieces_needed = None
     completed_routes = None
     completed_count = 0
+    pack_size = None
     save_game_folder = os.path.expandvars(r"%localappdata%/UNDERTALE")
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
         self.pieces_needed = 0
+        self.pack_size = 1
         self.game = "Undertale"
         self.got_deathlink = False
         self.syncing = False
@@ -135,8 +137,8 @@ class UndertaleContext(CommonContext):
                 try:
                     if "check.spot" == file or "scout" == file:
                         os.remove(os.path.join(root, file))
-                    elif file.endswith((".item", ".victory", ".route", ".playerspot", ".mad",
-                                                ".youDied", ".LV", ".flag", ".hint")):
+                    elif file.endswith(("disconnected", ".item", ".victory", ".route", ".playerspot", ".mad",
+                                                ".youDied", ".LV", ".flag", ".hint", ".pack")):
                         os.remove(os.path.join(root, file))
                 except Exception as error:
                     print(str(error))
@@ -214,9 +216,10 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
     if cmd == "Connected":
         if not os.path.exists(ctx.save_game_folder):
             os.mkdir(ctx.save_game_folder)
-        ctx.route = args["slot_data"]["route"]
+        ctx.route = args["slot_data"]["route_required"]
         ctx.pieces_needed = args["slot_data"]["key_pieces"]
-        ctx.tem_armor = args["slot_data"]["temy_armor_include"]
+        ctx.pack_size = args["slot_data"]["kill_sanity_pack_size"]
+        ctx.tem_armor = args["slot_data"]["temy_include"]
 
         await ctx.send_msgs([{"cmd": "Get", "keys": [str(ctx.slot)+" RoutesDone neutral",
                                                      str(ctx.slot)+" RoutesDone pacifist",
@@ -239,6 +242,10 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                 f.close()
         filename = f"{ctx.route}.route"
         with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+            f.close()
+        filename = f"size.pack"
+        with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+            f.write(str(ctx.pack_size)+"\n")
             f.close()
         filename = f"check.spot"
         with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
