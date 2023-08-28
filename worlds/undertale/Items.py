@@ -102,6 +102,7 @@ item_table = {
     "Snowdin Population Pack": ItemData(77088, ItemClassification.progression),
     "Waterfall Population Pack": ItemData(77089, ItemClassification.progression),
     "Hotland Population Pack": ItemData(77090, ItemClassification.progression),
+    "Ice Trap": ItemData(77091, ItemClassification.trap),
     "Undyne Date": ItemData(None, ItemClassification.progression),
     "Alphys Date": ItemData(None, ItemClassification.progression),
     "Papyrus Date": ItemData(None, ItemClassification.progression),
@@ -109,7 +110,6 @@ item_table = {
 
 non_key_items = {
     "Butterscotch Pie": 1,
-    "500G": 2,
     "1000G": 2,
     "Face Steak": 1,
     "Snowman Piece": 1,
@@ -117,8 +117,6 @@ non_key_items = {
     "Astronaut Food": 2,
     "Hot Cat": 1,
     "Abandoned Quiche": 1,
-    "Spider Donut": 1,
-    "Spider Cider": 1,
     "Hush Puppy": 1,
 }
 

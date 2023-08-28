@@ -78,7 +78,8 @@ class UndertaleWorld(World):
             "kill_sanity": bool(self.multiworld.kill_sanity[self.player].value),
             "rando_jump": bool(self.multiworld.rando_jump[self.player].value),
             "cut_items": bool(self.multiworld.cut_items[self.player].value),
-            "kill_sanity_pack_size": self.multiworld.kill_sanity_pack_size[self.player].value
+            "kill_sanity_pack_size": self.multiworld.kill_sanity_pack_size[self.player].value,
+            "ice_traps": self.multiworld.ice_traps[self.player].value
         }
 
     def get_filler_item_name(self):
@@ -162,6 +163,8 @@ class UndertaleWorld(World):
             itempool += ["Snowdin Population Pack"] * math.ceil(16/self.multiworld.kill_sanity_pack_size[self.player].value)
             itempool += ["Waterfall Population Pack"] * math.ceil(18/self.multiworld.kill_sanity_pack_size[self.player].value)
             itempool += ["Hotland Population Pack"] * math.ceil(40/self.multiworld.kill_sanity_pack_size[self.player].value)
+        if self.multiworld.ice_traps[self.player].value > 0:
+            itempool += ["Ice Trap"] * self.multiworld.ice_traps[self.player].value
         if not self.multiworld.rando_stats[self.player] or \
                 (self.multiworld.route_required[self.player] != "genocide" and
                  self.multiworld.route_required[self.player] != "all_routes"):

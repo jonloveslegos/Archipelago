@@ -113,6 +113,14 @@ class CutItems(Toggle):
     default = 0
 
 
+class IceTraps(Range):
+    """Adds this many Ice Traps to the pool"""
+    display_name = "Ice Trap Count"
+    default = 0
+    range_start = 1
+    range_end = 10
+
+
 undertale_options: typing.Dict[str, type(Option)] = {
     "route_required":                           RouteRequired,
     "starting_area":                            StartingArea,
@@ -126,6 +134,7 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "kill_sanity_pack_size":                    KillSanityPackSize,
     "temy_include":                             IncludeTemy,
     "cut_items":                                CutItems,
+    "ice_traps":                                IceTraps,
     "prog_armor":                               ProgressiveArmor,
     "prog_weapons":                             ProgressiveWeapons,
     "no_equips":                                NoEquips,
