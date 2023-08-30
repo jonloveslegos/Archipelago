@@ -117,7 +117,7 @@ class IceTraps(Range):
     """Adds this many Ice Traps to the pool"""
     display_name = "Ice Trap Count"
     default = 0
-    range_start = 1
+    range_start = 0
     range_end = 10
 
 

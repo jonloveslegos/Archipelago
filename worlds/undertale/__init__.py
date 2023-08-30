@@ -95,7 +95,6 @@ class UndertaleWorld(World):
             junk_pool = junk_weights_all.copy()
         if self.multiworld.cut_items[self.player]:
             junk_pool = junk_pool | junk_weights_cut_items.copy()
-        print(junk_pool)
         if not self.multiworld.only_flakes[self.player]:
             return self.multiworld.random.choices(list(junk_pool.keys()), weights=list(junk_pool.values()))[0]
         else:
@@ -261,7 +260,6 @@ class UndertaleWorld(World):
                 slot_data[option_name] = int(option.value)
             elif slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
                 slot_data[option_name] = int(option.value)
-        print(slot_data)
         return slot_data
 
     def create_item(self, name: str) -> Item:
