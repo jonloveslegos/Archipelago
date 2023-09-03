@@ -97,6 +97,12 @@ def set_rules(multiworld: MultiWorld, player: int):
     set_rule(multiworld.get_entrance("Waterfall Hub", player), lambda state: state.has("Waterfall Key", player))
     set_rule(multiworld.get_entrance("Hotland Hub", player), lambda state: state.has("Hotland Key", player))
     set_rule(multiworld.get_entrance("Core Hub", player), lambda state: state.has("Core Key", player))
+    if multiworld.spare_sanity[player] and (_undertale_is_route(multiworld.state, player, 0) or _undertale_is_route(multiworld.state, player, 1)):
+        for i in range(multiworld.spare_sanity_max[player].value):
+            set_rule(multiworld.get_location("Ruins Spare "+str(i+1), player), lambda state, i=i: state.has("Ruins Spare", player, i+1))
+            set_rule(multiworld.get_location("Snowdin Spare "+str(i+1), player), lambda state, i=i: state.has("Snowdin Spare", player, i+1))
+            set_rule(multiworld.get_location("Waterfall Spare "+str(i+1), player), lambda state, i=i: state.has("Waterfall Spare", player, i+1))
+            set_rule(multiworld.get_location("Hotland Spare "+str(i+1), player), lambda state, i=i: state.has("Hotland Spare", player, i+1) and (state.can_reach("Hotland", "Region", player) or state.can_reach("Core", "Region", player)))
     set_rule(multiworld.get_entrance("Core Exit", player),
              lambda state: state.has("Mettaton Plush", player) and (not bool(state.multiworld.kill_sanity[player].value) or state.has("Hotland Population Pack", player, math.ceil(40/multiworld.kill_sanity_pack_size[player].value))))
     set_rule(multiworld.get_entrance("New Home Exit", player),
@@ -172,16 +178,16 @@ def set_rules(multiworld: MultiWorld, player: int):
             set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Snowdin Kill "+str(i+1), player), lambda state, i=i: state.has("Snowdin Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Waterfall Kill "+str(i+1), player), lambda state, i=i: state.has("Waterfall Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland", "Region", player) or state.can_reach("Core", "Region", player)))
         for i in range(16, 18):
             set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Waterfall Kill "+str(i+1), player), lambda state, i=i: state.has("Waterfall Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland", "Region", player) or state.can_reach("Core", "Region", player)))
         for i in range(18, 20):
             set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland", "Region", player) or state.can_reach("Core", "Region", player)))
         for i in range(20, 40):
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland", "Region", player) or state.can_reach("Core", "Region", player)))
     if _undertale_is_route(multiworld.state, player, 2) and \
             (multiworld.rando_love[player] or multiworld.rando_stats[player]):
         maxlv = 1

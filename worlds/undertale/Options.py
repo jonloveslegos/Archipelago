@@ -121,6 +121,20 @@ class IceTraps(Range):
     range_end = 10
 
 
+class SpareSanity(Toggle):
+    """Makes every spare from a random encounter a check, up to how many spare items you have for that area. Only matters if your goal includes the Pacifist or Neutral route"""
+    display_name = "Spare Sanity"
+    default = 0
+
+
+class SpareSanityMaxSpares(Range):
+    """How many spares you want to be checks in each area. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled"""
+    display_name = "Spare Sanity Max Spares"
+    default = 10
+    range_start = 1
+    range_end = 100
+
+
 undertale_options: typing.Dict[str, type(Option)] = {
     "route_required":                           RouteRequired,
     "starting_area":                            StartingArea,
@@ -139,4 +153,6 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "prog_weapons":                             ProgressiveWeapons,
     "no_equips":                                NoEquips,
     "only_flakes":                              OnlyFlakes,
+    "spare_sanity":                             SpareSanity,
+    "spare_sanity_max":                         SpareSanityMaxSpares,
 }

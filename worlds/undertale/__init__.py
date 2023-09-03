@@ -79,7 +79,9 @@ class UndertaleWorld(World):
             "rando_jump": bool(self.multiworld.rando_jump[self.player].value),
             "cut_items": bool(self.multiworld.cut_items[self.player].value),
             "kill_sanity_pack_size": self.multiworld.kill_sanity_pack_size[self.player].value,
-            "ice_traps": self.multiworld.ice_traps[self.player].value
+            "ice_traps": self.multiworld.ice_traps[self.player].value,
+            "spare_sanity": bool(self.multiworld.spare_sanity[self.player].value),
+            "spare_sanity_max": self.multiworld.spare_sanity_max[self.player].value
         }
 
     def get_filler_item_name(self):
@@ -149,6 +151,11 @@ class UndertaleWorld(World):
                 (self.multiworld.route_required[self.player] != "genocide" and
                  self.multiworld.route_required[self.player] != "all_routes"):
             itempool = [item for item in itempool if not item == "LOVE"]
+        if self.multiworld.spare_sanity[self.player] and self.multiworld.route_required[self.player] != "genocide":
+            itempool += ["Ruins Spare"] * self.multiworld.spare_sanity_max[self.player].value
+            itempool += ["Snowdin Spare"] * self.multiworld.spare_sanity_max[self.player].value
+            itempool += ["Waterfall Spare"] * self.multiworld.spare_sanity_max[self.player].value
+            itempool += ["Hotland Spare"] * self.multiworld.spare_sanity_max[self.player].value
         if not self.multiworld.kill_sanity[self.player] or \
                 (self.multiworld.route_required[self.player] != "genocide" and
                  self.multiworld.route_required[self.player] != "all_routes"):
@@ -210,7 +217,8 @@ class UndertaleWorld(World):
         # Convert itempool into real items
         itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
         # Fill remaining items with randomly generated junk or Temmie Flakes
-        itempool += [self.create_filler() for _ in range(len(self.location_names) - len(itempool) - len(exclusion_pool))]
+        while len(itempool) < len(self.multiworld.get_unfilled_locations(self.player)):
+            itempool += [self.create_filler()]
 
         self.multiworld.itempool += itempool
 
@@ -236,7 +244,19 @@ class UndertaleWorld(World):
                               (self.multiworld.rando_love[self.player] and
                                (self.multiworld.route_required[self.player] == "genocide" or
                                 self.multiworld.route_required[self.player] == "all_routes"))) and
+                             (loc_name not in exclusion_table["NoSpare"]) and
                              loc_name not in exclusion_table[self.multiworld.route_required[self.player].current_key]]
+
+            if self.multiworld.spare_sanity[self.player] and self.multiworld.route_required[self.player] != "genocide":
+                if region_name == "Ruins":
+                    ret.locations += [UndertaleAdvancement(self.player, "Ruins Spare "+str(i+1), 79213+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
+                elif region_name == "Snowdin Forest":
+                    ret.locations += [UndertaleAdvancement(self.player, "Snowdin Spare "+str(i+1), 79313+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
+                elif region_name == "Waterfall":
+                    ret.locations += [UndertaleAdvancement(self.player, "Waterfall Spare "+str(i+1), 79413+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
+                elif region_name == "???":
+                    ret.locations += [UndertaleAdvancement(self.player, "Hotland Spare "+str(i+1), 79513+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
+
             for exit in exits:
                 ret.exits.append(Entrance(self.player, exit, ret))
             return ret
@@ -251,6 +271,10 @@ class UndertaleWorld(World):
             if (option_name == "rando_love" or option_name == "rando_stats" or option_name == "kill_sanity") and \
                     self.multiworld.route_required[self.player] != "genocide" and \
                     self.multiworld.route_required[self.player] != "all_routes":
+                option.value = False
+                slot_data[option_name] = int(option.value)
+            elif (option_name == "spare_sanity") and \
+                    self.multiworld.route_required[self.player] == "genocide":
                 option.value = False
                 slot_data[option_name] = int(option.value)
             elif (option_name == "kill_sanity_pack_size" and ((

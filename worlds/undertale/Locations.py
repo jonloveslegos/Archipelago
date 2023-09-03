@@ -201,50 +201,56 @@ advancement_table = {
     "Waterfall Kill 16": AdvData(79170, "Waterfall"),
     "Waterfall Kill 17": AdvData(79171, "Waterfall"),
     "Waterfall Kill 18": AdvData(79172, "Waterfall"),
-    "Hotland Kill 1": AdvData(79173, "Hotland"),
-    "Hotland Kill 2": AdvData(79174, "Hotland"),
-    "Hotland Kill 3": AdvData(79175, "Hotland"),
-    "Hotland Kill 4": AdvData(79176, "Hotland"),
-    "Hotland Kill 5": AdvData(79177, "Hotland"),
-    "Hotland Kill 6": AdvData(79178, "Hotland"),
-    "Hotland Kill 7": AdvData(79179, "Hotland"),
-    "Hotland Kill 8": AdvData(79180, "Hotland"),
-    "Hotland Kill 9": AdvData(79181, "Hotland"),
-    "Hotland Kill 10": AdvData(79182, "Hotland"),
-    "Hotland Kill 11": AdvData(79183, "Hotland"),
-    "Hotland Kill 12": AdvData(79184, "Hotland"),
-    "Hotland Kill 13": AdvData(79185, "Hotland"),
-    "Hotland Kill 14": AdvData(79186, "Hotland"),
-    "Hotland Kill 15": AdvData(79187, "Hotland"),
-    "Hotland Kill 16": AdvData(79188, "Hotland"),
-    "Hotland Kill 17": AdvData(79189, "Hotland"),
-    "Hotland Kill 18": AdvData(79190, "Hotland"),
-    "Hotland Kill 19": AdvData(79191, "Hotland"),
-    "Hotland Kill 20": AdvData(79192, "Hotland"),
-    "Hotland Kill 21": AdvData(79193, "Hotland"),
-    "Hotland Kill 22": AdvData(79194, "Hotland"),
-    "Hotland Kill 23": AdvData(79195, "Hotland"),
-    "Hotland Kill 24": AdvData(79196, "Hotland"),
-    "Hotland Kill 25": AdvData(79197, "Hotland"),
-    "Hotland Kill 26": AdvData(79198, "Hotland"),
-    "Hotland Kill 27": AdvData(79199, "Hotland"),
-    "Hotland Kill 28": AdvData(79200, "Hotland"),
-    "Hotland Kill 29": AdvData(79201, "Hotland"),
-    "Hotland Kill 30": AdvData(79202, "Hotland"),
-    "Hotland Kill 31": AdvData(79203, "Hotland"),
-    "Hotland Kill 32": AdvData(79204, "Hotland"),
-    "Hotland Kill 33": AdvData(79205, "Hotland"),
-    "Hotland Kill 34": AdvData(79206, "Hotland"),
-    "Hotland Kill 35": AdvData(79207, "Hotland"),
-    "Hotland Kill 36": AdvData(79208, "Hotland"),
-    "Hotland Kill 37": AdvData(79209, "Hotland"),
-    "Hotland Kill 38": AdvData(79210, "Hotland"),
-    "Hotland Kill 39": AdvData(79211, "Hotland"),
-    "Hotland Kill 40": AdvData(79212, "Hotland"),
+    "Hotland Kill 1": AdvData(79173, "???"),
+    "Hotland Kill 2": AdvData(79174, "???"),
+    "Hotland Kill 3": AdvData(79175, "???"),
+    "Hotland Kill 4": AdvData(79176, "???"),
+    "Hotland Kill 5": AdvData(79177, "???"),
+    "Hotland Kill 6": AdvData(79178, "???"),
+    "Hotland Kill 7": AdvData(79179, "???"),
+    "Hotland Kill 8": AdvData(79180, "???"),
+    "Hotland Kill 9": AdvData(79181, "???"),
+    "Hotland Kill 10": AdvData(79182, "???"),
+    "Hotland Kill 11": AdvData(79183, "???"),
+    "Hotland Kill 12": AdvData(79184, "???"),
+    "Hotland Kill 13": AdvData(79185, "???"),
+    "Hotland Kill 14": AdvData(79186, "???"),
+    "Hotland Kill 15": AdvData(79187, "???"),
+    "Hotland Kill 16": AdvData(79188, "???"),
+    "Hotland Kill 17": AdvData(79189, "???"),
+    "Hotland Kill 18": AdvData(79190, "???"),
+    "Hotland Kill 19": AdvData(79191, "???"),
+    "Hotland Kill 20": AdvData(79192, "???"),
+    "Hotland Kill 21": AdvData(79193, "???"),
+    "Hotland Kill 22": AdvData(79194, "???"),
+    "Hotland Kill 23": AdvData(79195, "???"),
+    "Hotland Kill 24": AdvData(79196, "???"),
+    "Hotland Kill 25": AdvData(79197, "???"),
+    "Hotland Kill 26": AdvData(79198, "???"),
+    "Hotland Kill 27": AdvData(79199, "???"),
+    "Hotland Kill 28": AdvData(79200, "???"),
+    "Hotland Kill 29": AdvData(79201, "???"),
+    "Hotland Kill 30": AdvData(79202, "???"),
+    "Hotland Kill 31": AdvData(79203, "???"),
+    "Hotland Kill 32": AdvData(79204, "???"),
+    "Hotland Kill 33": AdvData(79205, "???"),
+    "Hotland Kill 34": AdvData(79206, "???"),
+    "Hotland Kill 35": AdvData(79207, "???"),
+    "Hotland Kill 36": AdvData(79208, "???"),
+    "Hotland Kill 37": AdvData(79209, "???"),
+    "Hotland Kill 38": AdvData(79210, "???"),
+    "Hotland Kill 39": AdvData(79211, "???"),
+    "Hotland Kill 40": AdvData(79212, "???"),
     "Undyne Date": AdvData(None, "Undyne\"s Home"),
     "Alphys Date": AdvData(None, "Hotland"),
     "Papyrus Date": AdvData(None, "Papyrus\" Home"),
 }
+
+for i in range(100):
+    advancement_table.__setitem__("Ruins Spare " + str(i + 1), AdvData(79213+i, "Ruins"))
+    advancement_table.__setitem__("Snowdin Spare " + str(i + 1), AdvData(79313+i, "Snowdin Forest"))
+    advancement_table.__setitem__("Waterfall Spare " + str(i + 1), AdvData(79413+i, "Waterfall"))
+    advancement_table.__setitem__("Hotland Spare " + str(i + 1), AdvData(79513+i, "???"))
 
 exclusion_table = {
     "pacifist": {
@@ -758,6 +764,13 @@ exclusion_table = {
     "all_routes": {
     }
 }
+no_spare = set()
+for i in range(100):
+    no_spare.add("Ruins Spare " + str(i + 1))
+    no_spare.add("Snowdin Spare " + str(i + 1))
+    no_spare.add("Waterfall Spare " + str(i + 1))
+    no_spare.add("Hotland Spare " + str(i + 1))
+exclusion_table.__setitem__("NoSpare", no_spare.copy())
 
 events_table = {
 }
