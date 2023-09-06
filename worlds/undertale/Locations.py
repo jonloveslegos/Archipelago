@@ -247,10 +247,10 @@ advancement_table = {
 }
 
 for i in range(100):
-    advancement_table.__setitem__("Ruins Spare " + str(i + 1), AdvData(79213+i, "Ruins"))
-    advancement_table.__setitem__("Snowdin Spare " + str(i + 1), AdvData(79313+i, "Snowdin Forest"))
-    advancement_table.__setitem__("Waterfall Spare " + str(i + 1), AdvData(79413+i, "Waterfall"))
-    advancement_table.__setitem__("Hotland Spare " + str(i + 1), AdvData(79513+i, "???"))
+    advancement_table.__setitem__("Ruins Spare " + str(i + 1), AdvData(78013+i, "Ruins"))
+    advancement_table.__setitem__("Snowdin Spare " + str(i + 1), AdvData(78113+i, "Snowdin Forest"))
+    advancement_table.__setitem__("Waterfall Spare " + str(i + 1), AdvData(78213+i, "Waterfall"))
+    advancement_table.__setitem__("Hotland Spare " + str(i + 1), AdvData(78313+i, "???"))
 
 exclusion_table = {
     "pacifist": {

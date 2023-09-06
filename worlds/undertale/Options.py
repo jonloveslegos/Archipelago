@@ -129,9 +129,21 @@ class SpareSanity(Toggle):
 
 class SpareSanityMaxSpares(Range):
     """How many spares you want to be checks in each area. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled"""
+    """Warning: It is not recommended to set this to above 25, because there will be this many, times 4, items and 
+    locations that will be tedious to obtain. At maximum, that is 400 locations and items 
+    that are just for sparing."""
     display_name = "Spare Sanity Max Spares"
     default = 10
     range_start = 1
+    range_end = 100
+
+
+class SpareSanityPackSize(Range):
+    """How many spare checks you want to unlock per item. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled"""
+    """Rounds down when you get a pack with more spares than there are left to unlock in the area"""
+    display_name = "Spare Sanity Pack Size"
+    default = 2
+    range_start = 2
     range_end = 100
 
 
@@ -144,6 +156,9 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "rando_jump":                               RandomizeJump,
     "rando_love":                               RandomizeLove,
     "rando_stats":                              RandomizeStats,
+    "spare_sanity":                             SpareSanity,
+    "spare_sanity_max":                         SpareSanityMaxSpares,
+    "spare_sanity_pack_size":                   SpareSanityPackSize,
     "kill_sanity":                              KillSanity,
     "kill_sanity_pack_size":                    KillSanityPackSize,
     "temy_include":                             IncludeTemy,
@@ -153,6 +168,4 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "prog_weapons":                             ProgressiveWeapons,
     "no_equips":                                NoEquips,
     "only_flakes":                              OnlyFlakes,
-    "spare_sanity":                             SpareSanity,
-    "spare_sanity_max":                         SpareSanityMaxSpares,
 }

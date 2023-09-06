@@ -81,7 +81,8 @@ class UndertaleWorld(World):
             "kill_sanity_pack_size": self.multiworld.kill_sanity_pack_size[self.player].value,
             "ice_traps": self.multiworld.ice_traps[self.player].value,
             "spare_sanity": bool(self.multiworld.spare_sanity[self.player].value),
-            "spare_sanity_max": self.multiworld.spare_sanity_max[self.player].value
+            "spare_sanity_max": self.multiworld.spare_sanity_max[self.player].value,
+            "spare_sanity_pack_size": self.multiworld.spare_sanity_pack_size[self.player].value
         }
 
     def get_filler_item_name(self):
@@ -152,10 +153,10 @@ class UndertaleWorld(World):
                  self.multiworld.route_required[self.player] != "all_routes"):
             itempool = [item for item in itempool if not item == "LOVE"]
         if self.multiworld.spare_sanity[self.player] and self.multiworld.route_required[self.player] != "genocide":
-            itempool += ["Ruins Spare"] * self.multiworld.spare_sanity_max[self.player].value
-            itempool += ["Snowdin Spare"] * self.multiworld.spare_sanity_max[self.player].value
-            itempool += ["Waterfall Spare"] * self.multiworld.spare_sanity_max[self.player].value
-            itempool += ["Hotland Spare"] * self.multiworld.spare_sanity_max[self.player].value
+            itempool += ["Ruins Spare"] * math.ceil(self.multiworld.spare_sanity_max[self.player].value/self.multiworld.spare_sanity_pack_size[self.player].value)
+            itempool += ["Snowdin Spare"] * math.ceil(self.multiworld.spare_sanity_max[self.player].value/self.multiworld.spare_sanity_pack_size[self.player].value)
+            itempool += ["Waterfall Spare"] * math.ceil(self.multiworld.spare_sanity_max[self.player].value/self.multiworld.spare_sanity_pack_size[self.player].value)
+            itempool += ["Hotland Spare"] * math.ceil(self.multiworld.spare_sanity_max[self.player].value/self.multiworld.spare_sanity_pack_size[self.player].value)
         if not self.multiworld.kill_sanity[self.player] or \
                 (self.multiworld.route_required[self.player] != "genocide" and
                  self.multiworld.route_required[self.player] != "all_routes"):
@@ -249,13 +250,13 @@ class UndertaleWorld(World):
 
             if self.multiworld.spare_sanity[self.player] and self.multiworld.route_required[self.player] != "genocide":
                 if region_name == "Ruins":
-                    ret.locations += [UndertaleAdvancement(self.player, "Ruins Spare "+str(i+1), 79213+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
+                    ret.locations += [UndertaleAdvancement(self.player, "Ruins Spare "+str(i+1), 78013+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
                 elif region_name == "Snowdin Forest":
-                    ret.locations += [UndertaleAdvancement(self.player, "Snowdin Spare "+str(i+1), 79313+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
+                    ret.locations += [UndertaleAdvancement(self.player, "Snowdin Spare "+str(i+1), 78113+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
                 elif region_name == "Waterfall":
-                    ret.locations += [UndertaleAdvancement(self.player, "Waterfall Spare "+str(i+1), 79413+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
+                    ret.locations += [UndertaleAdvancement(self.player, "Waterfall Spare "+str(i+1), 78213+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
                 elif region_name == "???":
-                    ret.locations += [UndertaleAdvancement(self.player, "Hotland Spare "+str(i+1), 79513+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
+                    ret.locations += [UndertaleAdvancement(self.player, "Hotland Spare "+str(i+1), 78313+i, ret) for i in range(self.multiworld.spare_sanity_max[self.player].value)]
 
             for exit in exits:
                 ret.exits.append(Entrance(self.player, exit, ret))
