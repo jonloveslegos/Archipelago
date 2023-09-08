@@ -99,8 +99,8 @@ class KillSanity(Toggle):
 
 
 class KillSanityPackSize(Range):
-    """How many encounters do you unlock per item in Kill Sanity. Only matters if your goal includes Genocide route, and has Kill Sanity enabled"""
-    """Rounds down when you get a pack with more encounters than there are left to unlock in the area"""
+    """How many encounters do you unlock per item in Kill Sanity. Only matters if your goal includes Genocide route, and has Kill Sanity enabled
+    Rounds down when you get a pack with more encounters than there are left to unlock in the area"""
     display_name = "Kill Sanity Pack Size"
     default = 5
     range_start = 1
@@ -128,8 +128,8 @@ class SpareSanity(Toggle):
 
 
 class SpareSanityMaxSpares(Range):
-    """How many spares you want to be checks in each area. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled"""
-    """Warning: It is not recommended to set this to above 25, because there will be this many, times 4, items and 
+    """How many spares you want to be checks in each area. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled
+    Warning: It is not recommended to set this to above 25, because there will be this many, times 4, items and 
     locations that will be tedious to obtain. At maximum, that is 400 locations and items 
     that are just for sparing."""
     display_name = "Spare Sanity Max Spares"
@@ -139,8 +139,8 @@ class SpareSanityMaxSpares(Range):
 
 
 class SpareSanityPackSize(Range):
-    """How many spare checks you want to unlock per item. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled"""
-    """Rounds down when you get a pack with more spares than there are left to unlock in the area"""
+    """How many spare checks you want to unlock per item. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled
+    Rounds down when you get a pack with more spares than there are left to unlock in the area"""
     display_name = "Spare Sanity Pack Size"
     default = 2
     range_start = 2
