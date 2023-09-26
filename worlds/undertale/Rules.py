@@ -119,7 +119,7 @@ def set_rules(multiworld: MultiWorld, player: int):
         set_rule(multiworld.get_entrance("Undyne\"s Home Entrance", player),
                  lambda state: state.has("Fish", player) and state.has("Papyrus Date", player))
         set_rule(multiworld.get_entrance("Lab Elevator", player),
-                 lambda state: state.has("Alphys Date", player) and state.has("DT Extractor", player) and ((state.has("Left Home Key", player) and
+                 lambda state: state.can_reach("New Home", "Region", player) and and state.has("Alphys Date", player) and state.has("DT Extractor", player) and ((state.has("Left Home Key", player) and
                             state.has("Right Home Key", player)) or
                            state.has("Key Piece", player, state.multiworld.key_pieces[player].value)))
         set_rule(multiworld.get_location("Alphys Date", player),
