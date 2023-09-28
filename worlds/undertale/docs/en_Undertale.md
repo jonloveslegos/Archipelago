@@ -24,13 +24,15 @@ every major route in the game, those being `Pacifist`, `Neutral`, and `Genocide`
 
 There are some major differences between vanilla and the randomizer. 
 
-There are now doors to every major area in the underground located in the flower room (The first room of the game), those being Ruins, Snowdin, Waterfall, Hotland, and Core. 
+There are now doors to every major area in the underground located in the flower room (the first room of the game.)
+These doors lead to Ruins, Snowdin, Waterfall, Hotland, and Core from left to right. 
 Each door needs their respective key from the pool to enter. 
-You start with one key for the door of your choice.
-The rest of the keys will be in the item pool.
 
-Genocide works a little differently in terms of the requirements. 
-You now only need to get through Core and fight Mettaton NEO, after grinding out Hotland or Core, and then beat Sans, to win. 
+You start with one key and the rest of the keys will be in the item pool to be found by other players.
+
+**Genocide** works a little differently in terms of the requirements. 
+
+In order to win with the genocide route, you only need to grind out Core, fight Mettaton NEO, and beat Sans to win. 
 If you choose to fight other major bosses, you will still need to grind out the area before fighting them like normal.
 
 Pacifist is mostly the same, except you are not required to go to the Ruins to spare Toriel, 
@@ -41,7 +43,17 @@ in that order, before entering the True Lab. Neutral is also no longer required 
 You now require custom items to hangout with Papyrus, Undyne, to enter the True Lab, and to fight Mettaton EX/NEO. 
 Those being `Complete Skeleton`, `Fish`, `DT Extractor`, and `Mettaton Plush`.
 
-The Riverperson will only take you to locations you have actually seen the Riverperson at. 
-Meaning they will only take you to, for example, Waterfall, if you have seen the Riverperson at Waterfall at least once.
+**Pacifist** remains mostly the same.
+
+In the Pacifist run, you are not required to go to the Ruins to spare Toriel. The only necessary spares are Papyrus, 
+Undyne, and Mettaton EX. Just as it is in the vanilla game, you cannot kill anyone. You are also required to complete 
+the date/hangout with Papyrus, Undyne, and Alphys, in that order, before entering the True Lab.
+
+Additionally, custom items are required to hang out with Papyrus, Undyne, to enter the True Lab, and to fight 
+Mettaton EX/NEO. The respective items for each interaction are `Complete Skeleton`, `Fish`, `DT Extractor`, 
+and `Mettaton Plush`.
+
+The Riverperson will only take you to locations you have seen them at, meaning they will only take you to 
+Waterfall if you have seen them at Waterfall at least once.
 
 If you press `W` while in the save menu, you will teleport back to the flower room, for quick access to the other areas.

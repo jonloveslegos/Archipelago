@@ -12,11 +12,11 @@ from multiprocessing import Process
 import math
 
 
-def run_client():
-    print('running undertale client')
-    from .UndertaleClient import main  # lazy import
-    p = Process(target=main)
-    p.start()
+# def run_client():
+#     print('running undertale client')
+#     from .UndertaleClient import main  # lazy import
+#     p = Process(target=main)
+#     p.start()
 
 
 components.append(Component("Undertale Client", "UndertaleClient"))
@@ -34,8 +34,8 @@ class UndertaleWeb(WebWorld):
         "A guide to setting up the Archipelago Undertale software on your computer. This guide covers "
         "single-player, multiworld, and related software.",
         "English",
-        "undertale_en.md",
-        "undertale/en",
+        "setup_en.md",
+        "setup/en",
         ["Mewlif"]
     )]
 
