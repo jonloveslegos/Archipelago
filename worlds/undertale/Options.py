@@ -129,8 +129,8 @@ class SpareSanity(Toggle):
 
 class SpareSanityMaxSpares(Range):
     """How many spares you want to be checks in each area. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled
-    Warning: It is not recommended to set this to above 25, because there will be this many, times 4, items and 
-    locations that will be tedious to obtain. At maximum, that is 400 locations and items 
+    Warning: It is not recommended to set this to above 25, because there will be this many, times 4, locations that
+    will be tedious to obtain. At maximum, that is 400 locations
     that are just for sparing."""
     display_name = "Spare Sanity Max Spares"
     default = 10

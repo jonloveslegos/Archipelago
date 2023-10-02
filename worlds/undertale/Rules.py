@@ -174,10 +174,11 @@ def set_rules(multiworld: MultiWorld, player: int):
                  lambda state: state.can_reach("Waterfall", "Region", player))
         set_rule(multiworld.get_location("Apron Hidden", player),
                  lambda state: state.can_reach("Cooking Show", "Region", player))
-    if _undertale_is_route(multiworld.state, player, 2) and bool(multiworld.kill_sanity[player].value):
+    if _undertale_is_route(multiworld.state, player, 2) and (not _undertale_is_route(multiworld.state, player, 3)) and bool(multiworld.kill_sanity[player].value):
         set_rule(multiworld.get_location("Toriel Fight", player), lambda state: state.has("Ruins Population Pack", player, math.ceil(20/state.multiworld.kill_sanity_pack_size[player].value)))
         set_rule(multiworld.get_location("Papyrus Fight", player), lambda state: state.has("Snowdin Population Pack", player, math.ceil(16/state.multiworld.kill_sanity_pack_size[player].value)))
         set_rule(multiworld.get_location("Undyne Fight", player), lambda state: state.has("Waterfall Population Pack", player, math.ceil(18/state.multiworld.kill_sanity_pack_size[player].value)))
+    if _undertale_is_route(multiworld.state, player, 2) and bool(multiworld.kill_sanity[player].value):
         for i in range(0, 16):
             set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Snowdin Kill "+str(i+1), player), lambda state, i=i: state.has("Snowdin Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
