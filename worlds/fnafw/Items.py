@@ -14,14 +14,14 @@ class FNaFWItem(Item):
 
 item_table = {
     "Progressive Endoskeleton": ItemData(797199, ItemClassification.useful, "armor"),
-    #"Freddy": ItemData(797200, ItemClassification.useful, "1have"),
-    #"Bonnie": ItemData(797201, ItemClassification.useful, "2have"),
-    #"Chica": ItemData(797202, ItemClassification.useful, "3have"),
-    #"Foxy": ItemData(797203, ItemClassification.useful, "4have"),
-    #"Toy Bonnie": ItemData(797204, ItemClassification.useful, "5have"),
-    #"Toy Chica": ItemData(797205, ItemClassification.useful, "6have"),
-    #"Toy Freddy": ItemData(797206, ItemClassification.useful, "7have"),
-    #"Mangle": ItemData(797207, ItemClassification.useful, "8have"),
+    "Freddy": ItemData(797200, ItemClassification.useful, "1have"),
+    "Bonnie": ItemData(797201, ItemClassification.useful, "2have"),
+    "Chica": ItemData(797202, ItemClassification.useful, "3have"),
+    "Foxy": ItemData(797203, ItemClassification.useful, "4have"),
+    "Toy Bonnie": ItemData(797204, ItemClassification.useful, "5have"),
+    "Toy Chica": ItemData(797205, ItemClassification.useful, "6have"),
+    "Toy Freddy": ItemData(797206, ItemClassification.useful, "7have"),
+    "Mangle": ItemData(797207, ItemClassification.useful, "8have"),
     "Balloon Boy": ItemData(797208, ItemClassification.useful, "9have"),
     "JJ": ItemData(797209, ItemClassification.useful, "10have"),
     "Phantom Freddy": ItemData(797210, ItemClassification.useful, "11have"),
@@ -106,7 +106,7 @@ item_table = {
     "BossDrain-X": ItemData(797289, ItemClassification.useful, "p21"),
 }
 
-anim_table = [
+start_anim_table = [
     "Freddy",
     "Bonnie",
     "Chica",
@@ -130,7 +130,10 @@ anim_table = [
     "Marionette",
     "Phantom Marionette",
     "Golden Freddy",
-    "Paperpals",
+    "Paperpals"
+]
+
+strong_anim_table = [
     "Nightmare Freddy",
     "Nightmare Bonnie",
     "Nightmare Chica",
@@ -146,7 +149,10 @@ anim_table = [
     "Nightmare Fredbear",
     "Nightmare",
     "Fredbear",
-    "Spring Bonnie",
+    "Spring Bonnie"
+]
+
+halloween_anim_table = [
     "Jack-O-Bonnie",
     "Jack-O-Chica",
     "Animdude",

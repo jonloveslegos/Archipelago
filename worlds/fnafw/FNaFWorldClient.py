@@ -20,7 +20,7 @@ class FNaFWCommandProcessor(ClientCommandProcessor):
 
     def _cmd_patch(self):
         """Patch the vanilla game."""
-        bsdiff4.file_patch(os.getcwd() + "/FNaFW Game/fnafworld.exe", os.getcwd() + "/FNaFW Game/FNaFW Modded.exe",
+        bsdiff4.file_patch(os.getcwd() + "/FNaFW Game/fnaf-world.exe", os.getcwd() + "/FNaFW Game/FNaFW Modded.exe",
                            fnafw.data_path("patch.bsdiff"))
         self.output(f"Done!")
 
@@ -155,12 +155,13 @@ async def game_watcher(ctx: FNaFWContext):
             ctx.syncing = False
         path = os.path.expandvars("%appdata%/MMFApplications/fnafwAP1")
         sending = []
+        hinting = []
         victory = False
         filesread = ""
         if os.path.exists(os.path.expandvars("%appdata%/MMFApplications/fnafw1")):
             while True:
                 try:
-                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafw1"), 'r+') as f:
+                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafw1"), 'r') as f:
                         filesread = f.read()
                         f.close()
                     break
@@ -175,6 +176,9 @@ async def game_watcher(ctx: FNaFWContext):
                             if data.setId in filesread and data.setId != "" and not str(data.id)+"=sent" in lines:
                                 sending = sending+[(int(data.id))]
                                 f.write(str(data.id)+"=sent\n")
+                            if data.hintId+"=1" in filesread and data.hintId != "" and not str(data.id)+"HINT=sent" in lines:
+                                hinting = hinting+[(int(data.id))]
+                                f.write(str(data.id)+"HINT=sent\n")
                         f.close()
                     break
                 except PermissionError:
@@ -183,7 +187,7 @@ async def game_watcher(ctx: FNaFWContext):
         if os.path.exists(path):
             while True:
                 try:
-                    with open(path, 'r+') as f:
+                    with open(path, 'r') as f:
                         filesread = f.readlines()
                         if filesread.__contains__("fin=1\n"):
                             victory = True
@@ -196,6 +200,9 @@ async def game_watcher(ctx: FNaFWContext):
         ctx.locations_checked = sending
         message = [{"cmd": 'LocationChecks', "locations": sending}]
         await ctx.send_msgs(message)
+        if len(hinting) > 0:
+            hint_message = [{"cmd": 'LocationScouts', "locations": hinting, "create_as_hint": 2}]
+            await ctx.send_msgs(hint_message)
         if not ctx.finished_game and victory:
             await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
             ctx.finished_game = True
