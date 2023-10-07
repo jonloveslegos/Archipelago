@@ -71,6 +71,7 @@ class KHDaysContext(CommonContext):
     char_2 = "Xion"
     valid_characters = {"Roxas"}
     connected = "false"
+    locations_array = []
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -184,9 +185,8 @@ async def nds_sync_task(ctx: KHDaysContext):
                     data_decoded = json.loads(data.decode())
                     ctx.valid_characters = {items_by_id[item.item] for item in ctx.items_received if item.item < 25000}
                     if ctx.game is not None and 'checked_locs' in data_decoded:
-                        ctx.locations_array = []
                         for i in data_decoded["checked_locs"]:
-                            if not ctx.locations_array.__contains__(data_decoded["checked_locs"][i]):
+                            if data_decoded["checked_locs"][i] not in ctx.locations_array:
                                 ctx.locations_array.append(data_decoded["checked_locs"][i])
                                 if data_decoded["checked_locs"][i] not in ctx.server_locations:
                                     print("Unknown location: "+str(data_decoded["checked_locs"][i]))
@@ -220,6 +220,7 @@ async def nds_sync_task(ctx: KHDaysContext):
                 ctx.nds_streams = None
             if ctx.nds_status == CONNECTION_TENTATIVE_STATUS:
                 if not error_status:
+                    ctx.locations_array = []
                     logger.info("Successfully Connected to NDS")
                     ctx.nds_status = CONNECTION_CONNECTED_STATUS
                 else:
