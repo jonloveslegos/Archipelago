@@ -191,13 +191,13 @@ class KHDaysLogic(LogicMixin):
     def days_crowns_obtainable(self, state: CollectionState, player: int):
         obtainable = 0
         if self.days_has_day_access(state, self.days_mission_to_day(93), player):
-            obtainable += 1
+            obtainable += 1000
         return obtainable
 
     def days_challenges_completable(self, state: CollectionState, player: int):
         completable = 0
         if self.days_has_day_access(state, self.days_mission_to_day(93), player):
-            completable += 1
+            completable += 1000
         return completable
 
     def days_mission_to_day(self, mission_number: int):
@@ -282,6 +282,8 @@ class KHDaysLogic(LogicMixin):
             can_do = can_do and state.has_any({"Glide 3", "Glide 5"}, player)
         if day_number >= 11:
             can_do = can_do and self.days_has_magic(state, player)
+        if day_number >= self.days_mission_to_day(14):
+            can_do = can_do and state.has_any({"Block 2", "Block 4"}, player)
         return can_do and state.has("Panel Slot", player, max(0, self.days_day_to_mission(day_number)-5))
 
     def days_shop_status(self, state: CollectionState, player: int):

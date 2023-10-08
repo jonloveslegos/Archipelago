@@ -1,4 +1,7 @@
 console.clear()
+print("NOTICE: Items obtained from a chest will be in your inventory until you change rooms. THAT IS UNFIXABLE!")
+print("NOTICE: Items obtained from mission clears will only send out after you return to the hub. This may change in the future.")
+print("NOTICE: Mission rewards 1-3 are for normal clear, 4-5 are for full clear.")
 
 local socket = require("socket")
 local json = require('json')
@@ -498,6 +501,63 @@ equipSlotIds[7] = 0x04C6B0
 equipSlotIds[8] = 0x04C6B4
 equipSlotIds[9] = 0x04C6B8
 
+chestCount = {}
+ipsc = 1
+while ipsc <= 93 do
+    chestCount[ipsc] = 0
+    ipsc = ipsc + 1
+end
+chestCount[1] = 1
+chestCount[2] = 0
+chestCount[3] = 1
+chestCount[4] = 4
+chestCount[5] = 1
+chestCount[6] = 0
+chestCount[7] = 3
+chestCount[8] = 2
+chestCount[9] = 7
+chestCount[10] = 0
+chestCount[11] = 5
+chestCount[12] = 2
+chestCount[13] = 1
+chestCount[14] = 5
+chestCount[15] = 5
+chestCount[16] = 5
+chestCount[17] = 2
+chestCount[18] = 4
+chestCount[19] = 3
+chestCount[20] = 2
+chestCount[21] = 8
+chestCount[22] = 5
+chestCount[23] = 7
+chestCount[24] = 8
+chestCount[25] = 2
+chestCount[26] = 6
+chestCount[27] = 6
+chestCount[28] = 6
+chestCount[29] = 7
+chestCount[30] = 6
+chestCount[31] = 7
+chestCount[32] = 8
+chestCount[33] = 0
+chestCount[34] = 8
+chestCount[35] = 6
+chestCount[36] = 2
+chestCount[37] = 0
+chestCount[38] = 6
+chestCount[39] = 3
+chestCount[40] = 3
+chestCount[41] = 3
+chestCount[42] = 3
+chestCount[43] = 4
+chestCount[44] = 2
+chestCount[45] = 4
+chestCount[46] = 3
+chestCount[47] = 3
+chestCount[48] = 8
+chestCount[49] = 8
+chestCount[50] = 4
+
 sentIds = {}
 
 obtainedCount = {}
@@ -880,27 +940,36 @@ function main()
                         end
                         local itemName = index[tostring(0x194DC9+mainmemory.read_u16_le(b)-1)]
                         if itemName ~= nil then
-                            if sentIds[tostring(mainmemory.read_u16_le(b+2))] == nil then
-                                local merged = {}
-                                local e = 0
-                                for k, v in pairs(already_obtained) do
-                                    if countEntries(merged)[v] == nil then
-                                        merged[tostring(e)] = v
-                                        e = e + 1
-                                    else
-                                        if countEntries(merged)[v] <= 0 then
+                            if chestCount[mainmemory.read_u16_le(0x04C21C)] > mainmemory.read_u16_le(b+2) then
+                                if sentIds[tostring(mainmemory.read_u16_le(b+2))] == nil then
+                                    local merged = {}
+                                    local e = 0
+                                    for k, v in pairs(already_obtained) do
+                                        if countEntries(merged)[v] == nil then
                                             merged[tostring(e)] = v
                                             e = e + 1
+                                        else
+                                            if countEntries(merged)[v] <= 0 then
+                                                merged[tostring(e)] = v
+                                                e = e + 1
+                                            end
                                         end
                                     end
+                                    temp = mainmemory.read_u16_le(0x04C21C)*100
+                                    sentIds[tostring(mainmemory.read_u16_le(b+2))] = "done"
+                                    merged[tostring(e)] = mainmemory.read_u16_le(b+2)+500000+temp
+                                    print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": "..itemName.." "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(merged[tostring(e)])..",")
+                                    already_obtained = merged
                                 end
-                                temp = mainmemory.read_u16_le(0x04C21C)*100
-                                sentIds[tostring(mainmemory.read_u16_le(b+2))] = "done"
-                                merged[tostring(e)] = mainmemory.read_u16_le(b+2)+500000+temp
-                                print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": "..itemName.." "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(merged[tostring(e)])..",")
-                                already_obtained = merged
+                                mainmemory.write_u16_le(b, 0x0000)
+                            else
+                                mainmemory.write_u16_le(b, 0x0000)
+                                hasCount[itemName] = hasCount[itemName] + 1
+                                console.clear()
+                                print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": Obtained item higher than chest count, please report if you got this item from a chest. Moving to hub inventory for now.")
                             end
-                            mainmemory.write_u16_le(b, 0x0000)
+                        else
+                            print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": (UNKNOWN ITEM ID "..tostring(0x194DC9+mainmemory.read_u16_le(b)-1)..") "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(merged[tostring(e)])..",")
                         end
                     end
                 end
