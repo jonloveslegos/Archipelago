@@ -401,6 +401,9 @@ itemIds["Flowers Athirst"] = 0x194FC4
 itemIds["Stolen Thunder"] = 0x194FC5
 itemIds["Dying of the Light"] = 0x194FC6
 
+itemIds["Shining Shard"] = 0x194ED5
+itemIds["Blazing Shard"] = 0x194DD5
+
 synth = {}
 for k, v in pairs(itemIds) do
     synth[k] = 0
@@ -468,6 +471,8 @@ itemMax["Cura Recipe"] = 99
 itemMax["Curaga Recipe"] = 99
 itemMax["Elixir Recipe"] = 99
 itemMax["Megalixir Recipe"] = 99
+itemMax["Blazing Shard"] = 99
+itemMax["Shining Shard"] = 99
 
 slotIds = {}
 slotIds[0] = 0x04C712
@@ -963,14 +968,15 @@ function main()
                                 end
                                 mainmemory.write_u16_le(b, 0x0000)
                             else
-                                mainmemory.write_u16_le(b, 0x0000)
                                 hasCount[itemName] = hasCount[itemName] + 1
                                 console.clear()
                                 print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": Obtained item higher than chest count, please report if you got this item from a chest. Moving to hub inventory for now.")
+                                mainmemory.write_u16_le(b, 0x0000)
                             end
                         else
                             temp = mainmemory.read_u16_le(0x04C21C)*100
-                            print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": (UNKNOWN ITEM ID "..tostring(0x194DC9+mainmemory.read_u16_le(b)-1)..") "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(mainmemory.read_u16_le(b+2)+500000+temp)..",")
+                            print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": (UNKNOWN ITEM ID "..tostring(0x194DC9+mainmemory.read_u16_le(b)-1)..") "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(mainmemory.read_u16_le(b+2)+500000+temp)..", (Removing item from inventory.)")
+                            mainmemory.write_u16_le(b, 0x0000)
                         end
                     end
                 end
