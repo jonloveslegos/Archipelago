@@ -969,6 +969,8 @@ function main()
                                 print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": Obtained item higher than chest count, please report if you got this item from a chest. Moving to hub inventory for now.")
                             end
                         else
+                            temp = mainmemory.read_u16_le(0x04C21C)*100
+                            merged[tostring(e)] = mainmemory.read_u16_le(b+2)+500000+temp
                             print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": (UNKNOWN ITEM ID "..tostring(0x194DC9+mainmemory.read_u16_le(b)-1)..") "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(merged[tostring(e)])..",")
                         end
                     end
