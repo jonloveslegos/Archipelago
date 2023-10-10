@@ -147,6 +147,7 @@ def get_payload(ctx: KHDaysContext):
         {
             "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000],
             "checked_locs": ctx.check_locs_count,
+            "locs_sent": {key: value for key, value in ctx.locations_checked},
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
             "char_1": ctx.char_1,

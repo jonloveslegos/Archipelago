@@ -508,6 +508,18 @@ equipSlotIds[7] = 0x04C6B0
 equipSlotIds[8] = 0x04C6B4
 equipSlotIds[9] = 0x04C6B8
 
+chestObtains = {}
+ipsc = 1
+while ipsc <= 93 do
+    s = 0
+    chestObtains[ipsc] = {}
+    while s <= 99 do
+        chestObtains[(ipsc*100)+500000+s] = false
+        s = s + 1
+    end
+    ipsc = ipsc + 1
+end
+
 chestCount = {}
 ipsc = 1
 while ipsc <= 93 do
@@ -713,6 +725,23 @@ function processBlock(block)
             end
             for y, u in pairs(locBlock) do
                 moogleBuyCount[y] = u
+            end
+        end
+        local sentBlock = block["locs_sent"]
+        if locBlock ~= nil then
+            chestObtains = {}
+            ipsc = 1
+            while ipsc <= 93 do
+                s = 0
+                chestObtains[ipsc] = {}
+                while s <= 99 do
+                    chestObtains[(ipsc*100)+500000+s] = false
+                    s = s + 1
+                end
+                ipsc = ipsc + 1
+            end
+            for y, u in pairs(locBlock) do
+                chestObtains[u] = true
             end
         end
         local char1 = block["char_1"]
@@ -947,33 +976,36 @@ function main()
                         end
                         local itemName = index[tostring(0x194DC9+mainmemory.read_u16_le(b)-1)]
                         if itemName ~= nil then
-                            if chestCount[mainmemory.read_u16_le(0x04C21C)] > mainmemory.read_u16_le(b+2) then
-                                if sentIds[tostring(mainmemory.read_u16_le(b+2))] == nil then
-                                    local merged = {}
-                                    local e = 0
-                                    for k, v in pairs(already_obtained) do
-                                        if countEntries(merged)[v] == nil then
-                                            merged[tostring(e)] = v
-                                            e = e + 1
-                                        else
-                                            if countEntries(merged)[v] <= 0 then
+                            temp = mainmemory.read_u16_le(0x04C21C)*100
+                            if chestObtains[tostring(tostring(mainmemory.read_u16_le(b+2)+500000+temp))] == false then
+                                if chestCount[mainmemory.read_u16_le(0x04C21C)] >= mainmemory.read_u16_le(b+2) then
+                                    if sentIds[tostring(mainmemory.read_u16_le(b+2))] == nil then
+                                        local merged = {}
+                                        local e = 0
+                                        for k, v in pairs(already_obtained) do
+                                            if countEntries(merged)[v] == nil then
                                                 merged[tostring(e)] = v
                                                 e = e + 1
+                                            else
+                                                if countEntries(merged)[v] <= 0 then
+                                                    merged[tostring(e)] = v
+                                                    e = e + 1
+                                                end
                                             end
                                         end
+                                        sentIds[tostring(mainmemory.read_u16_le(b+2))] = "done"
+                                        merged[tostring(e)] = mainmemory.read_u16_le(b+2)+500000+temp
+                                        chestObtains[tostring(mainmemory.read_u16_le(b+2)+500000+temp)] = true
+                                        print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": "..itemName.." "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(merged[tostring(e)])..",")
+                                        already_obtained = merged
                                     end
-                                    temp = mainmemory.read_u16_le(0x04C21C)*100
-                                    sentIds[tostring(mainmemory.read_u16_le(b+2))] = "done"
-                                    merged[tostring(e)] = mainmemory.read_u16_le(b+2)+500000+temp
-                                    print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": "..itemName.." "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(merged[tostring(e)])..",")
-                                    already_obtained = merged
+                                    mainmemory.write_u16_le(b, 0x0000)
+                                else
+                                    hasCount[itemName] = hasCount[itemName] + 1
+                                    console.clear()
+                                    print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": Obtained item higher than chest count, please report if you got this item from a chest. Moving item to hub inventory for now.")
+                                    mainmemory.write_u16_le(b, 0x0000)
                                 end
-                                mainmemory.write_u16_le(b, 0x0000)
-                            else
-                                hasCount[itemName] = hasCount[itemName] + 1
-                                console.clear()
-                                print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": Obtained item higher than chest count, please report if you got this item from a chest. Moving to hub inventory for now.")
-                                mainmemory.write_u16_le(b, 0x0000)
                             end
                         else
                             temp = mainmemory.read_u16_le(0x04C21C)*100
