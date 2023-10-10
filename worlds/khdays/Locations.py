@@ -110,5 +110,8 @@ for i in range(93):
     location_table["Mission "+str(i+1)+": Reward 4"] = 570104+(i*100)
     location_table["Mission "+str(i+1)+": Reward 5"] = 570105+(i*100)
 
+for i in range(100):
+    location_table["TEMP"+str(i+1)] = 99999000+(i*1)
+
 lookup_id_to_Location: typing.Dict[int, str] = {data: item_name for item_name, data in location_table.items() if
                                                 data}
