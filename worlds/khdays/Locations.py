@@ -81,6 +81,7 @@ location_table = {
     "Moogle: Technical Gear 3 1": 529800,
     "Moogle: Magic Ring 1": 555900,
     "Moogle: Fencer's Ring 1": 556100,
+    "Moogle: Triplecast 3 1": 521400,
     "Hub: LV Doubler 5 1": 516300,
 }
 
