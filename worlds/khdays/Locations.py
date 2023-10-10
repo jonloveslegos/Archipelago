@@ -19,6 +19,7 @@ location_table = {
     "Mission 7: Potion 1": 500700,
     "Mission 7: Potion 2": 500701,
     "Mission 7: Shining Shard 3": 500702,
+    "Mission 8: Iron 2": 500801,
     "Mission 9: Fire Recipe 1": 500900,
     "Mission 9: Potion 2": 500901,
     "Mission 9: Blazing Shard 3": 500902,
@@ -30,13 +31,41 @@ location_table = {
     "Mission 11: Potion 1": 501100,
     "Mission 11: Potion 2": 501101,
     "Mission 11: Potion 3": 501102,
+    "Mission 11: Blazing Shard 4": 501103,
     "Mission 11: Loaded Gear 5": 501104,
     "Mission 12: Potion 1": 501200,
     "Mission 12: Potion 2": 501201,
     "Mission 13: Power Unit 1": 501300,
     "Mission 14: Potion 1": 501400,
     "Mission 14: Potion 2": 501401,
+    "Mission 14: Iron 3": 501402,
+    "Mission 14: Blazing Shard 4": 501403,
     "Mission 14: Potion 5": 501404,
+    "Mission 15: Potion 2": 501501,
+    "Mission 15: Potion 4": 501503,
+    "Mission 15: Potion 5": 501504,
+    "Mission 15: Panacea 1": 501500,
+    "Mission 16: Loaded Gear+ 2 1": 501600,
+    "Mission 16: Potion 2": 501601,
+    "Mission 16: Ether 3": 501602,
+    "Mission 16: Ether 4": 501603,
+    "Mission 16: Shining Shard 5": 501604,
+    "Mission 17: Panacea 1": 501700,
+    "Mission 17: Blazing Shard 2": 501701,
+    "Mission 18: Potion 1": 501800,
+    "Mission 18: Potion 2": 501801,
+    "Mission 18: Ether 3": 501802,
+    "Mission 18: Potion 4": 501803,
+    "Mission 20: Panacea 1": 502000,
+    "Mission 20: Panacea 2": 502001,
+    "Mission 21: Potion 1": 502100,
+    "Mission 21: Potion 2": 502101,
+    "Mission 21: Shining Shard 3": 502102,
+    "Mission 21: Potion 4": 502103,
+    "Mission 21: Potion 5": 502104,
+    "Mission 21: Iron 6": 502105,
+    "Mission 21: Potion 7": 502106,
+    "Mission 21: Iron 8": 502107,
     "Moogle: Panel Slot 1": 510000,
     "Moogle: Aerial Recovery 1": 524700,
     "Moogle: Power Unit 1": 534600,
@@ -50,16 +79,21 @@ location_table = {
     "Moogle: Lift Gear 3 1": 530400,
     "Moogle: Chrono Gear 3 1": 530000,
     "Moogle: Technical Gear 3 1": 529800,
-    "Moogle: Triplecast 3 1": 521400,
-    "Mission 15: Potion 2": 501501,
-    "Mission 15: Potion 4": 501503,
-    "Mission 15: Potion 5": 501504,
-    "Mission 15: Panacea 1": 501500,
+    "Moogle: Magic Ring 1": 555900,
+    "Moogle: Fencer's Ring 1": 556100,
+    "Hub: LV Doubler 5 1": 516300,
 }
 
 for i in range(20):
     location_table["Moogle: Potion "+str(i+1)] = 510100+i
     location_table["Moogle: Ether "+str(i+1)] = 510400+i
+
+for i in range(10):
+    location_table["Moogle: Hi-Potion "+str(i+1)] = 510200+i
+    location_table["Moogle: Hi-Ether "+str(i+1)] = 510500+i
+
+for i in range(5):
+    location_table["Moogle: Mega-Potion "+str(i+1)] = 510300+i
 
 for i in range(10):
     location_table["Moogle: Fire "+str(i+3)] = 519200+i+2

@@ -253,6 +253,7 @@ item_table: Dict[str, ItemData] = {
     "Megalixir Recipe": ItemData(progression, 10, 0x194EFA),
     "Shining Shard": ItemData(filler, 1, 0x194ED5),
     "Blazing Shard": ItemData(filler, 4, 0x194DD5),
+    "Iron": ItemData(filler, 1, 0x194EFF),
 }	
 
 i = 0

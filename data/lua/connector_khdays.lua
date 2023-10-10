@@ -403,6 +403,7 @@ itemIds["Dying of the Light"] = 0x194FC6
 
 itemIds["Shining Shard"] = 0x194ED5
 itemIds["Blazing Shard"] = 0x194DD5
+itemIds["Iron"] = 0x194EFF
 
 synth = {}
 for k, v in pairs(itemIds) do
@@ -473,6 +474,7 @@ itemMax["Elixir Recipe"] = 99
 itemMax["Megalixir Recipe"] = 99
 itemMax["Blazing Shard"] = 99
 itemMax["Shining Shard"] = 99
+itemMax["Iron"] = 99
 
 slotIds = {}
 slotIds[0] = 0x04C712
@@ -975,7 +977,7 @@ function main()
                             end
                         else
                             temp = mainmemory.read_u16_le(0x04C21C)*100
-                            print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": (UNKNOWN ITEM ID "..tostring(0x194DC9+mainmemory.read_u16_le(b)-1)..") "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(mainmemory.read_u16_le(b+2)+500000+temp)..", (Removing item from inventory.)")
+                            print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": (UNKNOWN ITEM ID ".."0x"..string.format("%X", 0x000DC9+mainmemory.read_u16_le(b)-1)..") "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(mainmemory.read_u16_le(b+2)+500000+temp)..", (Removing item from inventory.)")
                             mainmemory.write_u16_le(b, 0x0000)
                         end
                     end
