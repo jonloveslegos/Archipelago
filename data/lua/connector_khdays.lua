@@ -1002,7 +1002,6 @@ function main()
                                     mainmemory.write_u16_le(b, 0x0000)
                                 else
                                     hasCount[itemName] = hasCount[itemName] + 1
-                                    console.clear()
                                     print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": Obtained item higher than chest count, please report if you got this item from a chest. Moving item to hub inventory for now.")
                                     mainmemory.write_u16_le(b, 0x0000)
                                 end
