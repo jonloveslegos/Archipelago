@@ -28,6 +28,11 @@ components.append(Component("FNaF World Client", func=run_client))
 client_version = 7
 
 
+def data_path(file_name: str):
+    import pkgutil
+    return pkgutil.get_data(__name__, "data/" + file_name)
+
+
 class FNaFWWeb(WebWorld):
     tutorials = [Tutorial(
         "Multiworld Setup Tutorial",
@@ -62,7 +67,9 @@ class FNaFWWorld(World):
             'player_name': self.multiworld.get_player_name(self.player),
             'player_id': self.player,
             'client_version': client_version,
-            'race': self.multiworld.is_race
+            'race': self.multiworld.is_race,
+            'exclude_halloween': bool(self.multiworld.exclude_halloween[self.player].value),
+            'exclude_initial_characters': bool(self.multiworld.initial_characters[self.player].value)
         }
 
     def create_items(self):
@@ -74,22 +81,43 @@ class FNaFWWorld(World):
             itempool += [name]
         itempool += ["Progressive Endoskeleton"] * 2
 
-        chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
-        self.multiworld.get_location("Freddy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
-        chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
-        self.multiworld.get_location("Bonnie", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
-        chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
-        self.multiworld.get_location("Chica", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
-        chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
-        self.multiworld.get_location("Foxy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
-        chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
-        self.multiworld.get_location("Toy Bonnie", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
-        chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
-        self.multiworld.get_location("Toy Chica", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
-        chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
-        self.multiworld.get_location("Toy Freddy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
-        chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
-        self.multiworld.get_location("Mangle", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+        if not self.multiworld.initial_characters[self.player]:
+            self.multiworld.get_location("Freddy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Freddy"))))
+            self.multiworld.get_location("Bonnie", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Bonnie"))))
+            self.multiworld.get_location("Chica", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Chica"))))
+            self.multiworld.get_location("Foxy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Foxy"))))
+            self.multiworld.get_location("Toy Bonnie", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Toy Bonnie"))))
+            self.multiworld.get_location("Toy Chica", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Toy Chica"))))
+            self.multiworld.get_location("Toy Freddy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Toy Freddy"))))
+            self.multiworld.get_location("Mangle", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Mangle"))))
+        else:
+            chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
+            self.multiworld.get_location("Freddy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+            chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
+            self.multiworld.get_location("Bonnie", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+            chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
+            self.multiworld.get_location("Chica", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+            chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
+            self.multiworld.get_location("Foxy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+            chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
+            self.multiworld.get_location("Toy Bonnie", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+            chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
+            self.multiworld.get_location("Toy Chica", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+            chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
+            self.multiworld.get_location("Toy Freddy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+            chosen_anim = self.multiworld.random.choice([item for item in start_anim_table if item in itempool])
+            self.multiworld.get_location("Mangle", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+
+        if self.multiworld.exclude_halloween[self.player]:
+            self.multiworld.get_location("Jack-O-Chica", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Jack-O-Chica"))))
+            self.multiworld.get_location("Purpleguy", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Purpleguy"))))
+            self.multiworld.get_location("Coffee", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Coffee"))))
+            self.multiworld.get_location("Jack-O-Bonnie", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Jack-O-Bonnie"))))
+            self.multiworld.get_location("Nightmare BB", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Nightmare BB"))))
+            self.multiworld.get_location("Nightmarionne", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Nightmarionne"))))
+            self.multiworld.get_location("Mr. Chipper", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Mr. Chipper"))))
+            self.multiworld.get_location("Animdude", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Animdude"))))
+
 
         # Convert itempool into real items
 

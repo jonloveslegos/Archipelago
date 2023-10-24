@@ -186,6 +186,9 @@ minecraft_versions.json
 #undertale stuff
 /Undertale/
 
+#fnafw stuff
+/FNaFW Game/
+
 # OS General Files
 .DS_Store
 .AppleDouble

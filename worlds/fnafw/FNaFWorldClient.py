@@ -20,8 +20,10 @@ class FNaFWCommandProcessor(ClientCommandProcessor):
 
     def _cmd_patch(self):
         """Patch the vanilla game."""
-        bsdiff4.file_patch(os.getcwd() + "/FNaFW Game/fnaf-world.exe", os.getcwd() + "/FNaFW Game/FNaFW Modded.exe",
-                           fnafw.data_path("patch.bsdiff"))
+        with open(os.path.join(os.getcwd(), "FNaFW Game", "fnaf-world.exe"), "rb") as f:
+            patchedFile = bsdiff4.patch(f.read(), fnafw.data_path("patch.bsdiff"))
+        with open(os.path.join(os.getcwd(), "FNaFW Game", "FNaFW Modded.exe"), "wb") as f:
+            f.write(patchedFile)
         self.output(f"Done!")
 
 
@@ -72,6 +74,10 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
             with open(path, "w") as f:
                 f.write("[fnafw]\n")
                 f.close()
+        path = os.path.expandvars("%appdata%/MMFApplications/fnafwAP1")
+        with open(path, "w") as f:
+            f.write("[fnafw]\n")
+            f.close()
 
     elif cmd == 'ReceivedItems':
         start_index = args["index"]
@@ -157,12 +163,12 @@ async def game_watcher(ctx: FNaFWContext):
         sending = []
         hinting = []
         victory = False
-        filesread = ""
+        filesread = []
         if os.path.exists(os.path.expandvars("%appdata%/MMFApplications/fnafw1")):
             while True:
                 try:
                     with open(os.path.expandvars("%appdata%/MMFApplications/fnafw1"), 'r') as f:
-                        filesread = f.read()
+                        filesread = f.readlines()
                         f.close()
                     break
                 except PermissionError:
@@ -173,7 +179,7 @@ async def game_watcher(ctx: FNaFWContext):
                     with open(path, 'r+') as f:
                         lines = f.read()
                         for name, data in location_table.items():
-                            if data.setId in filesread and data.setId != "" and not str(data.id)+"=sent" in lines:
+                            if data.setId+"=1" in filesread and data.setId != "" and not str(data.id)+"=sent" in lines:
                                 sending = sending+[(int(data.id))]
                                 f.write(str(data.id)+"=sent\n")
                             if data.hintId+"=1" in filesread and data.hintId != "" and not str(data.id)+"HINT=sent" in lines:
@@ -189,7 +195,7 @@ async def game_watcher(ctx: FNaFWContext):
                 try:
                     with open(path, 'r') as f:
                         filesread = f.readlines()
-                        if filesread.__contains__("fin=1\n"):
+                        if "fin=1\n" in filesread:
                             victory = True
                         f.close()
                     break

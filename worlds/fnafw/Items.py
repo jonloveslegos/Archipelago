@@ -47,7 +47,7 @@ item_table = {
     "Plushtrap": ItemData(797230, ItemClassification.useful, "31have"),
     "Endoplush": ItemData(797231, ItemClassification.useful, "32have"),
     "Springtrap": ItemData(797232, ItemClassification.useful, "33have"),
-    "RXQ": ItemData(797233, ItemClassification.useful, "34have"),
+    "RWQ": ItemData(797233, ItemClassification.useful, "34have"),
     "Crying Child": ItemData(797234, ItemClassification.useful, "35have"),
     "Funtime Foxy": ItemData(797235, ItemClassification.useful, "36have"),
     "Nightmare Fredbear": ItemData(797236, ItemClassification.useful, "37have"),
@@ -104,6 +104,16 @@ item_table = {
     "BossDrain01": ItemData(797287, ItemClassification.useful, "p19"),
     "BossDrain02": ItemData(797288, ItemClassification.useful, "p20"),
     "BossDrain-X": ItemData(797289, ItemClassification.useful, "p21"),
+    "Choppy's Woods Access Switch": ItemData(797290, ItemClassification.progression, "sw1"),
+    "Lilygear Lake Access Switch": ItemData(797291, ItemClassification.progression, "sw2"),
+    "Blacktomb Yard Access Switch": ItemData(797292, ItemClassification.progression, "sw3"),
+    "Pinwheel Circus Access Switch": ItemData(797293, ItemClassification.progression, "sw4"),
+    "Key Shortcut Switch": ItemData(797294, ItemClassification.progression, "sw5"),
+    "Laser Switch 1": ItemData(797295, ItemClassification.progression, "sw6"),
+    "Laser Switch 2": ItemData(797296, ItemClassification.progression, "sw7"),
+    "Laser Switch 3": ItemData(797297, ItemClassification.progression, "sw8"),
+    "Laser Switch 4": ItemData(797298, ItemClassification.progression, "sw9"),
+    "Key": ItemData(797299, ItemClassification.progression, "key"),
 }
 
 start_anim_table = [
@@ -118,49 +128,52 @@ start_anim_table = [
     "Balloon Boy",
     "JJ",
     "Phantom Freddy",
-    "Phantom Chica",
     "Phantom BB",
-    "Phantom Foxy",
+    "Phantom Chica",
     "Phantom Mangle",
-    "Withered Bonnie",
+    "Withered Foxy",
+    "Phantom Foxy",
+]
+
+mid_anim_table = [
     "Withered Chica",
     "Withered Freddy",
-    "Withered Foxy",
+    "Withered Bonnie",
     "Shadow Freddy",
     "Marionette",
     "Phantom Marionette",
-    "Golden Freddy",
-    "Paperpals"
-]
-
-strong_anim_table = [
-    "Nightmare Freddy",
     "Nightmare Bonnie",
     "Nightmare Chica",
     "Nightmare Foxy",
+]
+
+late_anim_table = [
     "Endo 01",
     "Endo 02",
     "Plushtrap",
     "Endoplush",
     "Springtrap",
-    "RXQ",
+    "RWQ",
     "Crying Child",
     "Funtime Foxy",
     "Nightmare Fredbear",
     "Nightmare",
     "Fredbear",
-    "Spring Bonnie"
+    "Spring Bonnie",
+    "Golden Freddy",
+    "Paperpals",
+    "Nightmare Freddy",
 ]
 
 halloween_anim_table = [
-    "Jack-O-Bonnie",
     "Jack-O-Chica",
-    "Animdude",
-    "Mr. Chipper",
     "Nightmare BB",
-    "Nightmarionne",
     "Coffee",
-    "Purpleguy"
+    "Jack-O-Bonnie",
+    "Purpleguy",
+    "Nightmarionne",
+    "Mr. Chipper",
+    "Animdude",
 ]
 
 chip_table = [
