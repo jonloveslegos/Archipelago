@@ -1,12 +1,20 @@
 from __future__ import annotations
+import os
+import sys
+import asyncio
+import typing
+import bsdiff4
+import shutil
 import multiprocessing
 
 import Utils
 
-from worlds import fnafw
-from CommonClient import *
-from worlds.fnafw import FNaFWWorld, item_table, location_table
-import bsdiff4
+from NetUtils import NetworkItem, ClientStatus
+from worlds.fnafw import FNaFWWorld, item_table, location_table, data_path
+from MultiServer import mark_raw
+from CommonClient import CommonContext, server_loop, \
+    gui_enabled, ClientCommandProcessor, logger, get_base_parser
+from Utils import async_start
 
 
 class FNaFWCommandProcessor(ClientCommandProcessor):
@@ -21,7 +29,7 @@ class FNaFWCommandProcessor(ClientCommandProcessor):
     def _cmd_patch(self):
         """Patch the vanilla game."""
         with open(os.path.join(os.getcwd(), "FNaFW Game", "fnaf-world.exe"), "rb") as f:
-            patchedFile = bsdiff4.patch(f.read(), fnafw.data_path("patch.bsdiff"))
+            patchedFile = bsdiff4.patch(f.read(), data_path("patch.bsdiff"))
         with open(os.path.join(os.getcwd(), "FNaFW Game", "FNaFW Modded.exe"), "wb") as f:
             f.write(patchedFile)
         self.output(f"Done!")
@@ -31,6 +39,9 @@ class FNaFWContext(CommonContext):
     command_processor: int = FNaFWCommandProcessor
     game = "FNaFW"
     items_handling = 0b111  # full remote
+    progressive_anims_order = []
+    progressive_chips_order = []
+    progressive_bytes_order = []
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -69,6 +80,9 @@ async def not_in_use(filename):
 
 async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
     if cmd == 'Connected':
+        ctx.progressive_anims_order = args["slot_data"]["Progressive Animatronics Order"]
+        ctx.progressive_chips_order = args["slot_data"]["Progressive Chips Order"]
+        ctx.progressive_bytes_order = args["slot_data"]["Progressive Bytes Order"]
         path = os.path.expandvars("%appdata%/MMFApplications/fnafw1")
         if not os.path.exists(path):
             with open(path, "w") as f:
@@ -92,28 +106,42 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
             await ctx.send_msgs(sync_msg)
         if start_index == len(ctx.items_received):
             if os.path.exists(os.path.expandvars("%appdata%/MMFApplications/fnafwAP1")):
+                temp_progressive = {}
+                temp_progressive["anims"] = ctx.progressive_anims_order.copy()
+                temp_progressive["bytes"] = ctx.progressive_bytes_order.copy()
+                temp_progressive["chips"] = ctx.progressive_chips_order.copy()
                 for item in args['items']:
+                    if FNaFWWorld.item_id_to_name[NetworkItem(*item).item] == "Progressive Animatronic":
+                        if len(temp_progressive["anims"]) > 0:
+                            item_got = item_table[temp_progressive["anims"].pop(0)].setId
+                        else:
+                            item_got = "nothing"
+                    elif FNaFWWorld.item_id_to_name[NetworkItem(*item).item] == "Progressive Byte":
+                        if len(temp_progressive["bytes"]) > 0:
+                            item_got = item_table[temp_progressive["bytes"].pop(0)].setId
+                        else:
+                            item_got = "nothing"
+                    elif FNaFWWorld.item_id_to_name[NetworkItem(*item).item] == "Progressive Chip":
+                        if len(temp_progressive["chips"]) > 0:
+                            item_got = item_table[temp_progressive["chips"].pop(0)].setId
+                        else:
+                            item_got = "nothing"
+                    else:
+                        item_got = item_table[FNaFWWorld.item_id_to_name[NetworkItem(*item).item]].setId
                     while True:
                         try:
                             with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAP1"), 'r+') as f:
                                 lines = f.read()
-                                item_got = item_table[FNaFWWorld.item_id_to_name[NetworkItem(*item).item]].setId
                                 if not item_got == "armor":
                                     f.write(str(item_got)+"=1\n")
                                 if not lines.__contains__("armor="):
                                     f.write("armor=0\n")
                                 f.close()
-                            break
-                        except PermissionError:
-                            continue
-                    while True:
-                        try:
                             with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAP1"), "r") as file:
                                 replacement = ""
                                 for line in file:
                                     line = line.strip()
-                                    if item_table[FNaFWWorld.item_id_to_name[NetworkItem(*item).item]].setId == \
-                                            "armor":
+                                    if item_got == "armor":
                                         if (line.__contains__("armor=10")):
                                             changes = line
                                         elif (line.__contains__("armor=0")):

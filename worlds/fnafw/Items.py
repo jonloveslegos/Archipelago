@@ -114,6 +114,9 @@ item_table = {
     "Laser Switch 3": ItemData(797297, ItemClassification.progression, "sw8"),
     "Laser Switch 4": ItemData(797298, ItemClassification.progression, "sw9"),
     "Key": ItemData(797299, ItemClassification.progression, "key"),
+    "Progressive Animatronic": ItemData(797300, ItemClassification.useful, "-"),
+    "Progressive Chip": ItemData(797301, ItemClassification.useful, "-"),
+    "Progressive Byte": ItemData(797302, ItemClassification.useful, "-"),
 }
 
 start_anim_table = [
@@ -124,45 +127,69 @@ start_anim_table = [
     "Toy Bonnie",
     "Toy Chica",
     "Toy Freddy",
-    "Mangle",
+    "Mangle"
+]
+
+fazbear_hills_anim_table = [
     "Balloon Boy",
     "JJ",
     "Phantom Freddy",
     "Phantom BB",
-    "Phantom Chica",
-    "Phantom Mangle",
-    "Withered Foxy",
-    "Phantom Foxy",
+    "Phantom Chica"
 ]
 
-mid_anim_table = [
+choppys_woods_anim_table = [
+    "Phantom Mangle",
+    "Withered Foxy",
+    "Phantom Foxy"
+]
+
+dusting_fields_anim_table = [
     "Withered Chica",
     "Withered Freddy",
-    "Withered Bonnie",
+    "Withered Bonnie"
+]
+
+lilygear_lake_anim_table = [
     "Shadow Freddy",
     "Marionette",
-    "Phantom Marionette",
+    "Phantom Marionette"
+]
+
+mysterious_mine_anim_table = [
+    "Golden Freddy",
+    "Paperpals",
+    "Nightmare Freddy"
+]
+
+blacktomb_yard_anim_table = [
     "Nightmare Bonnie",
     "Nightmare Chica",
     "Nightmare Foxy",
 ]
 
-late_anim_table = [
+deep_metal_mine_anim_table = [
     "Endo 01",
     "Endo 02",
     "Plushtrap",
+]
+
+pinwheel_circus_anim_table = [
     "Endoplush",
     "Springtrap",
     "RWQ",
+]
+
+top_layer_anim_table = [
     "Crying Child",
     "Funtime Foxy",
     "Nightmare Fredbear",
+]
+
+pinwheel_funhouse_anim_table = [
     "Nightmare",
     "Fredbear",
     "Spring Bonnie",
-    "Golden Freddy",
-    "Paperpals",
-    "Nightmare Freddy",
 ]
 
 halloween_anim_table = [
@@ -176,7 +203,7 @@ halloween_anim_table = [
     "Animdude",
 ]
 
-chip_table = [
+green_chip_table = [
     "Headstart Defense",
     "Headstart Strength",
     "Headstart Speed",
@@ -184,13 +211,19 @@ chip_table = [
     "Quickstart Party",
     "Block Jumpscare",
     "Run Luck",
-    "Endless Defense",
-    "Endless Strength",
-    "Endless Speed",
+]
+
+orange_chip_table = [
     "Evercomet Strong",
+    "Find Characters",
+    "Endless Speed",
     "Auto Giftboxes",
     "Auto Regen",
-    "Find Characters",
+    "Endless Defense",
+    "Endless Strength",
+]
+
+red_chip_table = [
     "Curse Status",
     "Freddle Fury",
     "Auto Shield",
@@ -200,26 +233,32 @@ chip_table = [
     "Block Unscrew"
 ]
 
-byte_table = [
+weak_byte_table = [
     "Gnat",
     "Neon Bee",
-    "Neon Wasp",
     "Medpod 1",
     "Medpod 2",
-    "Mega-Med",
+]
+
+byte_table = [
+    "Neon Wasp",
     "Mini-Reaper",
     "Reaper",
-    "X-Reaper",
     "Mini-FO",
     "UFO",
-    "X-FO",
     "Block5",
     "Block20",
+    "BossDrain01",
+]
+
+strong_byte_table = [
+    "Mega-Med",
+    "X-Reaper",
+    "X-FO",
     "Block50",
     "Pop-Pop",
     "BOOM!",
     "KABOOM!",
-    "BossDrain01",
     "BossDrain02",
     "BossDrain-X"
 ]
