@@ -5,8 +5,6 @@ from BaseClasses import MultiWorld, CollectionState
 def _fnaf_world_can_access(state: CollectionState, player: int, name: str):
     if name == "Choppy's Woods":
         return state.has("Choppy's Woods Access Switch", player)
-    elif name == "Dusting Fields":
-        return state.has("Choppy's Woods Access Switch", player)
     elif name == "Lilygear Lake":
         return state.has("Lilygear Lake Access Switch", player)
     elif name == "Blacktomb Yard":
@@ -41,9 +39,9 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Fazbear Hills: Lolbit Shop 1", player), lambda state: True)
     set_rule(world.get_location("Choppy's Woods: Switch", player), lambda state: True)
     set_rule(world.get_location("Choppy's Woods: Lolbit Shop 1", player), lambda state: True)
-    set_rule(world.get_location("Withered Foxy", player), lambda state: world.hard_logic[player] or _fnaf_world_can_access(state, player, "Choppy's Woods"))
-    set_rule(world.get_location("Phantom Foxy", player), lambda state: world.hard_logic[player] or _fnaf_world_can_access(state, player, "Choppy's Woods"))
-    set_rule(world.get_location("Phantom Mangle", player), lambda state: world.hard_logic[player] or _fnaf_world_can_access(state, player, "Choppy's Woods"))
+    set_rule(world.get_location("Withered Foxy", player), lambda state: True)
+    set_rule(world.get_location("Phantom Foxy", player), lambda state: True)
+    set_rule(world.get_location("Phantom Mangle", player), lambda state: True)
     set_rule(world.get_location("Fazbear Hills: Endo Shop 2", player), lambda state: world.hard_logic[player] or _fnaf_world_can_access(state, player, "Choppy's Woods"))
     set_rule(world.get_location("Fazbear Hills: Endo Shop 3", player), lambda state: world.hard_logic[player] or _fnaf_world_can_access(state, player, "Blacktomb Yard"))
     set_rule(world.get_location("Fazbear Hills: Lolbit Shop 2", player), lambda state: world.hard_logic[player] or _fnaf_world_can_access(state, player, "Choppy's Woods"))
@@ -131,12 +129,12 @@ def set_rules(world: MultiWorld, player: int):
 
     # Requires "Key"
     set_rule(world.get_location("Dusting Fields: Laser Switch", player), lambda state: _fnaf_world_can_access(state, player, "Choppy's Woods") and state.has("Key", player))
-    set_rule(world.get_location("Fazbear Hills: Laser Switch", player), lambda state: _fnaf_world_can_access(state, player, "Lilygear Lake") and state.has("Key", player))
+    set_rule(world.get_location("Fazbear Hills: Laser Switch", player), lambda state: state.has("Key", player))
     set_rule(world.get_location("Lilygear Lake: Laser Switch", player), lambda state: _fnaf_world_can_access(state, player, "Lilygear Lake") and state.has("Key", player))
     set_rule(world.get_location("Deep-Metal Mine: Laser Switch", player), lambda state: _fnaf_world_can_access(state, player, "Blacktomb Yard") and state.has("Key", player))
 
 
 # Sets rules on completion condition
 def set_completion_rules(world: MultiWorld, player: int):
-    completion_requirements = lambda state: _fnaf_world_can_access(state, player, "Lilygear Lake") and state.has("Laser Switch 1", player) and state.has("Laser Switch 2", player) and state.has("Laser Switch 3", player) and state.has("Laser Switch 4", player)
+    completion_requirements = lambda state: _fnaf_world_can_access(state, player, "Blacktomb Yard") and _fnaf_world_can_access(state, player, "Choppy's Woods") and _fnaf_world_can_access(state, player, "Lilygear Lake") and state.has("Laser Switch 1", player) and state.has("Laser Switch 2", player) and state.has("Laser Switch 3", player) and state.has("Laser Switch 4", player)
     world.completion_condition[player] = lambda state: completion_requirements(state)
