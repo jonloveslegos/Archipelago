@@ -19,8 +19,8 @@ def run_client():
     p.start()
 
 
-# components.append(Component("Undertale Client", "UndertaleClient"))
-components.append(Component("Undertale Client", func=run_client))
+components.append(Component("Undertale Client", "UndertaleClient"))
+# components.append(Component("Undertale Client", func=run_client))
 
 
 def data_path(file_name: str):
@@ -108,6 +108,15 @@ class UndertaleWorld(World):
         self.multiworld.get_location("Undyne Date", self.player).place_locked_item(self.create_item("Undyne Date"))
         self.multiworld.get_location("Alphys Date", self.player).place_locked_item(self.create_item("Alphys Date"))
         self.multiworld.get_location("Papyrus Date", self.player).place_locked_item(self.create_item("Papyrus Date"))
+        self.multiworld.get_location("Ruins Switch Puzzle 1", self.player).place_locked_item(self.create_item("Ruins Switch Puzzle 1"))
+        self.multiworld.get_location("Ruins Switch Puzzle 2 Switch 1", self.player).place_locked_item(self.create_item("Ruins Switch Puzzle 2 Switch 1"))
+        self.multiworld.get_location("Ruins Switch Puzzle 2 Switch 2", self.player).place_locked_item(self.create_item("Ruins Switch Puzzle 2 Switch 2"))
+        self.multiworld.get_location("Ruins Rock Puzzle 1", self.player).place_locked_item(self.create_item("Ruins Rock Puzzle 1"))
+        self.multiworld.get_location("Ruins Rock Puzzle 2", self.player).place_locked_item(self.create_item("Ruins Rock Puzzle 2"))
+        self.multiworld.get_location("Ruins Switch Puzzle 3", self.player).place_locked_item(self.create_item("Ruins Switch Puzzle 3"))
+        self.multiworld.get_location("Ruins Switch Puzzle 4 Switch 1", self.player).place_locked_item(self.create_item("Ruins Switch Puzzle 4 Switch 1"))
+        self.multiworld.get_location("Ruins Switch Puzzle 4 Switch 2", self.player).place_locked_item(self.create_item("Ruins Switch Puzzle 4 Switch 2"))
+        self.multiworld.get_location("Ruins Switch Puzzle 4 Switch 3", self.player).place_locked_item(self.create_item("Ruins Switch Puzzle 4 Switch 3"))
         # Generate item pool
         itempool = []
         # Add all required progression items

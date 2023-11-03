@@ -5,6 +5,7 @@ import asyncio
 import typing
 import bsdiff4
 import shutil
+import platformdirs
 
 import Utils
 
@@ -45,7 +46,7 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
         if isinstance(self.ctx, UndertaleContext):
             os.makedirs(name=os.path.join(os.getcwd(), "Undertale"), exist_ok=True)
             tempInstall = steaminstall
-            if not os.path.isfile(os.path.join(tempInstall, "data.win")):
+            if not os.path.isfile(os.path.join(tempInstall, "game.unx")) and not os.path.isfile(os.path.join(tempInstall, "data.win")):
                 tempInstall = None
             if tempInstall is None:
                 tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Undertale"
@@ -55,7 +56,7 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
                 tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Undertale"
                 if not os.path.exists(tempInstall):
                     tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\Undertale"
-            if not os.path.exists(tempInstall) or not os.path.exists(tempInstall) or not os.path.isfile(os.path.join(tempInstall, "data.win")):
+            if not os.path.exists(tempInstall) or not os.path.exists(tempInstall) or (not os.path.isfile(os.path.join(tempInstall, "game.unx")) and not os.path.isfile(os.path.join(tempInstall, "data.win"))):
                 self.output("ERROR: Cannot find Undertale. Please rerun the command with the correct folder."
                             " command. \"/auto_patch (Steam directory)\".")
             else:
@@ -97,7 +98,7 @@ class UndertaleContext(CommonContext):
     kill_pack_size = None
     spare_pack_size = None
     spare_max = None
-    save_game_folder = os.path.expandvars(r"%localappdata%/UNDERTALE")
+    save_game_folder = platformdirs.user_config_dir(appname="UNDERTALE", ensure_exists=True, appauthor=False)
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -114,13 +115,24 @@ class UndertaleContext(CommonContext):
         self.completed_count = 0
         self.completed_routes = {"pacifist": 0, "genocide": 0, "neutral": 0}
         # self.save_game_folder: files go in this path to pass data between us and the actual game
-        self.save_game_folder = os.path.expandvars(r"%localappdata%/UNDERTALE")
+        self.save_game_folder = platformdirs.user_config_dir(appname="UNDERTALE", ensure_exists=True, appauthor=False)
+        print(self.save_game_folder)
 
     def patch_game(self):
-        with open(os.path.join(os.getcwd(), "Undertale", "data.win"), "rb") as f:
-            patchedFile = bsdiff4.patch(f.read(), undertale.data_path("patch.bsdiff"))
-        with open(os.path.join(os.getcwd(), "Undertale", "data.win"), "wb") as f:
-            f.write(patchedFile)
+        if os.path.isfile(os.path.join(os.getcwd(), "Undertale", "game.unx")):
+            with open(os.path.join(os.getcwd(), "Undertale", "game.unx"), "rb") as f:
+                patchedFile = bsdiff4.patch(f.read(), undertale.data_path("lintowin.bsdiff"))
+            with open(os.path.join(os.getcwd(), "Undertale", "game.unx"), "wb") as f:
+                f.write(patchedFile)
+            with open(os.path.join(os.getcwd(), "Undertale", "game.unx"), "rb") as f:
+                patchedFile = bsdiff4.patch(f.read(), undertale.data_path("patch.bsdiff"))
+            with open(os.path.join(os.getcwd(), "Undertale", "game.unx"), "wb") as f:
+                f.write(patchedFile)
+        elif os.path.isfile(os.path.join(os.getcwd(), "Undertale", "data.win")):
+            with open(os.path.join(os.getcwd(), "Undertale", "data.win"), "rb") as f:
+                patchedFile = bsdiff4.patch(f.read(), undertale.data_path("patch.bsdiff"))
+            with open(os.path.join(os.getcwd(), "Undertale", "data.win"), "wb") as f:
+                f.write(patchedFile)
         os.makedirs(name=os.path.join(os.getcwd(), "Undertale", "Custom Sprites"), exist_ok=True)
         with open(os.path.expandvars(os.path.join(os.getcwd(), "Undertale", "Custom Sprites",
                                      "Which Character.txt")), "w") as f:
