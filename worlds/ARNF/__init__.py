@@ -2,7 +2,7 @@ from typing import List
 
 from BaseClasses import Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
-from .Items import ARNFItem, item_data_table, item_table
+from .Items import ARNFItem
 from .Locations import ARNFLocation, location_data_table, location_table, locked_locations
 from .Options import arnf_options
 from .Regions import region_data_table
@@ -32,19 +32,17 @@ class ARNFWorld(World):
     web = ARNFWebWorld()
     option_definitions = arnf_options
     location_name_to_id = location_table
-    item_name_to_id = item_table
 
     def __init__(self, multiworld: "MultiWorld", player: int):
         super().__init__(multiworld, player)
 
-    def create_item(self, name: str) -> ARNFItem:
-        return ARNFItem(name, item_data_table[name].type, item_data_table[name].code, self.player)
+    def create_item(self, name: int) -> ARNFItem:
+        return ARNFItem("ItemPickup" + str(name), ItemClassification.useful, name, self.player)
 
     def create_items(self) -> None:
         item_pool: List[ARNFItem] = []
-        for name, item in item_data_table.items():
-            if item.code and item.can_create(self.multiworld, self.player):
-                item_pool.append(self.create_item(name))
+        for i in range(1, 47):
+            item_pool.append(self.create_item(i))
         self.multiworld.itempool += item_pool
 
     def create_regions(self) -> None:
