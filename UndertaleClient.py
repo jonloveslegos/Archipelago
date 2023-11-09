@@ -6,6 +6,7 @@ import typing
 import bsdiff4
 import shutil
 import platformdirs
+import platform
 
 import Utils
 
@@ -30,7 +31,10 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
     def _cmd_patch(self):
         """Patch the game."""
         if isinstance(self.ctx, UndertaleContext):
-            os.makedirs(name=os.path.join(os.getcwd(), "Undertale"), exist_ok=True)
+            if platform.system() == "Linux":
+                os.makedirs(name=os.path.expanduser("~/Archipelago/Undertale/assets"), exist_ok=True)
+            else:
+                os.makedirs(name=os.path.join(os.getcwd(), "Undertale"), exist_ok=True)
             self.ctx.patch_game()
             self.output("Patched.")
 
@@ -41,31 +45,51 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
             self.output("Changed to the following directory: " + self.ctx.save_game_folder)
 
     @mark_raw
-    def _cmd_auto_patch(self, steaminstall: typing.Optional[str] = None):
+    def _cmd_auto_patch(self, steaminstall: typing.Optional[str] = ""):
         """Patch the game automatically."""
         if isinstance(self.ctx, UndertaleContext):
-            os.makedirs(name=os.path.join(os.getcwd(), "Undertale"), exist_ok=True)
-            tempInstall = steaminstall
-            if not os.path.isfile(os.path.join(tempInstall, "game.unx")) and not os.path.isfile(os.path.join(tempInstall, "data.win")):
-                tempInstall = None
-            if tempInstall is None:
-                tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Undertale"
-                if not os.path.exists(tempInstall):
-                    tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\Undertale"
-            elif not os.path.exists(tempInstall):
-                tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Undertale"
-                if not os.path.exists(tempInstall):
-                    tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\Undertale"
-            if not os.path.exists(tempInstall) or not os.path.exists(tempInstall) or (not os.path.isfile(os.path.join(tempInstall, "game.unx")) and not os.path.isfile(os.path.join(tempInstall, "data.win"))):
-                self.output("ERROR: Cannot find Undertale. Please rerun the command with the correct folder."
-                            " command. \"/auto_patch (Steam directory)\".")
+            if platform.system() == "Linux":
+                os.makedirs(name=os.path.expanduser("~/Archipelago/Undertale/assets"), exist_ok=True)
             else:
-                for file_name in os.listdir(tempInstall):
-                    if file_name != "steam_api.dll":
-                        shutil.copy(os.path.join(tempInstall, file_name),
-                               os.path.join(os.getcwd(), "Undertale", file_name))
-                self.ctx.patch_game()
-                self.output("Patching successful!")
+                os.makedirs(name=os.path.join(os.getcwd(), "Undertale"), exist_ok=True)
+            tempInstall = steaminstall
+            if tempInstall is not None:
+                if platform.system() == "Linux":
+                    if not os.path.isfile(os.path.join(tempInstall, "assets", "game.unx")):
+                        tempInstall = None
+                else:
+                    if not os.path.isfile(os.path.join(tempInstall, "data.win")):
+                        tempInstall = None
+            if tempInstall is None:
+                if platform.system() == "Linux":
+                    tempInstall = os.path.expanduser("~/.steam/steam/steamapps/common/Undertale/")
+                else:
+                    tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Undertale"
+                    if not os.path.exists(tempInstall):
+                        tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\Undertale"
+            elif not os.path.exists(tempInstall) and platform.system() != "Linux":
+                tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Undertale"
+                if not os.path.exists(tempInstall):
+                    tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\Undertale"
+            if platform.system() == "Linux":
+                if not os.path.exists(tempInstall) or not os.path.isfile(os.path.join(tempInstall, "assets", "game.unx")):
+                    self.output("ERROR: Cannot find Undertale. Please rerun the command with the correct folder."
+                                " command. \"/auto_patch (Undertale directory)\".")
+                else:
+                    shutil.copytree(os.path.join(tempInstall), os.path.expanduser("~/Archipelago/Undertale"), dirs_exist_ok=True)
+                    self.ctx.patch_game()
+                    self.output("Patching successful!")
+            else:
+                if not os.path.exists(tempInstall) or not os.path.isfile(os.path.join(tempInstall, "data.win")):
+                    self.output("ERROR: Cannot find Undertale. Please rerun the command with the correct folder."
+                                " command. \"/auto_patch (Undertale directory)\".")
+                else:
+                    shutil.copytree(os.path.join(tempInstall), os.path.join(os.getcwd(), "Undertale"), dirs_exist_ok=True)
+                    for file_name in os.listdir(os.path.join(os.getcwd(), "Undertale")):
+                        if file_name == "steam_api.dll":
+                            os.remove(os.path.join(os.getcwd(), "Undertale", file_name))
+                    self.ctx.patch_game()
+                    self.output("Patching successful!")
 
     def _cmd_online(self):
         """Makes you no longer able to see other Undertale players."""
