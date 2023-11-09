@@ -29,7 +29,6 @@ class ARNFWorld(World):
     power-ups to traverse obstacles, find secrets and explode meat beasts."""
 
     game = "A Robot Named Fight!"
-    data_version = 3
     web = ARNFWebWorld()
     option_definitions = arnf_options
     location_name_to_id = location_table
@@ -46,7 +45,6 @@ class ARNFWorld(World):
         for name, item in item_data_table.items():
             if item.code and item.can_create(self.multiworld, self.player):
                 item_pool.append(self.create_item(name))
-
         self.multiworld.itempool += item_pool
 
     def create_regions(self) -> None:
@@ -64,9 +62,6 @@ class ARNFWorld(World):
             }, CliqueLocation)
             region.add_exits(region_data_table[region_name].connecting_regions)
 
-    def get_filler_item_name(self) -> str:
-        return "A Cool Filler Item (No Satisfaction Guaranteed)"
-
     def set_rules(self) -> None:
         set_rules(self.multiworld, self.player)
 
@@ -77,8 +72,8 @@ class ARNFWorld(World):
 
 class ARNFItem(Item):
     game = "A Robot Named Fight!"
-    type: int
+    type: str
 
     def __init__(self, name, classification, type: str, code, player: int):
-        super(SMItem, self).__init__(name, classification, code, player)
+        super(ARNFItem, self).__init__(name, classification, code, player)
         self.type = type
