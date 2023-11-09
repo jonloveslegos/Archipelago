@@ -35,6 +35,9 @@ class ARNFWorld(World):
     location_name_to_id = location_table
     item_name_to_id = item_table
 
+    def __init__(self, multiworld: "MultiWorld", player: int):
+        super().__init__(multiworld, player)
+
     def create_item(self, name: str) -> ARNFItem:
         return ARNFItem(name, item_data_table[name].type, item_data_table[name].code, self.player)
 
@@ -71,3 +74,11 @@ class ARNFWorld(World):
         return {
             "color": getattr(self.multiworld, "color")[self.player].current_key
         }
+
+class ARNFItem(Item):
+    game = "A Robot Named Fight!"
+    type: int
+
+    def __init__(self, name, classification, type: str, code, player: int):
+        super(SMItem, self).__init__(name, classification, code, player)
+        self.type = type
