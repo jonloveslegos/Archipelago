@@ -98,9 +98,8 @@ class FNaFWWorld(World):
         itempool = []
 
         # Add all required progression items
-        for name, item in item_table.items():
-            itempool += [name]
-        itempool += ["Progressive Endoskeleton"] * 2
+        for name, count in to_add_to_pool.items():
+            itempool += [name] * count
 
         if not self.multiworld.initial_characters[self.player]:
             for item in start_anim_table:
