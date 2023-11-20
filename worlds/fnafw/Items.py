@@ -75,7 +75,7 @@ item_table = {
     "Evercomet Strong": ItemData(797258, ItemClassification.useful, "c11"),
     "Auto Giftboxes": ItemData(797259, ItemClassification.useful, "c12"),
     "Auto Regen": ItemData(797260, ItemClassification.useful, "c13"),
-    "Find Characters": ItemData(797261, ItemClassification.useful, "c14"),
+    "Find Characters": ItemData(797261, ItemClassification.progression, "c14"),
     "Curse Status": ItemData(797262, ItemClassification.useful, "c15"),
     "Freddle Fury": ItemData(797263, ItemClassification.useful, "c16"),
     "Auto Shield": ItemData(797264, ItemClassification.useful, "c17"),
@@ -115,7 +115,7 @@ item_table = {
     "Laser Switch 4": ItemData(797298, ItemClassification.progression, "sw9"),
     "Key": ItemData(797299, ItemClassification.progression, "key"),
     "Progressive Animatronic": ItemData(797300, ItemClassification.useful, "-"),
-    "Progressive Chip": ItemData(797301, ItemClassification.useful, "-"),
+    "Progressive Chip": ItemData(797301, ItemClassification.progression, "-"),
     "Progressive Byte": ItemData(797302, ItemClassification.useful, "-"),
 }
 
@@ -215,7 +215,6 @@ green_chip_table = [
 
 orange_chip_table = [
     "Evercomet Strong",
-    "Find Characters",
     "Endless Speed",
     "Auto Giftboxes",
     "Auto Regen",

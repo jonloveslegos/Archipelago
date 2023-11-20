@@ -33,15 +33,7 @@ def data_path(file_name: str):
 
 
 class FNaFWWeb(WebWorld):
-    tutorials = [Tutorial(
-        "Multiworld Setup Tutorial",
-        "A guide to setting up the Archipelago FNaFW software on your computer. This guide covers "
-        "single-player, multiworld, and related software.",
-        "English",
-        "fnafw_en.md",
-        "fnafw/en",
-        ["Mewlif"]
-    )]
+    tutorials = []
 
 
 class FNaFWWorld(World):
@@ -71,6 +63,10 @@ class FNaFWWorld(World):
     bytes_2 = []
     bytes_3 = []
 
+    all_anims = []
+    all_chips = []
+    all_bytes = []
+
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.id for name, data in location_table.items()}
 
@@ -87,9 +83,11 @@ class FNaFWWorld(World):
             'exclude_halloween': bool(self.multiworld.exclude_halloween[self.player].value),
             'exclude_initial_characters': bool(self.multiworld.initial_characters[self.player].value),
             'hard_logic': bool(self.multiworld.hard_logic[self.player].value),
+            'require_find_char': bool(self.multiworld.require_find_char[self.player].value),
             'progressive_anims': bool(self.multiworld.progressive_anims[self.player].value),
             'progressive_bytes': bool(self.multiworld.progressive_bytes[self.player].value),
-            'progressive_chips': bool(self.multiworld.progressive_chips[self.player].value)
+            'progressive_chips': bool(self.multiworld.progressive_chips[self.player].value),
+            'vanilla_lasers': bool(self.multiworld.vanilla_lasers[self.player].value)
         }
 
     def create_items(self):
@@ -137,7 +135,8 @@ class FNaFWWorld(World):
             self.random.shuffle(self.anims_9)
             self.random.shuffle(self.anims_10)
             self.random.shuffle(self.anims_11)
-            itempool = ["Progressive Animatronic" if item in start_anim_table+fazbear_hills_anim_table+choppys_woods_anim_table+dusting_fields_anim_table+lilygear_lake_anim_table+mysterious_mine_anim_table+blacktomb_yard_anim_table+deep_metal_mine_anim_table+pinwheel_circus_anim_table+top_layer_anim_table+pinwheel_funhouse_anim_table+halloween_anim_table else item for item in itempool]
+            self.all_anims = self.anims_0+self.anims_1+self.anims_2+self.anims_3+self.anims_4+self.anims_5+self.anims_6+self.anims_7+self.anims_8+self.anims_9+self.anims_10+self.anims_11
+            itempool = ["Progressive Animatronic" if item in self.all_anims else item for item in itempool]
 
         if self.multiworld.exclude_halloween[self.player]:
             for item in halloween_anim_table:
@@ -146,14 +145,24 @@ class FNaFWWorld(World):
                 else:
                     self.multiworld.get_location(item, self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(item))))
 
+        if self.multiworld.vanilla_lasers[self.player]:
+            self.multiworld.get_location("Dusting Fields: Laser Switch", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Laser Switch 1"))))
+            self.multiworld.get_location("Fazbear Hills: Laser Switch", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Laser Switch 2"))))
+            self.multiworld.get_location("Lilygear Lake: Laser Switch", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Laser Switch 3"))))
+            self.multiworld.get_location("Deep-Metal Mine: Laser Switch", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Laser Switch 4"))))
+
         if self.multiworld.progressive_chips[self.player]:
             self.chips_1 = [item for item in itempool if item in green_chip_table]
             self.chips_2 = [item for item in itempool if item in orange_chip_table]
+            if not self.multiworld.require_find_char[self.player]:
+                self.chips_2 += ["Find Characters"]
             self.chips_3 = [item for item in itempool if item in red_chip_table]
             self.random.shuffle(self.chips_1)
             self.random.shuffle(self.chips_2)
             self.random.shuffle(self.chips_3)
-            itempool = ["Progressive Chip" if item in green_chip_table+orange_chip_table+red_chip_table else item for item in itempool]
+            self.all_chips = self.chips_1+self.chips_2+self.chips_3
+            itempool = ["Progressive Chip" if item in self.all_chips else item for item in itempool]
+
 
         if self.multiworld.progressive_bytes[self.player]:
             self.bytes_1 = [item for item in itempool if item in weak_byte_table]
@@ -162,13 +171,27 @@ class FNaFWWorld(World):
             self.random.shuffle(self.bytes_1)
             self.random.shuffle(self.bytes_2)
             self.random.shuffle(self.bytes_3)
-            itempool = ["Progressive Byte" if item in weak_byte_table+byte_table+strong_byte_table else item for item in itempool]
+            self.all_bytes = self.bytes_1+self.bytes_2+self.bytes_3
+            itempool = ["Progressive Byte" if item in self.all_bytes else item for item in itempool]
+
 
         # Convert itempool into real items
 
         self.random.shuffle(itempool)
         itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
         self.multiworld.itempool += itempool
+
+    def write_spoiler(self, spoiler_handle: typing.TextIO) -> None:
+        player_name = self.multiworld.get_player_name(self.player)
+        spoiler_handle.write(f"\n\nProgressive Animatronics ({player_name}): ")
+        for item in self.all_anims:
+            spoiler_handle.write(f"{self.all_anims.index(item)+1}={item}, ")
+        spoiler_handle.write(f"\nProgressive Chips ({player_name}): ")
+        for item in self.all_chips:
+            spoiler_handle.write(f"{self.all_chips.index(item)+1}={item}, ")
+        spoiler_handle.write(f"\nProgressive Bytes ({player_name}): ")
+        for item in self.all_bytes:
+            spoiler_handle.write(f"{self.all_bytes.index(item)+1}={item}, ")
 
     def set_rules(self):
         set_rules(self.multiworld, self.player)
@@ -193,9 +216,9 @@ class FNaFWWorld(World):
             option = getattr(self.multiworld, option_name)[self.player]
             if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
                 slot_data[option_name] = int(option.value)
-        slot_data["Progressive Animatronics Order"] = self.anims_0+self.anims_1+self.anims_2+self.anims_3+self.anims_4+self.anims_5+self.anims_6+self.anims_7+self.anims_8+self.anims_9+self.anims_10+self.anims_11
-        slot_data["Progressive Chips Order"] = self.chips_1+self.chips_2+self.chips_3
-        slot_data["Progressive Bytes Order"] = self.bytes_1+self.bytes_2+self.bytes_3
+        slot_data["Progressive Animatronics Order"] = self.all_anims
+        slot_data["Progressive Chips Order"] = self.all_chips
+        slot_data["Progressive Bytes Order"] = self.all_bytes
 
         return slot_data
 
