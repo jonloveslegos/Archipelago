@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from Options import Toggle, DefaultOnToggle, DeathLink, Range, Choice, PerGameCommonOptions
 
 class TotalLocations(Range):
-    """Number of pickups that should be considered for checks.  Please note that approximately 47 non-progress items and 3 progress items are in each run of the game."""
+    """Number of pickups that should be considered for checks.  Please note that approximately 35 non-progress items and 3 progress items are in each run of the game."""
     display_name = "Total Locations"
     range_start = 20
     range_end = 250
-    default = 47
+    default = 35
 
 class ItemWeights(Choice):
     """Set item_pool_presets to true if you want to use one of these presets.
