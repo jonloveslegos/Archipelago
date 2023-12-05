@@ -12,7 +12,7 @@ class ARNFItemData(NamedTuple):
 
 
 item_data_table: Dict[str, ARNFItemData] = {
-    "NonProgressionItem": ARNFItemData(
+    "NormalModeItem": ARNFItemData(
         code=7331000,
         type=ItemClassification.filler,
     )

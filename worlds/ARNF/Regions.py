@@ -4,7 +4,7 @@ class ARNFRegionData(NamedTuple):
     connecting_regions: List[str] = []
 
 region_data_table: Dict[str, ARNFRegionData] = {
-    "Menu": ARNFRegionData(["Planet"]),
-    "Planet": ARNFRegionData(["Victory"]),
+    "Menu": ARNFRegionData(["NormalMode"]),
+    "NormalMode": ARNFRegionData(["Victory"]),
     "Victory": ARNFRegionData()
 }

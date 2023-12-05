@@ -110,7 +110,7 @@ class ARNFWorld(World):
         # shuffled_items = dict(zip(ace_items, shuffled))
         logger = logging.getLogger()
         logger.info(ace_items)
-        planet = create_region(self.multiworld, self.player, "Planet", ace_items)
+        planet = create_region(self.multiworld, self.player, "NormalMode", ace_items)
         self.multiworld.regions.append(planet)
 
         # can get to victory from the beginning of the game
@@ -136,7 +136,7 @@ class ARNFWorld(World):
 
 
 def create_events(world: MultiWorld, player: int) -> None:
-    world_region = world.get_region("Planet", player)
+    world_region = world.get_region("NormalMode", player)
     victory_region = world.get_region("Victory", player)
     victory_event = ARNFLocation(player, "Victory", None, victory_region)
     victory_event.place_locked_item(ARNFItem("Victory", ItemClassification.progression, None, player))
