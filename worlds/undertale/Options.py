@@ -147,6 +147,11 @@ class SpareSanityPackSize(Range):
     range_end = 100
 
 
+class EntranceRando(Toggle):
+    """Randomize the connections between scenes."""
+    display_name = "Entrance Rando"
+
+
 undertale_options: typing.Dict[str, type(Option)] = {
     "route_required":                           RouteRequired,
     "starting_area":                            StartingArea,
@@ -168,4 +173,5 @@ undertale_options: typing.Dict[str, type(Option)] = {
     "prog_weapons":                             ProgressiveWeapons,
     "no_equips":                                NoEquips,
     "only_flakes":                              OnlyFlakes,
+    "entrance_rando":                           EntranceRando,
 }

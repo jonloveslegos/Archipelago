@@ -1,7 +1,8 @@
 from .Items import UndertaleItem, item_table, required_armor, required_weapons, non_key_items, key_items, \
     junk_weights_all, plot_items, junk_weights_neutral, junk_weights_pacifist, junk_weights_genocide, junk_weights_cut_items
 from .Locations import UndertaleAdvancement, advancement_table, exclusion_table
-from .Regions import undertale_regions, link_undertale_areas
+from .er_rules import set_er_location_rules
+from .er_scripts import create_er_regions, create_er_regions_vanilla
 from .Rules import set_rules, set_completion_rules
 from worlds.generic.Rules import exclusion_rules
 from BaseClasses import Region, Entrance, Tutorial, Item
@@ -9,6 +10,7 @@ from .Options import undertale_options
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components, Type
 from multiprocessing import Process
+from typing import Dict, List, Any
 import math
 
 
@@ -19,8 +21,8 @@ def run_client():
     p.start()
 
 
-components.append(Component("Undertale Client", "UndertaleClient"))
-# components.append(Component("Undertale Client", func=run_client))
+# components.append(Component("Undertale Client", "UndertaleClient"))
+components.append(Component("Undertale Client", func=run_client))
 
 
 def data_path(file_name: str):
@@ -50,10 +52,14 @@ class UndertaleWorld(World):
     option_definitions = undertale_options
     web = UndertaleWeb()
 
+    topology_present = True
+
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.id for name, data in advancement_table.items()}
 
     data_version = 7
+    undertale_portal_pairs: Dict[str, str]
+    er_portal_hints: Dict[int, str]
 
     def _get_undertale_data(self):
         return {
@@ -81,8 +87,10 @@ class UndertaleWorld(World):
             "kill_sanity_pack_size": self.multiworld.kill_sanity_pack_size[self.player].value,
             "ice_traps": self.multiworld.ice_traps[self.player].value,
             "spare_sanity": bool(self.multiworld.spare_sanity[self.player].value),
+            "entrance_rando": bool(self.multiworld.entrance_rando[self.player].value),
             "spare_sanity_max": self.multiworld.spare_sanity_max[self.player].value,
-            "spare_sanity_pack_size": self.multiworld.spare_sanity_pack_size[self.player].value
+            "spare_sanity_pack_size": self.multiworld.spare_sanity_pack_size[self.player].value,
+            "Entrance Rando": self.undertale_portal_pairs
         }
 
     def get_filler_item_name(self):
@@ -105,9 +113,6 @@ class UndertaleWorld(World):
 
     def create_items(self):
         exclusion_pool = set()
-        self.multiworld.get_location("Undyne Date", self.player).place_locked_item(self.create_item("Undyne Date"))
-        self.multiworld.get_location("Alphys Date", self.player).place_locked_item(self.create_item("Alphys Date"))
-        self.multiworld.get_location("Papyrus Date", self.player).place_locked_item(self.create_item("Papyrus Date"))
         # Generate item pool
         itempool = []
         # Add all required progression items
@@ -222,10 +227,12 @@ class UndertaleWorld(World):
             itempool += [self.create_filler()]
 
         self.multiworld.itempool += itempool
+    def set_rules(self) -> None:
+        set_er_location_rules(self)
 
-    def set_rules(self):
-        set_rules(self.multiworld, self.player)
-        set_completion_rules(self.multiworld, self.player)
+    def extend_hint_information(self, hint_data: Dict[int, Dict[int, str]]):
+        if self.multiworld.entrance_rando[self.player]:
+            hint_data[self.player] = self.er_portal_hints
 
     def create_regions(self):
         def UndertaleRegion(region_name: str, exits=[]):
@@ -262,8 +269,17 @@ class UndertaleWorld(World):
                 ret.exits.append(Entrance(self.player, exit, ret))
             return ret
 
-        self.multiworld.regions += [UndertaleRegion(*r) for r in undertale_regions]
-        link_undertale_areas(self.multiworld, self.player)
+        self.undertale_portal_pairs = {}
+        self.er_portal_hints = {}
+        if self.multiworld.entrance_rando[self.player]:
+            portal_pairs, portal_hints = create_er_regions(self)
+            for portal1, portal2 in portal_pairs.items():
+                self.undertale_portal_pairs[portal1.scene_destination()] = portal2.scene_destination()
+            self.er_portal_hints = portal_hints
+        else:
+            portal_pairs = create_er_regions_vanilla(self)
+            for portal1, portal2 in portal_pairs.items():
+                self.undertale_portal_pairs[portal1.scene_destination()] = portal2.scene_destination()
 
     def fill_slot_data(self):
         slot_data = self._get_undertale_data()

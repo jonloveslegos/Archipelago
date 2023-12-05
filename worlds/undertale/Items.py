@@ -106,10 +106,7 @@ item_table = {
     "Snowdin Spare": ItemData(77093, ItemClassification.progression),
     "Waterfall Spare": ItemData(77094, ItemClassification.progression),
     "Hotland Spare": ItemData(77095, ItemClassification.progression),
-    "Ice Trap": ItemData(77091, ItemClassification.trap),
-    "Undyne Date": ItemData(None, ItemClassification.progression),
-    "Alphys Date": ItemData(None, ItemClassification.progression),
-    "Papyrus Date": ItemData(None, ItemClassification.progression),
+    "Ice Trap": ItemData(77091, ItemClassification.trap)
 }
 
 non_key_items = {
