@@ -22,28 +22,10 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
         connecting_region=regions["room_water_undynebridge"])
 
     regions["room_water_undynefinal"].connect(
-        connecting_region=regions["room_water_undynefinal2"])
-
-    regions["room_water_undynefinal2"].connect(
-        connecting_region=regions["room_water_undynefinal"])
-
-    regions["room_water_undynefinal2"].connect(
-        connecting_region=regions["room_water_undynefinal3"])
-
-    regions["room_water_undynefinal3"].connect(
-        connecting_region=regions["room_water_undynefinal2"])
-
-    regions["room_water_undynefinal3"].connect(
-        connecting_region=regions["room_fire1"])
-
-    regions["room_fire1"].connect(
-        connecting_region=regions["room_water_undynefinal3"])
-
-    regions["room_fire1"].connect(
         connecting_region=regions["room_fire2"])
 
     regions["room_fire2"].connect(
-        connecting_region=regions["room_fire1"])
+        connecting_region=regions["room_water_undynefinal"])
 
     regions["Ruins Exit"].connect(
         connecting_region=regions["room_area1"])
@@ -110,9 +92,6 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
 
     # regions["Core Entrance"].connect(
     #     connecting_region=regions["room_area1"])
-
-    regions["room_water_undynebridgeend"].connect(
-        connecting_region=regions["Trash Zone Fall"])
 
     regions["Trash Zone Fall"].connect(
         connecting_region=regions["room_water_trashzone1"])

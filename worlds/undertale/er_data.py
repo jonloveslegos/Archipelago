@@ -116,6 +116,10 @@ portal_mapping: List[Portal] = [
 
     Portal(region="room_water_trashzone1", destination="room_water_trashsavepoint", origin_letter="B"),
 
+    Portal(region="Trash Zone Fall", destination="room_water_undynebridgeend", origin_letter="A"),
+
+    Portal(region="room_water_undynebridgeend", destination="Trash Zone Fall", origin_letter="B"),
+
     Portal(region="room_water_trashsavepoint", destination="room_water_trashzone1", origin_letter="A"),
     Portal(region="room_water_trashsavepoint", destination="room_water_trashzone2", origin_letter="B"),
 
@@ -580,9 +584,6 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_water20": RegionInfo("room_water20"),
     "room_water21": RegionInfo("room_water21"),
     "room_water_undynefinal": RegionInfo("room_water_undynefinal"),
-    "room_water_undynefinal2": RegionInfo("room_water_undynefinal2"),
-    "room_water_undynefinal3": RegionInfo("room_water_undynefinal3"),
-    "room_fire1": RegionInfo("room_fire1"),
     "room_fire2": RegionInfo("room_fire2"),
     "Toriel Basement 2": RegionInfo("room_basement1"),
     "Trash Zone Fall": RegionInfo("room_water_trashzone1"),
@@ -598,7 +599,7 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "Ruins Exit": RegionInfo("room_area1"),
     "Snowdin Exit": RegionInfo("room_area1"),
     "Waterfall Exit": RegionInfo("room_area1"),
-    "Monster Kid Raised Ledge": RegionInfo("room_waterfall_waterfall4"),
+    "Monster Kid Raised Ledge": RegionInfo("room_water_waterfall4"),
     "Menu": RegionInfo("Fake", dead_end=True),
 }
 
@@ -729,22 +730,32 @@ class StaticCxn(NamedTuple):
 # the key is the region you have, the value is the regions you get for having that region
 # this is mostly so we don't have to do something overly complex to get this information
 dependent_regions: Dict[Tuple[str, ...], List[str]] = {
-    tuple(["Ice Hole Fall"]):
+    ("Ice Hole Fall",):
          ["room_tundra_icehole", "Ice Hole Fall"],
-    tuple(["Ruins Pit Circle B"]):
+    ("Ruins Pit Circle B",):
          ["room_ruins15E", "Ruins Pit Circle B"],
-    tuple(["Ruins Pit Circle C"]):
+    ("Ruins Pit Circle C",):
          ["room_ruins15E", "Ruins Pit Circle C"],
-    tuple(["Ruins Pit Circle D"]):
+    ("Ruins Pit Circle D",):
          ["room_ruins15E", "Ruins Pit Circle D"],
-    tuple(["Papyrus Rocks", "room_tundra_sanshouse"]):
+    ("room_water_waterfall4",):
+         ["room_water_waterfall4", "Monster Kid Raised Ledge"],
+    ("Papyrus Rocks", "room_tundra_sanshouse"):
          ["Papyrus Rocks", "room_tundra_sanshouse"],
-    tuple(["Undyne Rocks", "room_water_friendlyhub"]):
+    ("Undyne Rocks", "room_water_friendlyhub"):
          ["Undyne Rocks", "room_water_friendlyhub"],
-    tuple(["room_water_undynebridge", "room_water_undynebridgeend"]):
-         ["room_water_undynebridge", "room_water_undynebridgeend", "room_water_trashzone1", "Trash Zone Fall"],
-    tuple(["room_water_undynefinal", "room_water_undynefinal2", "room_water_undynefinal3", "room_fire1", "room_fire2"]):
-         ["room_water_undynefinal", "room_water_undynefinal2", "room_water_undynefinal3", "room_fire1", "room_fire2"],
-    tuple(["room_area1"]):
-         ["room_area1", "Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"]
+    ("room_water_undynebridge", "room_water_undynebridgeend",):
+         ["room_water_undynebridge", "room_water_undynebridgeend"],
+    ("Trash Zone Fall",):
+         ["room_water_trashzone1", "Trash Zone Fall"],
+    ("room_water_undynefinal", "room_fire2"):
+         ["room_water_undynefinal", "room_fire2"],
+    ("room_area1",):
+         ["room_area1", "Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"],
+    ("Ruins Exit",):
+         ["room_area1", "Ruins Exit"],
+    ("Snowdin Exit",):
+         ["room_area1", "Snowdin Exit"],
+    ("Waterfall Exit",):
+         ["room_area1", "Waterfall Exit"]
 }

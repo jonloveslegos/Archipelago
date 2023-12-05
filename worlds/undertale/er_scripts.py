@@ -184,22 +184,32 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     two_plus: List[Portal] = []
 
     # create separate lists for dead ends and non-dead ends
+    for portal in portal_mapping:
+        if undertale_er_regions[portal.region].dead_end:
+            dead_ends.append(portal)
+        else:
+            two_plus.append(portal)
+
     portal_region_count = {}
     for portal in portal_mapping:
         if portal_region_count.keys().__contains__(undertale_er_regions[portal.region].game_scene):
-            portal_region_count[undertale_er_regions[portal.region].game_scene] += len(add_dependent_regions(portal.destination))
+            portal_region_count[undertale_er_regions[portal.region].game_scene] += len(add_dependent_regions(portal.region))
         else:
-            portal_region_count[undertale_er_regions[portal.region].game_scene] = len(add_dependent_regions(portal.destination))
+            portal_region_count[undertale_er_regions[portal.region].game_scene] = len(add_dependent_regions(portal.region))
         if portal_region_count.keys().__contains__(undertale_er_regions[portal.destination].game_scene):
             portal_region_count[undertale_er_regions[portal.destination].game_scene] += len(add_dependent_regions(portal.destination))
         else:
             portal_region_count[undertale_er_regions[portal.destination].game_scene] = len(add_dependent_regions(portal.destination))
-    for portal in portal_mapping:
+
+    for portal in two_plus:
         if portal_region_count.keys().__contains__(undertale_er_regions[portal.region].game_scene):
-            if portal_region_count[undertale_er_regions[portal.region].game_scene] <= 2 and not undertale_er_regions[portal.region].dead_end_override:
-                dead_ends.append(portal)
-            else:
-                two_plus.append(portal)
+            if portal_region_count[undertale_er_regions[portal.region].game_scene] <= 2:
+                print("TWO_PLUS IS A DEAD END: "+portal.region+" "+portal.origin_letter+ " : "+str(portal_region_count[undertale_er_regions[portal.region].game_scene])+" connections")
+
+    for portal in dead_ends:
+        if portal_region_count.keys().__contains__(undertale_er_regions[portal.region].game_scene):
+            if portal_region_count[undertale_er_regions[portal.region].game_scene] > 2:
+                print("DEAD_END IS A TWO PLUS: "+portal.region+" "+portal.origin_letter+ " : "+str(portal_region_count[undertale_er_regions[portal.region].game_scene])+" connections")
 
     connected_regions: Set[str] = set()
     # make better start region stuff when/if implementing random start
@@ -219,7 +229,9 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     names = []
     for item in portal_mapping:
         if Portal(item.destination, item.region, origin_letter_flip[item.origin_letter], item.destination+" "+origin_letter_flip[item.origin_letter]) not in portal_mapping:
-            print("Could not find corresponding location for "+item.region+item.origin_letter)
+            if item.region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"]:
+                if item.destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"]:
+                    print("Could not find corresponding location for "+item.region+item.origin_letter)
         names.append(item.name)
     for item in names:
         if names.count(item) > 1:
@@ -251,9 +263,6 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
                     check_success = 2
                     break
 
-        if check_success == 1:
-            print("COULD NOT FIND VALID ROOM\nMISSING ACCESS TO "+non_dead_end_regions.difference(connected_regions).__str__())
-
         # once we have both portals, connect them and add the new region(s) to connected_regions
         if check_success == 2:
             connected_regions.update(add_dependent_regions(portal2.region))
@@ -264,6 +273,7 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     # connect dead ends to random non-dead ends
     # none of the key events are in dead ends, so we don't need to do gate_before_switch
     print(len(dead_ends)-len(two_plus))
+    pass
     while len(dead_ends) > 0:
 
         if len(two_plus) == 0:
