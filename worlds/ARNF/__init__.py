@@ -129,7 +129,7 @@ class ARNFWorld(World):
         total_locations = self.multiworld.total_locations[self.player].value  # total locations for current player
         
         set_rule(self.multiworld.get_location("Victory", self.player),
-             lambda state: state.can_reach(f"ItemPickup{total_locations}", "Location", self.player))
+             lambda state: state.can_reach(f"ARNF{total_locations}", "Location", self.player))
         
         # Win Condition
         self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
