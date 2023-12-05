@@ -142,6 +142,10 @@ def set_rules(multiworld: MultiWorld, player: int):
                  lambda state: state.can_reach("Waterfall", "Region", player) and state.has("Mystery Key", player, 1))
         set_rule(multiworld.get_location("True Lab Key", player),
                  lambda state: state.has("Alphys Date", player))
+        set_rule(multiworld.get_location("True Lab Plot", player),
+                 lambda state: state.can_reach("New Home", "Region", player)
+                               and state.can_reach("Letter Quest", "Location", player)
+                               and state.can_reach("Alphys Date", "Location", player))
         set_rule(multiworld.get_location("Chisps Machine", player),
                  lambda state: state.can_reach("True Lab", "Region", player))
         set_rule(multiworld.get_location("Donut Sale", player),

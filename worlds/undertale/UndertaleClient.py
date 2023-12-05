@@ -30,7 +30,7 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
             self.ctx.syncing = True
 
     def _cmd_patch(self):
-        """Patch the game."""
+        """Patch the game. Only use this command if /auto_patch fails."""
         if isinstance(self.ctx, UndertaleContext):
             if platform.system() == "Linux":
                 os.makedirs(name=os.path.expanduser("~/Archipelago/Undertale/assets"), exist_ok=True)
@@ -40,7 +40,7 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
             self.output("Patched.")
 
     def _cmd_savepath(self, directory: str):
-        """Redirect to proper save data folder. (Use before connecting!)"""
+        """Redirect to proper save data folder. This is necessary for Linux users to use before connecting."""
         if isinstance(self.ctx, UndertaleContext):
             self.ctx.save_game_folder = directory
             self.output("Changed to the following directory: " + self.ctx.save_game_folder)
@@ -93,7 +93,7 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
                     self.output("Patching successful!")
 
     def _cmd_online(self):
-        """Makes you no longer able to see other Undertale players."""
+        """Toggles seeing other Undertale players."""
         if isinstance(self.ctx, UndertaleContext):
             self.ctx.update_online_mode(not ("Online" in self.ctx.tags))
             if "Online" in self.ctx.tags:
