@@ -205,6 +205,10 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
         #          lambda state: state.has("Hot Dog...?", player, 1))
         # set_rule(multiworld.get_location("Letter Quest", player),
         #          lambda state: state.can_reach("room_fire_core_final", "Region", player) and state.has("Undyne Date", player))
+        # set_rule(multiworld.get_location("True Lab Plot", player),
+        #          lambda state: state.can_reach("New Home", "Region", player)
+        #                        and state.can_reach("Letter Quest", "Location", player)
+        #                        and state.can_reach("Alphys Date", "Location", player))
     if (not _undertale_is_route(multiworld.state, player, 2)) or _undertale_is_route(multiworld.state, player, 3):
         set_rule(multiworld.get_location("Nicecream Punch Card", player),
                  lambda state: state.has("Punch Card", player, 3))
