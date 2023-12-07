@@ -9,7 +9,7 @@ class ARNFLocation(Location):
     game: str = "A Robot Named Fight!"
 
 
-arnf_locations_start_id = 7331000
+arnf_locations_start_id = 73310000
 
 
 def get_ordered_item_pickups(n: int) -> Dict[str, int]:
