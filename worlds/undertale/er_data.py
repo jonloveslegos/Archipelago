@@ -402,12 +402,6 @@ portal_mapping: List[Portal] = [
     Portal(region="room_water19", destination="room_water20", origin_letter="B"),
 
     Portal(region="room_water20", destination="room_water19", origin_letter="A"),
-    Portal(region="room_water20", destination="room_water21", origin_letter="B"),
-
-    Portal(region="room_water21", destination="room_water20", origin_letter="A"),
-    Portal(region="room_water21", destination="room_water_undynefinal", origin_letter="B"),
-
-    Portal(region="room_water_undynefinal", destination="room_water21", origin_letter="A"),
 
     Portal(region="room_fire2", destination="Waterfall Exit", origin_letter="B"),
 
@@ -988,8 +982,8 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_water_undynebridge", "room_water_undynebridgeend"],
     ("Trash Zone Fall",):
          ["room_water_trashzone1", "Trash Zone Fall"],
-    ("room_water_undynefinal", "room_fire2"):
-         ["room_water_undynefinal", "room_fire2"],
+    ("room_water20", "room_water21", "room_water_undynefinal", "room_fire2"):
+         ["room_water20", "room_water21", "room_water_undynefinal", "room_fire2"],
     ("room_area1",):
          ["room_area1", "Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"],
     ("room_fire_core_bottomleft",):
@@ -1058,7 +1052,12 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_ruins13","Ruins Grind Rooms"],
     ("room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"):
          ["room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"],
-    ("room_fire_core_metttest", "room_fire_core_final", "room_fire_finalelevator"):
+    ("room_fire_core_metttest", "room_fire_core_final", "room_fire_finalelevator", "room_castle_elevatorout",
+         "room_castle_precastle", "room_castle_hook", "room_castle_front", "room_asghouse1", "room_asghouse2",
+         "room_asghouse2", "room_kitchen_final", "room_asrielroom_final", "room_asgoreroom", "room_basement1_final",
+         "room_basement2_final", "room_basement3_final", "room_basement4_final", "room_lastruins_corridor",
+         "room_sanscorridor", "room_castle_finalshoehorn", "room_castle_coffins1", "room_castle_coffins2",
+         "room_castle_throneroom"):
         ["room_fire_core_metttest", "room_fire_core_final", "room_fire_finalelevator", "room_castle_elevatorout",
          "room_castle_precastle", "room_castle_hook", "room_castle_front", "room_asghouse1", "room_asghouse2",
          "room_asghouse2", "room_kitchen_final", "room_asrielroom_final", "room_asgoreroom", "room_basement1_final",

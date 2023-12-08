@@ -21,6 +21,18 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_water_undynebridgeend"].connect(
         connecting_region=regions["room_water_undynebridge"])
 
+    regions["room_water20"].connect(
+        connecting_region=regions["room_water21"])
+
+    regions["room_water21"].connect(
+        connecting_region=regions["room_water20"])
+
+    regions["room_water21"].connect(
+        connecting_region=regions["room_water_undynefinal"])
+
+    regions["room_water_undynefinal"].connect(
+        connecting_region=regions["room_water21"])
+
     regions["room_water_undynefinal"].connect(
         connecting_region=regions["room_fire2"])
 
@@ -404,10 +416,6 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
             set_rule(multiworld.get_location("Snowdin Spare "+str(i+1), player), lambda state, i=i: state.has("Snowdin Spare", player, math.ceil((i+1)/state.multiworld.spare_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Waterfall Spare "+str(i+1), player), lambda state, i=i: state.has("Waterfall Spare", player, math.ceil((i+1)/state.multiworld.spare_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Hotland Spare "+str(i+1), player), lambda state, i=i: state.has("Hotland Spare", player, math.ceil((i+1)/state.multiworld.spare_sanity_pack_size[player].value)) and (state.can_reach("Hotland/Core Grind Rooms", "Region", player)))
-    set_rule(multiworld.get_location("Undyne Date", player),
-            lambda state: state.has("Papyrus Date", player) and state.has("Undyne Fight (Event)", player))
-    set_rule(multiworld.get_location("Papyrus Date", player),
-            lambda state: state.has("Papyrus Fight (Event)", player))
     set_rule(multiworld.get_location("Diary 1", player),
                  lambda state: state.has("Mystery Key", player, 1))
     set_rule(multiworld.get_location("Diary 2", player),
@@ -421,6 +429,10 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
     set_rule(multiworld.get_location("Diary 6", player),
                  lambda state: state.has("Mystery Key", player, 1))
     if _undertale_is_route(multiworld.state, player, 1):
+        set_rule(multiworld.get_location("Undyne Date", player),
+                lambda state: state.has("Papyrus Date", player) and state.has("Undyne Fight (Event)", player))
+        set_rule(multiworld.get_location("Papyrus Date", player),
+                lambda state: state.has("Papyrus Fight (Event)", player))
         set_rule(multiworld.get_location("Alphys Date", player),
                  lambda state: state.can_reach("room_water_trashzone1", "Region", player) and state.can_reach("room_fire_core_final", "Region", player) and state.has("Undyne Letter EX", player) and state.has("Undyne Date", player))
         set_rule(multiworld.get_location("Undyne Cook-off", player),
@@ -489,7 +501,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                         set_rule(multiworld.get_location(("DEF "+str(maxlv)), player),
                                          lambda state, maxlv=maxlv: _undertale_return_reachable_level(state, _undertale_exp_available(state, player)) >= maxlv)
                 if multiworld.rando_love[player]:
-                    add_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
+                    set_rule(multiworld.get_location(("LOVE "+str(maxlv)), player),
                                  lambda state, maxlv=maxlv: _undertale_return_reachable_level(state, _undertale_exp_available(state, player)) >= maxlv)
     set_rule(multiworld.get_location("Mettaton Fight", player),
              lambda state: state.can_reach("room_fire_core_metttest", "Region", player) and (not bool(state.multiworld.kill_sanity[player].value) or not _undertale_is_route(state, player, 2) or state.has("Hotland Population Pack", player, math.ceil(40/state.multiworld.kill_sanity_pack_size[player].value))))
@@ -509,14 +521,6 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5", "Region", player))
     set_rule(multiworld.get_location("Gerson 4", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5", "Region", player))
-    set_rule(multiworld.get_location("Present Knife", player),
-             lambda state: (not bool(state.multiworld.kill_sanity[player].value) or not _undertale_is_route(state, player, 2) or state.has("Hotland Population Pack", player, math.ceil(40/state.multiworld.kill_sanity_pack_size[player].value))))
-    set_rule(multiworld.get_location("Present Locket", player),
-             lambda state: (not bool(state.multiworld.kill_sanity[player].value) or not _undertale_is_route(state, player, 2) or state.has("Hotland Population Pack", player, math.ceil(40/state.multiworld.kill_sanity_pack_size[player].value))))
-    set_rule(multiworld.get_location("Left New Home Key", player),
-             lambda state: (not bool(state.multiworld.kill_sanity[player].value) or not _undertale_is_route(state, player, 2) or state.has("Hotland Population Pack", player, math.ceil(40/state.multiworld.kill_sanity_pack_size[player].value))))
-    set_rule(multiworld.get_location("Right New Home Key", player),
-             lambda state: (not bool(state.multiworld.kill_sanity[player].value) or not _undertale_is_route(state, player, 2) or state.has("Hotland Population Pack", player, math.ceil(40/state.multiworld.kill_sanity_pack_size[player].value))))
     set_rule(multiworld.get_location("TemmieShop 1", player),
              lambda state: state.can_reach("room_water_piano", "Region", player))
     set_rule(multiworld.get_location("TemmieShop 2", player),

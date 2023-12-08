@@ -179,6 +179,10 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
 
     portals_and_hints = (portal_pairs, er_hint_data)
 
+    state = world.multiworld.get_all_state(False)
+    state.update_reachable_regions(world.player)
+    Utils.visualize_regions(world.multiworld.get_region("Menu", world.player), "undertale_check.puml", show_entrance_names=True, highlight_regions=state.reachable_regions[world.player])
+
     return portals_and_hints
 
 
@@ -191,25 +195,27 @@ def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[st
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_3"], world.multiworld.get_entrance("Fire Door 2 Block", world.player))
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_4"], world.multiworld.get_entrance("Fire Door 2 Block", world.player))
 
-    paps_region = regions["room_tundra_paproom"]
-    paps_location = UndertaleERLocation(world.player, "Papyrus Date", None, paps_region)
-    paps_location.place_locked_item(UndertaleERItem("Papyrus Date", ItemClassification.progression, None, world.player))
-    paps_region.locations.append(paps_location)
+    if world.multiworld.route_required[world.player].current_key == "pacifist" or world.multiworld.route_required[world.player].current_key == "all_routes":
 
-    undy_region = regions["room_water_undyneyard"]
-    undy_location = UndertaleERLocation(world.player, "Undyne Date", None, undy_region)
-    undy_location.place_locked_item(UndertaleERItem("Undyne Date", ItemClassification.progression, None, world.player))
-    undy_region.locations.append(undy_location)
+        paps_region = regions["room_tundra_paproom"]
+        paps_location = UndertaleERLocation(world.player, "Papyrus Date", None, paps_region)
+        paps_location.place_locked_item(UndertaleERItem("Papyrus Date", ItemClassification.progression, None, world.player))
+        paps_region.locations.append(paps_location)
 
-    alph_region = regions["room_fire_prelab"]
-    alph_location = UndertaleERLocation(world.player, "Alphys Date", None, alph_region)
-    alph_location.place_locked_item(UndertaleERItem("Alphys Date", ItemClassification.progression, None, world.player))
-    alph_region.locations.append(alph_location)
+        undy_region = regions["room_water_undyneyard"]
+        undy_location = UndertaleERLocation(world.player, "Undyne Date", None, undy_region)
+        undy_location.place_locked_item(UndertaleERItem("Undyne Date", ItemClassification.progression, None, world.player))
+        undy_region.locations.append(undy_location)
 
-    lab_region = regions["room_fire_labelevator"]
-    lab_location = UndertaleERLocation(world.player, "True Lab Entrance", None, lab_region)
-    lab_location.place_locked_item(UndertaleERItem("True Lab Entrance", ItemClassification.progression, None, world.player))
-    lab_region.locations.append(lab_location)
+        alph_region = regions["room_fire_prelab"]
+        alph_location = UndertaleERLocation(world.player, "Alphys Date", None, alph_region)
+        alph_location.place_locked_item(UndertaleERItem("Alphys Date", ItemClassification.progression, None, world.player))
+        alph_region.locations.append(alph_location)
+
+        lab_region = regions["room_fire_labelevator"]
+        lab_location = UndertaleERLocation(world.player, "True Lab Entrance", None, lab_region)
+        lab_location.place_locked_item(UndertaleERItem("True Lab Entrance", ItemClassification.progression, None, world.player))
+        lab_region.locations.append(lab_location)
 
     undyf_region = regions["room_fire2"]
     undyf_location = UndertaleERLocation(world.player, "Undyne Fight (Event)", None, undyf_region)

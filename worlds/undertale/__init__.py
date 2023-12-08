@@ -144,11 +144,11 @@ class UndertaleWorld(World):
         if self.multiworld.route_required[self.player] == "pacifist" or \
                 self.multiworld.route_required[self.player] == "all_routes":
             itempool += ["Undyne Letter EX"]
-        # else:
-            # itempool.remove("Complete Skeleton")
-            # itempool.remove("Fish")
-            # itempool.remove("DT Extractor")
-            # itempool.remove("Hush Puppy")
+        else:
+            itempool.remove("Complete Skeleton")
+            itempool.remove("Fish")
+            itempool.remove("DT Extractor")
+            itempool.remove("Hush Puppy")
         if self.multiworld.key_hunt[self.player]:
             itempool += ["Key Piece"] * self.multiworld.key_pieces[self.player].value
         else:
