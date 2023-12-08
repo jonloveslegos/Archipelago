@@ -305,8 +305,7 @@ class UndertaleWorld(World):
 
         state = self.multiworld.get_all_state(False)
         state.update_reachable_regions(self.player)
-        Utils.visualize_regions(self.multiworld.get_region("Menu", self.player), "undertale_check.puml",
-                                    show_entrance_names=True, highlight_regions=state.reachable_regions[self.player])
+        Utils.visualize_regions(self.multiworld.get_region("Menu", self.player), "undertale_check.puml", show_entrance_names=True, highlight_regions=state.reachable_regions[self.player])
         return slot_data
 
     def create_item(self, name: str) -> Item:

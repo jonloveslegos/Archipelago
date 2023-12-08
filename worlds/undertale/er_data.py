@@ -170,7 +170,7 @@ portal_mapping: List[Portal] = [
 
     Portal(region="Hotland Exit", destination="room_fire_precore", origin_letter="A"),
 
-    Portal(region="room_fire_core1", destination="room_area1", origin_letter="A"),
+    Portal(region="room_fire_core1", destination="Core Entrance", origin_letter="A"),
     Portal(region="room_fire_core1", destination="room_fire_core2", origin_letter="B"),
     Portal(region="room_fire_core1", destination="room_fire_core3", origin_letter="D"),
     Portal(region="room_fire_core1", destination="room_fire_core_premett", origin_letter="U"),
@@ -640,10 +640,6 @@ portal_mapping: List[Portal] = [
 
     Portal(region="room_tundra_library", destination="room_tundra_town", origin_letter="U"),
 
-    Portal(region="room_tundra_garage", destination="Garage One Way", origin_letter="V"),
-
-    Portal(region="Garage One Way", destination="room_tundra_garage", origin_letter="V"),
-
     Portal(region="room_tundra_sanshouse", destination="room_tundra_town", origin_letter="S"),
     Portal(region="Papyrus Rocks", destination="room_tundra_paproom", origin_letter="B"),
     Portal(region="Papyrus Rocks", destination="room_tundra_sansroom", origin_letter="T"),
@@ -757,8 +753,6 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_tundra_dock": RegionInfo("room_tundra_dock", dead_end=True),
     "room_tundra_inn": RegionInfo("room_tundra_inn", dead_end=True),
     "room_tundra_library": RegionInfo("room_tundra_library", dead_end=True),
-    "room_tundra_garage": RegionInfo("room_tundra_garage", dead_end=True),
-    "Garage One Way": RegionInfo("room_tundra_town"),
     "room_tundra_grillby": RegionInfo("room_tundra_grillby", dead_end=True),
     "room_tundra_sanshouse": RegionInfo("room_tundra_sanshouse"),
     "room_tundra_paproom": RegionInfo("room_tundra_paproom", dead_end=True),

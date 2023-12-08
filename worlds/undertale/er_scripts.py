@@ -38,17 +38,37 @@ def create_er_regions_vanilla(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     # make better start region stuff when/if implementing random start
     start_region = "room_area1"
     connected_regions.update(add_dependent_regions(start_region))
+    for item in portal_mapping:
+        if Portal(item.destination, item.region, origin_letter_flip[item.origin_letter], item.destination+" "+origin_letter_flip[item.origin_letter]) not in portal_mapping:
+            if item.region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
+                                            "Hotland Entrance", "Core Entrance"]:
+                if item.destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
+                                            "Hotland Entrance", "Core Entrance"]:
+                    print("Could not find corresponding location for "+item.region+item.origin_letter)
     while len(portal_mapping) > 0:
 
         portal2: Portal = Portal(region="", destination="", origin_letter="")
-        for port in portal_mapping:
-            if port.region == portal_mapping[0].destination and port.origin_letter == origin_letter_flip[portal_mapping[0].origin_letter]:
-                portal2 = port
+        if portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
+                                            "Hotland Entrance", "Core Entrance"]:
+            if portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
+                                                     "Hotland Entrance", "Core Entrance"]:
+                for port in portal_mapping:
+                    if port.region == portal_mapping[0].destination and port.origin_letter == origin_letter_flip[portal_mapping[0].origin_letter]:
+                        portal2 = port
         if len(portal2.region) == 0:
-            portal2 = Portal(region=portal_mapping[0].destination, destination="", origin_letter=origin_letter_flip[portal_mapping[0].origin_letter])
-            portal_mapping.append(portal2)
-        if len(portal2.region) == 0:
-            raise Warning("CANNOT FIND PORTAL OF REGION "+portal_mapping[0].destination+" WITH LETTER OF "+origin_letter_flip[portal_mapping[0].origin_letter])
+            if portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "Core Entrance"]:
+                if portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "Core Entrance"]:
+                    raise Warning("CANNOT FIND PORTAL OF REGION "+portal_mapping[0].destination+" WITH LETTER OF "+origin_letter_flip[portal_mapping[0].origin_letter])
+                else:
+                    for port in portal_mapping:
+                        if port.region == portal_mapping[0].destination:
+                            portal2 = port
+            else:
+                for port in portal_mapping:
+                    if port.destination == portal_mapping[0].region:
+                        portal2 = port
+
+        # print(portal_mapping[0].name+" <-> "+portal2.name)
         connected_regions.update(add_dependent_regions(portal2.region))
         portal_pairs[portal_mapping[0]] = portal2
         portal_mapping.remove(portal2)
@@ -88,6 +108,8 @@ def create_er_regions_vanilla(world: "UndertaleWorld") -> Dict[Portal, Portal]:
                         UndertaleERLocation(world.player, "Hotland Spare " + str(i + 1), 78313 + i,
                                             regions[region_name]) for i in
                         range(world.multiworld.spare_sanity_max[world.player].value)]
+
+    create_randomized_entrances(portal_pairs, regions)
 
     for region in regions.values():
         world.multiworld.regions.append(region)
@@ -156,11 +178,6 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
     undertale_er_add_extra_region_info(world, regions)
 
     portals_and_hints = (portal_pairs, er_hint_data)
-
-    state = world.multiworld.get_all_state(False)
-    state.update_reachable_regions(world.player)
-    Utils.visualize_regions(world.multiworld.get_region("Menu", world.player), "undertale_check.puml",
-                                    show_entrance_names=True, highlight_regions=state.reachable_regions[world.player])
 
     return portals_and_hints
 
@@ -266,8 +283,10 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     names = []
     for item in portal_mapping:
         if Portal(item.destination, item.region, origin_letter_flip[item.origin_letter], item.destination+" "+origin_letter_flip[item.origin_letter]) not in portal_mapping:
-            if item.region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"]:
-                if item.destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"]:
+            if item.region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
+                                            "Hotland Entrance", "Core Entrance"]:
+                if item.destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
+                                            "Hotland Entrance", "Core Entrance"]:
                     print("Could not find corresponding location for "+item.region+item.origin_letter)
         names.append(item.name)
     for item in names:
@@ -312,7 +331,7 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
 
     # connect dead ends to random non-dead ends
     # none of the key events are in dead ends, so we don't need to do gate_before_switch
-    print(len(dead_ends)-len(two_plus))
+    # print(len(dead_ends)-len(two_plus))
     if len(dead_ends)-len(two_plus) > 0:
         pass
     while len(dead_ends) > 0:

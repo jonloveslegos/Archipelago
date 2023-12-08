@@ -99,9 +99,6 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["Menu"].connect(
         connecting_region=regions["???"])
 
-    regions["Garage One Way"].connect(
-        connecting_region=regions["room_tundra_town"])
-
     regions["Ruins Pit Circle B"].connect(
         connecting_region=regions["room_ruins15E"])
 
