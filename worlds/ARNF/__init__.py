@@ -8,7 +8,7 @@ from BaseClasses import Region, Entrance, Item, ItemClassification, MultiWorld, 
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import set_rule
 from .Items import ARNFItem, item_table, item_data_table
-from .Locations import ARNFLocation, location_table, get_ordered_item_pickups
+from .Locations import ARNFLocation, location_table, get_ordered_item_pickups, normal_mode_total_locations, classic_boss_rush_total_locations
 from .Options import ARNFOptions
 from .Regions import region_data_table
 
@@ -49,34 +49,34 @@ class ARNFWorld(World):
     def create_item(self, name: int) -> ARNFItem:
         item_id = item_table[name]
         classification = ItemClassification.filler
-        # logger = logging.getLogger()
-        # logger.info(f'create_item {name}, {classification}, {item_id}')
         item = ARNFItem(name, classification, item_id, self.player)
         return item
 
 
     def create_items(self) -> None:
-        # # Generate item pool
-        # itempool: List = []
-        
-        total_locations = self.options.total_locations.value
-        
-        # # Create junk items
-        # self.junk_pool = self.create_junk_pool()
-        
-        # logger = logging.getLogger()
-        # logger.info(f'create_item len(self.junk_pool): {len(self.junk_pool)}')
-        
-        # # Fill remaining items with randomly generated junk
-        # while len(itempool) < total_locations:
-            # itempool.append(self.get_filler_item_name())
-
+        #Initialize item pool
         item_pool: List[ARNFItem] = []
+        
+        #Get numbers for each mode in play
+        normal_mode_locations = normal_mode_total_locations
+        if self.options.normal_mode_included.value == 0:
+            normal_mode_locations = 0
+        classic_boss_rush_locations = classic_boss_rush_total_locations
+        if self.options.classic_boss_rush_included.value == 0:
+            classic_boss_rush_locations = 0
+        
+        #Generate the items
+        # name = "NormalItem"
+        # item = item_data_table[name]
         for name, item in item_data_table.items():
             if item.code and item.can_create(self.multiworld, self.player):
-                # name = item_data_table.items[0]
-                while len(item_pool) < total_locations:
-                    item_pool.append(self.create_item(name))
+                item_pool.append(self.create_item(name))
+        
+        # name = "CBRItem"
+        # item = item_data_table[name]
+        # if item.code and item.can_create(self.multiworld, self.player):
+            # while len(item_pool) < classic_boss_rush_locations:
+                # item_pool.append(self.create_item(name))
 
         self.multiworld.itempool += item_pool
 
@@ -104,7 +104,7 @@ class ARNFWorld(World):
         #   which can then determine the availability of the victory.
         victory_region = create_region(self.multiworld, self.player, "Victory")
         self.multiworld.regions.append(victory_region)
-        ace_items = get_ordered_item_pickups(self.options.total_locations.value)
+        ace_items = get_ordered_item_pickups()
         # shuffled = list(ace_items.values())
         # random.shuffle(shuffled)
         # shuffled_items = dict(zip(ace_items, shuffled))
@@ -126,10 +126,8 @@ class ARNFWorld(World):
 
 
     def set_rules(self) -> None:
-        total_locations = self.multiworld.total_locations[self.player].value  # total locations for current player
-        
-        set_rule(self.multiworld.get_location("Victory", self.player),
-             lambda state: state.can_reach(f"ARNF{total_locations}", "Location", self.player))
+        # set_rule(self.multiworld.get_location("Victory", self.player),
+             # lambda state: state.can_reach(f"VictoryCheck", "Location", self.player))
         
         # Win Condition
         self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)

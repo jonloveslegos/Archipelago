@@ -1,9 +1,11 @@
 from typing import Callable, Dict, NamedTuple, Optional
 from BaseClasses import Item, ItemClassification, MultiWorld
-from .Options import ItemWeights
+from .Locations import arnf_locations_start_id, normal_mode_total_locations, classic_boss_rush_total_locations
+
 
 class ARNFItem(Item):
     game: str = "A Robot Named Fight!"
+
 
 class ARNFItemData(NamedTuple):
     code: Optional[int] = None
@@ -12,11 +14,20 @@ class ARNFItemData(NamedTuple):
 
 
 item_data_table: Dict[str, ARNFItemData] = {
-    "NormalModeItem": ARNFItemData(
-        code=7331000,
-        type=ItemClassification.filler,
-    )
+    # "NormalItem": ARNFItemData(
+        # code=73310000,
+        # type=ItemClassification.filler,
+    # ),
+    # "ClassicBossRushItem": ARNFItemData(
+        # code=73310035,
+        # type=ItemClassification.filler,
+    # )
 }
+
+for i in range(normal_mode_total_locations):
+    item_data_table[f"NormalItem{i}"] = ARNFItemData(code = arnf_locations_start_id+i)
+for i in range(classic_boss_rush_total_locations):
+    item_data_table[f"CBRItem{i}"] = ARNFItemData(code = arnf_locations_start_id+normal_mode_total_locations+i)
 
 item_table = {name: data.code for name, data in item_data_table.items() if data.code is not None}
 

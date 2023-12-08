@@ -1,21 +1,25 @@
 from dataclasses import dataclass
 from Options import Toggle, DefaultOnToggle, DeathLink, Range, Choice, PerGameCommonOptions
 
-class TotalLocations(Range):
-    """Number of pickups that should be considered for checks.  Please note that approximately 35 non-progress items and 3 progress items are in each run of the game."""
-    display_name = "Total Locations"
-    range_start = 20
-    range_end = 250
-    default = 35
 
-class ItemWeights(Choice):
-    """Set item_pool_presets to true if you want to use one of these presets.
-    Preset choices for determining the weights of the item pool."""
-    display_name = "Item Weights"
-    option_default = 0
+class NormalModeIncluded(Choice):
+    """Whether a playthrough of normal mode is included for this player.  Please note that approximately 35 non-progress items are in each run."""
+    display_name = "Normal Mode Included"
+    option_off = 0
+    option_on = 1
+    default = 1
+
+
+class ClassicBossRushIncluded(Choice):
+    """Whether a playthrough of Classic Boss Rush is included for this player.  Please note that 11 items are in each run."""
+    display_name = "Classic Boss Rush Included"
+    option_off = 0
+    option_on = 1
+    default = 1
+
 
 @dataclass
 class ARNFOptions(PerGameCommonOptions):
-    total_locations: TotalLocations
-    item_weights: ItemWeights
+    normal_mode_included: NormalModeIncluded
+    classic_boss_rush_included: ClassicBossRushIncluded
     death_link: DeathLink
