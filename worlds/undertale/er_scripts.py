@@ -1,8 +1,9 @@
 from typing import Dict, List, Set, Tuple, TYPE_CHECKING
 from BaseClasses import Region, ItemClassification, Item, Location
-from .Locations import advancement_table as location_table
+from .Locations import advancement_table as location_table, exclusion_table
 from .er_data import Portal, undertale_er_regions, portal_mapping, dependent_regions, hallway_helper
 from .er_rules import set_er_region_rules
+import Utils
 
 if TYPE_CHECKING:
     from . import UndertaleWorld
@@ -61,10 +62,32 @@ def create_er_regions_vanilla(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     set_er_region_rules(world, regions)
 
     for location_name, location_id in location_table.items():
-        if regions.__contains__(location_table[location_name].er_region):
+        if regions.__contains__(location_table[location_name].er_region) and (location_name not in exclusion_table["NoKills"] or (world.multiworld.kill_sanity[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoStats"] or (world.multiworld.rando_stats[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoLove"] or (world.multiworld.rando_love[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoSpare"]) and location_name not in exclusion_table[world.multiworld.route_required[world.player].current_key]:
             region = regions[location_table[location_name].er_region]
             location = UndertaleERLocation(world.player, location_name, location_id.id, region)
             region.locations.append(location)
+
+    for region_name, region_data in undertale_er_regions.items():
+        if world.multiworld.spare_sanity[world.player] and world.multiworld.route_required[world.player] != "genocide":
+            if region_name == "Ruins Grind Rooms":
+                regions[region_name].locations += [
+                    UndertaleERLocation(world.player, "Ruins Spare " + str(i + 1), 78013 + i, regions[region_name])
+                    for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+            elif region_name == "Snowdin Grind Rooms":
+                regions[region_name].locations += [
+                    UndertaleERLocation(world.player, "Snowdin Spare " + str(i + 1), 78113 + i,
+                                        regions[region_name]) for i in
+                    range(world.multiworld.spare_sanity_max[world.player].value)]
+            elif region_name == "Waterfall Grind Rooms":
+                regions[region_name].locations += [
+                        UndertaleERLocation(world.player, "Waterfall Spare " + str(i + 1), 78213 + i,
+                                            regions[region_name]) for i in
+                        range(world.multiworld.spare_sanity_max[world.player].value)]
+            elif region_name == "Hotland/Core Grind Rooms":
+                regions[region_name].locations += [
+                        UndertaleERLocation(world.player, "Hotland Spare " + str(i + 1), 78313 + i,
+                                            regions[region_name]) for i in
+                        range(world.multiworld.spare_sanity_max[world.player].value)]
 
     for region in regions.values():
         world.multiworld.regions.append(region)
@@ -106,13 +129,24 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
 
     er_hint_data: Dict[int, str] = {}
     for location_name, location_id in location_table.items():
-        if regions.__contains__(location_table[location_name].er_region):
+        if regions.__contains__(location_table[location_name].er_region) and (location_name not in exclusion_table["NoKills"] or (world.multiworld.kill_sanity[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoStats"] or (world.multiworld.rando_stats[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoLove"] or (world.multiworld.rando_love[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoSpare"]) and location_name not in exclusion_table[world.multiworld.route_required[world.player].current_key]:
             region = regions[location_table[location_name].er_region]
             location = UndertaleERLocation(world.player, location_name, location_id.id, region)
             region.locations.append(location)
             if region.name == region.hint_text:
                 continue
             er_hint_data[location.address] = region.hint_text
+
+    for region_name, region_data in undertale_er_regions.items():
+        if world.multiworld.spare_sanity[world.player] and world.multiworld.route_required[world.player] != "genocide":
+            if region_name == "Ruins Grind Rooms":
+                regions[region_name].locations += [UndertaleERLocation(world.player, "Ruins Spare "+str(i+1), 78013+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+            elif region_name == "Snowdin Grind Rooms":
+                regions[region_name].locations += [UndertaleERLocation(world.player, "Snowdin Spare "+str(i+1), 78113+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+            elif region_name == "Waterfall Grind Rooms":
+                regions[region_name].locations += [UndertaleERLocation(world.player, "Waterfall Spare "+str(i+1), 78213+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+            elif region_name == "Hotland/Core Grind Rooms":
+                regions[region_name].locations += [UndertaleERLocation(world.player, "Hotland Spare "+str(i+1), 78313+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
     
     create_randomized_entrances(portal_pairs, regions)
 
@@ -123,11 +157,22 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
 
     portals_and_hints = (portal_pairs, er_hint_data)
 
+    state = world.multiworld.get_all_state(False)
+    state.update_reachable_regions(world.player)
+    Utils.visualize_regions(world.multiworld.get_region("Menu", world.player), "undertale_check.puml",
+                                    show_entrance_names=True, highlight_regions=state.reachable_regions[world.player])
+
     return portals_and_hints
 
 
 def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[str, Region]):
     world.multiworld.register_indirect_condition(regions["room_torhouse2"], world.multiworld.get_entrance("Toriel Basement Block", world.player))
+
+    world.multiworld.register_indirect_condition(regions["room_fire_shootguy_2"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
+    world.multiworld.register_indirect_condition(regions["room_fire_shootguy_1"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
+
+    world.multiworld.register_indirect_condition(regions["room_fire_shootguy_3"], world.multiworld.get_entrance("Fire Door 2 Block", world.player))
+    world.multiworld.register_indirect_condition(regions["room_fire_shootguy_4"], world.multiworld.get_entrance("Fire Door 2 Block", world.player))
 
     paps_region = regions["room_tundra_paproom"]
     paps_location = UndertaleERLocation(world.player, "Papyrus Date", None, paps_region)
@@ -139,6 +184,16 @@ def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[st
     undy_location.place_locked_item(UndertaleERItem("Undyne Date", ItemClassification.progression, None, world.player))
     undy_region.locations.append(undy_location)
 
+    alph_region = regions["room_fire_prelab"]
+    alph_location = UndertaleERLocation(world.player, "Alphys Date", None, alph_region)
+    alph_location.place_locked_item(UndertaleERItem("Alphys Date", ItemClassification.progression, None, world.player))
+    alph_region.locations.append(alph_location)
+
+    lab_region = regions["room_fire_labelevator"]
+    lab_location = UndertaleERLocation(world.player, "True Lab Entrance", None, lab_region)
+    lab_location.place_locked_item(UndertaleERItem("True Lab Entrance", ItemClassification.progression, None, world.player))
+    lab_region.locations.append(lab_location)
+
     undyf_region = regions["room_fire2"]
     undyf_location = UndertaleERLocation(world.player, "Undyne Fight (Event)", None, undyf_region)
     undyf_location.place_locked_item(UndertaleERItem("Undyne Fight (Event)", ItemClassification.progression, None, world.player))
@@ -149,29 +204,15 @@ def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[st
     papf_location.place_locked_item(UndertaleERItem("Papyrus Fight (Event)", ItemClassification.progression, None, world.player))
     papf_region.locations.append(papf_location)
 
-    world.multiworld.completion_condition[world.player] = lambda state: state.has("Undyne Date", world.player) and state.has("Papyrus Date", world.player)
-
-    return
-
     throne_region = regions["room_castle_throneroom"]
     throne_location = UndertaleERLocation(world.player, "Throne Room", None, throne_region)
     throne_location.place_locked_item(UndertaleERItem("Throne Room", ItemClassification.progression, None, world.player))
     throne_region.locations.append(throne_location)
 
-    elev_lab_region = regions["room_truelab_castle_elevator"]
-    elev_lab_location = UndertaleERLocation(world.player, "True Lab Elevator", None, elev_lab_region)
-    elev_lab_location.place_locked_item(UndertaleERItem("True Lab Elevator", ItemClassification.progression, None, world.player))
-    elev_lab_region.locations.append(elev_lab_location)
-
-    elev_pow_region = regions["room_truelab_power"]
-    elev_pow_location = UndertaleERLocation(world.player, "True Lab Power", None, elev_pow_region)
-    elev_pow_location.place_locked_item(UndertaleERItem("True Lab Power", ItemClassification.progression, None, world.player))
-    elev_pow_region.locations.append(elev_pow_location)
-
     if world.multiworld.route_required[world.player].current_key == "neutral":
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player)
     elif world.multiworld.route_required[world.player].current_key == "pacifist" or world.multiworld.route_required[world.player].current_key == "all_routes":
-        world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player) and state.has("True Lab Power", world.player) and state.has("True Lab Elevator", world.player)
+        world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player) and state.has("True Lab Entrance", world.player)
     elif world.multiworld.route_required[world.player].current_key == "genocide":
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player)
 
@@ -196,19 +237,15 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
             portal_region_count[undertale_er_regions[portal.region].game_scene] += len(add_dependent_regions(portal.region))
         else:
             portal_region_count[undertale_er_regions[portal.region].game_scene] = len(add_dependent_regions(portal.region))
-        if portal_region_count.keys().__contains__(undertale_er_regions[portal.destination].game_scene):
-            portal_region_count[undertale_er_regions[portal.destination].game_scene] += len(add_dependent_regions(portal.destination))
-        else:
-            portal_region_count[undertale_er_regions[portal.destination].game_scene] = len(add_dependent_regions(portal.destination))
 
     for portal in two_plus:
         if portal_region_count.keys().__contains__(undertale_er_regions[portal.region].game_scene):
-            if portal_region_count[undertale_er_regions[portal.region].game_scene] <= 2:
+            if portal_region_count[undertale_er_regions[portal.region].game_scene] <= 1:
                 print("TWO_PLUS IS A DEAD END: "+portal.region+" "+portal.origin_letter+ " : "+str(portal_region_count[undertale_er_regions[portal.region].game_scene])+" connections")
 
     for portal in dead_ends:
         if portal_region_count.keys().__contains__(undertale_er_regions[portal.region].game_scene):
-            if portal_region_count[undertale_er_regions[portal.region].game_scene] > 2:
+            if portal_region_count[undertale_er_regions[portal.region].game_scene] > 1:
                 print("DEAD_END IS A TWO PLUS: "+portal.region+" "+portal.origin_letter+ " : "+str(portal_region_count[undertale_er_regions[portal.region].game_scene])+" connections")
 
     connected_regions: Set[str] = set()
@@ -237,7 +274,7 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
         if names.count(item) > 1:
             print("DUPLICATE PORTAL NAME "+item)
     while len(connected_regions) < len(non_dead_end_regions):
-        # find a portal in an inaccessible region
+        # then we find a portal in a connected region
         if check_success == 0:
             for portal in two_plus:
                 if portal.region in connected_regions:
@@ -250,7 +287,7 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
                     check_success = 1
                     break
 
-        # then we find a portal in a connected region
+        # find a portal in an inaccessible region
         if check_success == 1:
             for portal in two_plus:
                 if portal.region not in connected_regions:
@@ -263,6 +300,9 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
                     check_success = 2
                     break
 
+        if check_success == 1:
+            print(non_dead_end_regions.difference(connected_regions).__str__())
+
         # once we have both portals, connect them and add the new region(s) to connected_regions
         if check_success == 2:
             connected_regions.update(add_dependent_regions(portal2.region))
@@ -273,14 +313,46 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     # connect dead ends to random non-dead ends
     # none of the key events are in dead ends, so we don't need to do gate_before_switch
     print(len(dead_ends)-len(two_plus))
-    pass
+    if len(dead_ends)-len(two_plus) > 0:
+        pass
     while len(dead_ends) > 0:
+            # then we find a portal in a connected region
+            if check_success == 0:
+                for portal in two_plus:
+                    if portal.region in connected_regions:
+                        # if there's risk of self-locking, start over
+                        if gate_before_switch(portal, two_plus):
+                            world.random.shuffle(two_plus)
+                            break
+                        portal1 = portal
+                        two_plus.remove(portal)
+                        check_success = 1
+                        break
 
-        if len(two_plus) == 0:
-            raise Exception("dead ends has more portals than it should")
-        portal1 = two_plus.pop()
-        portal2 = dead_ends.pop()
-        portal_pairs[portal1] = portal2
+            # find a portal in an inaccessible region
+            if check_success == 1:
+                for portal in dead_ends:
+                    if portal.region not in connected_regions:
+                        # if there's risk of self-locking, shuffle and try again
+                        if gate_before_switch(portal, dead_ends):
+                            world.random.shuffle(dead_ends)
+                            break
+                        portal2 = portal
+                        dead_ends.remove(portal)
+                        check_success = 2
+                        break
+
+            if check_success == 1:
+                print(two_plus.__str__())
+                print(dead_ends.__str__())
+
+            # once we have both portals, connect them and add the new region(s) to connected_regions
+            if check_success == 2:
+                connected_regions.update(add_dependent_regions(portal2.region))
+                portal_pairs[portal1] = portal2
+                check_success = 0
+                world.random.shuffle(two_plus)
+                world.random.shuffle(dead_ends)
 
     # then randomly connect the remaining portals to each other
     # every region is accessible, so gate_before_switch is not necessary
@@ -305,6 +377,7 @@ def create_randomized_entrances(portal_pairs: Dict[Portal, Portal], regions: Dic
         region1 = regions[portal1.region]
         region2 = regions[portal2.region]
         region1.connect(region2, f"{portal1.name} -> {portal2.name}")
+        region2.connect(region1, f"{portal2.name} -> {portal1.name}")
 
 
 # loop through the static connections, return regions you can reach from this region

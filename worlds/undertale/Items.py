@@ -112,49 +112,49 @@ item_table = {
 non_key_items = {
     "Butterscotch Pie": 1,
     "1000G": 2,
-    # "Face Steak": 1,
+    "Face Steak": 1,
     "Snowman Piece": 1,
     "Instant Noodles": 1,
     "Astronaut Food": 2,
-    # "Hot Cat": 1,
+    "Hot Cat": 1,
     "Abandoned Quiche": 1,
-    # "Hush Puppy": 1,
+    "Hush Puppy": 1,
 }
 
 required_armor = {
     "Cloudy Glasses": 1,
     "Manly Bandanna": 1,
     "Old Tutu": 1,
-    # "Stained Apron": 1,
-    # "Heart Locket": 1,
+    "Stained Apron": 1,
+    "Heart Locket": 1,
     "Faded Ribbon": 1,
-    # "Cowboy Hat": 1,
+    "Cowboy Hat": 1,
 }
 
 required_weapons = {
     "Torn Notebook": 1,
     "Tough Glove": 1,
     "Ballet Shoes": 1,
-    # "Burnt Pan": 1,
-    # "Worn Dagger": 1,
+    "Burnt Pan": 1,
+    "Worn Dagger": 1,
     "Toy Knife": 1,
-    # "Empty Gun": 1,
+    "Empty Gun": 1,
 }
 
 plot_items = {
     "Complete Skeleton": 1,
     "Fish": 1,
-    # "Mettaton Plush": 1,
-    # "DT Extractor": 1,
+    "Mettaton Plush": 1,
+    "DT Extractor": 1,
 }
 
 key_items = {
     "Complete Skeleton": 1,
     "Fish": 1,
-    # "DT Extractor": 1,
-    # "Mettaton Plush": 1,
+    "DT Extractor": 1,
+    "Mettaton Plush": 1,
     "Punch Card": 3,
-    # "Hot Dog...?": 1,
+    "Hot Dog...?": 1,
     "ATK Up": 19,
     "DEF Up": 4,
     "HP Up": 19,
@@ -162,8 +162,8 @@ key_items = {
     "Ruins Key": 1,
     "Snowdin Key": 1,
     "Waterfall Key": 1,
-    # "Hotland Key": 1,
-    # "Core Key": 1,
+    "Hotland Key": 1,
+    "Core Key": 1,
     "Mystery Key": 1,
     "Jump": 1,
 }

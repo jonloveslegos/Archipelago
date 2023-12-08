@@ -20,30 +20,30 @@ def _undertale_is_route(state: CollectionState, player: int, route: int):
 def _undertale_exp_available(state: CollectionState, player: int):
     exp = 0
     pack_size = state.multiworld.kill_sanity_pack_size[player].value
-    if state.has("Ruins Key", player):
+    if state.can_reach("Ruins Grind Rooms", "Region", player):
         exp += (min(20, state.count("Ruins Population Pack", player) * pack_size) * 2)
-        if state.count("Ruins Population Pack", player) * pack_size >= 20:
+        if state.can_reach("room_basement4", "Region", player) and state.count("Ruins Population Pack", player) * pack_size >= 20:
             exp += 150
-    if state.has("Snowdin Key", player):
+    if state.can_reach("Snowdin Grind Rooms", "Region", player):
         exp += (min(15, state.count("Snowdin Population Pack", player) * pack_size) * 1)
         exp += 170
-        if state.count("Snowdin Population Pack", player) * pack_size >= 16:
+        if state.can_reach("room_fogroom", "Region", player) and state.count("Snowdin Population Pack", player) * pack_size >= 16:
             exp += 222
-    if state.has("Waterfall Key", player):
+    if state.can_reach("Waterfall Grind Rooms", "Region", player):
         exp += (min(18, state.count("Waterfall Population Pack", player) * pack_size) * 3)
         exp += 52
-        if state.count("Waterfall Population Pack", player) * pack_size >= 18:
+        if state.can_reach("room_water20", "Region", player) and state.count("Waterfall Population Pack", player) * pack_size >= 18:
             exp += 1500
-    if state.has("Hotland Key", player) or state.has("Core Key", player):
+    if state.can_reach("room_fire_turn", "Region", player):
+        exp += 220
+    if state.can_reach("room_fire_spider", "Region", player):
+        exp += 300
+    if state.can_reach("Hotland/Core Grind Rooms", "Region", player):
         exp += (min(40, state.count("Hotland Population Pack", player) * pack_size) * 70)
-    if state.has("Hotland Key", player):
-        exp += 520
-    if state.has("Core Key", player):
-        exp += 1100
-        if state.count("Hotland Population Pack", player) * pack_size >= 40 and state.has("Mettaton Plush", player):
+        if state.can_reach("room_fire_core_metttest", "Region", player) and state.count("Hotland Population Pack", player) * pack_size >= 40:
             exp = 50000
-        if state.count("Hotland Population Pack", player) * pack_size >= 40 and state.can_reach("Last Corridor Exit", "Entrance", player):
-            exp = 99999
+    if state.can_reach("room_castle_finalshoehorn", "Region", player):
+        exp = 99999
     return exp
 
 

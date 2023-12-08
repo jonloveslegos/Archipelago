@@ -182,7 +182,7 @@ class UndertaleContext(CommonContext):
                     if "check.spot" == file or "scout" == file:
                         os.remove(os.path.join(root, file))
                     elif file.endswith(("disconnected", ".item", ".victory", ".route", ".playerspot", ".mad",
-                                                ".youDied", ".LV", ".flag", ".hint", ".pack")):
+                                                ".youDied", ".LV", ".flag", ".hint", ".pack", "roomrando")):
                         os.remove(os.path.join(root, file))
                 except Exception as error:
                     print(str(error))
@@ -257,6 +257,9 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                                                            str(ctx.slot)+" RoutesDone genocide"]}])
         if args["slot_data"]["only_flakes"]:
             with open(os.path.join(ctx.save_game_folder, "GenoNoChest.flag"), "w") as f:
+                f.close()
+        if args["slot_data"]["entrance_rando"]:
+            with open(os.path.join(ctx.save_game_folder, "roomrando.enabled"), "w") as f:
                 f.close()
         if not args["slot_data"]["key_hunt"]:
             ctx.pieces_needed = 0

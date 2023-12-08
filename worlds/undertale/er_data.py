@@ -15,16 +15,251 @@ class Portal(NamedTuple):
         return self.scene() + self.origin_letter
 
 
-to_implement_portals: List[Portal] = [
-    Portal(region="Hotland Entrance", destination="room_fire_prelab", origin_letter="C"),
-    Portal(region="Core Entrance", destination="room_fire_core1", origin_letter="X"),
-    ]
-
-
 portal_mapping: List[Portal] = [
     Portal(region="Ruins Entrance", destination="room_area1_2", origin_letter="B"),
     Portal(region="Snowdin Entrance", destination="room_tundra1", origin_letter="A"),
     Portal(region="Waterfall Entrance", destination="room_water1", origin_letter="D"),
+    Portal(region="Hotland Entrance", destination="room_fire_prelab", origin_letter="C"),
+    Portal(region="Core Entrance", destination="room_fire_core1", origin_letter="X"),
+
+    Portal(region="room_fire_prelab", destination="Hotland Entrance", origin_letter="A"),
+    Portal(region="room_fire_prelab", destination="room_fire_lab1", origin_letter="D"),
+    Portal(region="room_fire_prelab", destination="room_fire_dock", origin_letter="B"),
+    Portal(region="room_fire_prelab", destination="room_fire_elevator_l1", origin_letter="T"),
+
+    Portal(region="room_fire_elevator_l1", destination="room_fire_prelab", origin_letter="T"),
+
+    Portal(region="room_fire_dock", destination="room_fire_prelab", origin_letter="A"),
+
+    Portal(region="room_fire_lab1", destination="room_fire_prelab", origin_letter="C"),
+    Portal(region="room_fire_lab1", destination="room_fire_lab2", origin_letter="B"),
+    Portal(region="room_fire_lab1", destination="room_fire_lab2", origin_letter="A"),
+    Portal(region="room_fire_lab1", destination="room_fire3", origin_letter="D"),
+
+    Portal(region="room_fire_lab2", destination="room_fire_lab1", origin_letter="B"),
+    Portal(region="room_fire_lab2", destination="room_fire_lab1", origin_letter="A"),
+
+    Portal(region="room_fire3", destination="room_fire_lab1", origin_letter="C"),
+    Portal(region="room_fire3", destination="room_fire5", origin_letter="B"),
+
+    Portal(region="room_fire5", destination="room_fire3", origin_letter="A"),
+    Portal(region="room_fire5", destination="room_fire6", origin_letter="B"),
+
+    Portal(region="room_fire6", destination="room_fire5", origin_letter="A"),
+    Portal(region="room_fire6", destination="room_fire6A", origin_letter="B"),
+    Portal(region="room_fire6", destination="room_fire_lasers1", origin_letter="D"),
+
+    Portal(region="room_fire_lasers1", destination="room_fire6", origin_letter="C"),
+    Portal(region="room_fire_lasers1", destination="room_fire7", origin_letter="B"),
+
+    Portal(region="room_fire7", destination="room_fire_lasers1", origin_letter="A"),
+    Portal(region="room_fire7", destination="room_fire8", origin_letter="B"),
+    Portal(region="room_fire7", destination="room_fire9", origin_letter="U"),
+
+    Portal(region="Fire Door 1", destination="room_fire_turn", origin_letter="T"),
+
+    Portal(region="room_fire_turn", destination="Fire Door 1", origin_letter="T"),
+    Portal(region="Fire Turn Part 2", destination="room_fire_cookingshow", origin_letter="B"),
+
+    Portal(region="room_fire_cookingshow", destination="Fire Turn Part 2", origin_letter="A"),
+    Portal(region="room_fire_cookingshow", destination="room_fire_savepoint1", origin_letter="B"),
+
+    Portal(region="room_fire_savepoint1", destination="room_fire_cookingshow", origin_letter="A"),
+    Portal(region="room_fire_savepoint1", destination="room_fire_elevator_r1", origin_letter="B"),
+
+    Portal(region="room_fire_elevator_r1", destination="room_fire_savepoint1", origin_letter="A"),
+
+    Portal(region="room_fire_elevator_r2", destination="room_fire_hotdog", origin_letter="B"),
+
+    Portal(region="room_fire_hotdog", destination="room_fire_elevator_r2", origin_letter="A"),
+    Portal(region="room_fire_hotdog", destination="room_fire_walkandbranch", origin_letter="B"),
+
+    Portal(region="room_fire_walkandbranch", destination="room_fire_hotdog", origin_letter="A"),
+    Portal(region="room_fire_walkandbranch", destination="room_fire10", origin_letter="T"),
+    Portal(region="room_fire_walkandbranch", destination="room_fire_sorry", origin_letter="B"),
+    Portal(region="room_fire_walkandbranch", destination="room_fire_apron", origin_letter="D"),
+
+    Portal(region="room_fire_sorry", destination="room_fire_walkandbranch", origin_letter="A"),
+
+    Portal(region="room_fire_apron", destination="room_fire_walkandbranch", origin_letter="C"),
+
+    Portal(region="room_fire10", destination="room_fire_walkandbranch", origin_letter="T"),
+    Portal(region="room_fire10", destination="room_fire_rpuzzle", origin_letter="B"),
+
+    Portal(region="room_fire_rpuzzle", destination="room_fire10", origin_letter="A"),
+    Portal(region="room_fire_rpuzzle", destination="room_fire_mewmew2", origin_letter="B"),
+
+    Portal(region="room_fire_mewmew2", destination="room_fire_rpuzzle", origin_letter="A"),
+    Portal(region="room_fire_mewmew2", destination="room_fire_boysnightout", origin_letter="B"),
+
+    Portal(region="room_fire_boysnightout", destination="room_fire_mewmew2", origin_letter="A"),
+    Portal(region="room_fire_boysnightout", destination="room_fire_newsreport", origin_letter="B"),
+
+    Portal(region="room_fire_newsreport", destination="room_fire_boysnightout", origin_letter="A"),
+    Portal(region="room_fire_newsreport", destination="room_fire_coreview2", origin_letter="B"),
+
+    Portal(region="room_fire_coreview2", destination="room_fire_newsreport", origin_letter="A"),
+    Portal(region="room_fire_coreview2", destination="room_fire_elevator_l2", origin_letter="B"),
+
+    Portal(region="room_fire_elevator_l2", destination="room_fire_coreview2", origin_letter="A"),
+
+    Portal(region="room_fire_elevator_l3", destination="room_fire_spidershop", origin_letter="B"),
+
+    Portal(region="room_fire_spidershop", destination="room_fire_elevator_l3", origin_letter="A"),
+    Portal(region="room_fire_spidershop", destination="room_fire_walkandbranch2", origin_letter="B"),
+
+    Portal(region="room_fire_walkandbranch2", destination="room_fire_spidershop", origin_letter="A"),
+    Portal(region="room_fire_walkandbranch2", destination="room_fire_preshootguy4", origin_letter="T"),
+    Portal(region="room_fire_walkandbranch2", destination="room_fire_conveyorlaser", origin_letter="B"),
+
+    Portal(region="room_fire_conveyorlaser", destination="room_fire_walkandbranch2", origin_letter="A"),
+    Portal(region="room_fire_conveyorlaser", destination="room_fire_shootguy_3", origin_letter="B"),
+
+    Portal(region="room_fire_shootguy_3", destination="room_fire_conveyorlaser", origin_letter="A"),
+
+    Portal(region="room_fire_preshootguy4", destination="room_fire_walkandbranch2", origin_letter="T"),
+    Portal(region="room_fire_preshootguy4", destination="room_fire_shootguy_4", origin_letter="B"),
+
+    Portal(region="room_fire_shootguy_4", destination="room_fire_preshootguy4", origin_letter="A"),
+
+    Portal(region="Fire Door 2", destination="room_fire_savepoint2", origin_letter="X"),
+
+    Portal(region="room_fire_savepoint2", destination="Fire Door 2", origin_letter="X"),
+    Portal(region="room_fire_savepoint2", destination="room_fire_spider", origin_letter="B"),
+
+    Portal(region="room_fire_spider", destination="room_fire_savepoint2", origin_letter="A"),
+    Portal(region="room_fire_spider", destination="room_fire_pacing", origin_letter="B"),
+
+    Portal(region="room_fire_pacing", destination="room_fire_spider", origin_letter="A"),
+    Portal(region="room_fire_pacing", destination="room_fire_operatest", origin_letter="B"),
+
+    Portal(region="room_fire_operatest", destination="room_fire_pacing", origin_letter="A"),
+    Portal(region="room_fire_operatest", destination="room_fire_hotelfront_1", origin_letter="D"),
+
+    Portal(region="room_fire_hotelfront_1", destination="room_fire_operatest", origin_letter="C"),
+    Portal(region="room_fire_hotelfront_1", destination="room_fire_multitile", origin_letter="A"),
+    Portal(region="room_fire_hotelfront_1", destination="room_fire_hotelfront_2", origin_letter="B"),
+    Portal(region="room_fire_hotelfront_1", destination="room_fire_elevator_r3", origin_letter="X"),
+
+    Portal(region="room_fire_multitile", destination="room_fire_hotelfront_1", origin_letter="B"),
+
+    Portal(region="room_fire_elevator_r3", destination="room_fire_hotelfront_1", origin_letter="X"),
+
+    Portal(region="room_fire_hotelfront_2", destination="room_fire_hotelfront_1", origin_letter="A"),
+    Portal(region="room_fire_hotelfront_2", destination="room_fire_hotellobby", origin_letter="B"),
+    Portal(region="room_fire_hotelfront_2", destination="room_shop3", origin_letter="X"),
+
+    Portal(region="room_fire_hotellobby", destination="room_fire_hotelfront_2", origin_letter="A"),
+    Portal(region="room_fire_hotellobby", destination="room_fire_restaurant", origin_letter="B"),
+    Portal(region="room_fire_hotellobby", destination="room_fire_hoteldoors", origin_letter="C"),
+    Portal(region="room_fire_hotellobby", destination="room_fire_precore", origin_letter="X"),
+    Portal(region="room_fire_hotellobby", destination="room_shop4", origin_letter="T"),
+
+    Portal(region="room_shop4", destination="room_fire_hotellobby", origin_letter="T"),
+
+    Portal(region="room_fire_restaurant", destination="room_fire_hotellobby", origin_letter="A"),
+
+    Portal(region="room_fire_hoteldoors", destination="room_fire_hotellobby", origin_letter="D"),
+
+    Portal(region="Bed Door One-way", destination="room_fire_hotelbed", origin_letter="B"),
+
+    Portal(region="room_fire_hotelbed", destination="Bed Door One-way", origin_letter="A"),
+
+    Portal(region="room_fire_precore", destination="room_fire_hotellobby", origin_letter="X"),
+    Portal(region="room_fire_precore", destination="Hotland Exit", origin_letter="B"),
+
+    Portal(region="Hotland Exit", destination="room_fire_precore", origin_letter="A"),
+
+    Portal(region="room_fire_core1", destination="room_area1", origin_letter="A"),
+    Portal(region="room_fire_core1", destination="room_fire_core2", origin_letter="B"),
+    Portal(region="room_fire_core1", destination="room_fire_core3", origin_letter="D"),
+    Portal(region="room_fire_core1", destination="room_fire_core_premett", origin_letter="U"),
+
+    Portal(region="room_fire_core2", destination="room_fire_core1", origin_letter="A"),
+
+    Portal(region="room_fire_core3", destination="room_fire_core1", origin_letter="C"),
+    Portal(region="room_fire_core3", destination="room_fire_core4", origin_letter="B"),
+
+    Portal(region="room_fire_core4", destination="room_fire_core3", origin_letter="A"),
+    Portal(region="room_fire_core4", destination="room_fire_core5", origin_letter="B"),
+
+    Portal(region="room_fire_core5", destination="room_fire_core4", origin_letter="A"),
+    Portal(region="room_fire_core5", destination="room_fire_core_freebattle", origin_letter="B"),
+    Portal(region="room_fire_core5", destination="room_fire_core_laserfun", origin_letter="D"),
+
+    Portal(region="room_fire_core_freebattle", destination="room_fire_core5", origin_letter="A"),
+
+    Portal(region="room_fire_core_laserfun", destination="room_fire_core5", origin_letter="C"),
+    Portal(region="room_fire_core_laserfun", destination="room_fire_core_branch", origin_letter="B"),
+
+    Portal(region="room_fire_core_branch", destination="room_fire_core_laserfun", origin_letter="A"),
+    Portal(region="room_fire_core_branch", destination="room_fire_core_bottomleft", origin_letter="B"),
+    Portal(region="room_fire_core_branch", destination="room_fire_core_center", origin_letter="X"),
+    Portal(region="room_fire_core_branch", destination="room_fire_core_bottomright", origin_letter="U"),
+
+    Portal(region="room_fire_core_bottomleft", destination="room_fire_core_branch", origin_letter="A"),
+    Portal(region="room_fire_core_bottomleft", destination="room_fire_core_left", origin_letter="B"),
+
+    Portal(region="room_fire_core_center", destination="room_fire_core_branch", origin_letter="X"),
+    Portal(region="room_fire_core_center", destination="room_fire_core_right", origin_letter="C"),
+    Portal(region="room_fire_core_center", destination="room_fire_core_top", origin_letter="U"),
+
+    Portal(region="room_fire_core_left", destination="room_fire_core_bottomleft", origin_letter="A"),
+    Portal(region="room_fire_core_left", destination="room_fire_core_topleft", origin_letter="B"),
+    Portal(region="room_fire_core_left", destination="room_fire_shootguy_5", origin_letter="X"),
+
+    Portal(region="room_fire_core_topleft", destination="room_fire_core_left", origin_letter="A"),
+    Portal(region="room_fire_core_topleft", destination="room_fire_core_top", origin_letter="B"),
+    Portal(region="room_fire_core_topleft", destination="room_fire_core_treasureleft", origin_letter="X"),
+
+    Portal(region="room_fire_core_treasureleft", destination="room_fire_core_topleft", origin_letter="X"),
+
+    Portal(region="room_fire_shootguy_5", destination="room_fire_core_left", origin_letter="X"),
+
+    Portal(region="room_fire_core_top", destination="room_fire_core_center", origin_letter="U"),
+    Portal(region="room_fire_core_top", destination="room_fire_core_topleft", origin_letter="A"),
+    Portal(region="room_fire_core_top", destination="room_fire_core_warrior", origin_letter="X"),
+    Portal(region="room_fire_core_top", destination="room_fire_core_topright", origin_letter="B"),
+
+    Portal(region="room_fire_core_warrior", destination="room_fire_core_top", origin_letter="X"),
+
+    Portal(region="room_fire_core_right", destination="room_fire_core_center", origin_letter="D"),
+    Portal(region="room_fire_core_right", destination="room_fire_core_bottomright", origin_letter="B"),
+    Portal(region="room_fire_core_right", destination="room_fire_core_topright", origin_letter="A"),
+    Portal(region="room_fire_core_right", destination="room_fire_core_bridge", origin_letter="X"),
+
+    Portal(region="room_fire_core_topright", destination="room_fire_core_top", origin_letter="A"),
+    Portal(region="room_fire_core_topright", destination="room_fire_core_right", origin_letter="B"),
+    Portal(region="room_fire_core_topright", destination="room_fire_core_treasureright", origin_letter="X"),
+
+    Portal(region="room_fire_core_treasureright", destination="room_fire_core_topright", origin_letter="X"),
+
+    Portal(region="room_fire_core_bottomright", destination="room_fire_core_branch", origin_letter="U"),
+    Portal(region="room_fire_core_bottomright", destination="room_fire_core_right", origin_letter="A"),
+
+    Portal(region="room_fire_core_bridge", destination="room_fire_core_right", origin_letter="X"),
+    Portal(region="room_fire_core_bridge", destination="room_fire_core_premett", origin_letter="B"),
+
+    Portal(region="room_fire_core_premett", destination="room_fire_core_bridge", origin_letter="A"),
+    Portal(region="room_fire_core_premett", destination="room_fire_core1", origin_letter="U"),
+
+    Portal(region="Metta Entrance", destination="room_fire_core_metttest", origin_letter="B"),
+
+    Portal(region="room_fire_core_metttest", destination="Metta Entrance", origin_letter="A"),
+
+    Portal(region="room_shop3", destination="room_fire_hotelfront_2", origin_letter="X"),
+
+    Portal(region="room_fire8", destination="room_fire7", origin_letter="A"),
+    Portal(region="room_fire8", destination="room_fire_shootguy_2", origin_letter="B"),
+
+    Portal(region="room_fire_shootguy_2", destination="room_fire8", origin_letter="A"),
+
+    Portal(region="room_fire9", destination="room_fire7", origin_letter="U"),
+    Portal(region="room_fire9", destination="room_fire_shootguy_1", origin_letter="B"),
+
+    Portal(region="room_fire_shootguy_1", destination="room_fire9", origin_letter="A"),
+
+    Portal(region="room_fire6A", destination="room_fire6", origin_letter="A"),
 
     Portal(region="room_water1", destination="Waterfall Entrance", origin_letter="A"),
     Portal(region="room_water1", destination="room_water2", origin_letter="B"),
@@ -366,11 +601,8 @@ portal_mapping: List[Portal] = [
 
     Portal(region="room_tundra_iceentrance", destination="room_tundra_lesserdog", origin_letter="C"),
     Portal(region="room_tundra_iceentrance", destination="room_tundra_icehole", origin_letter="A"),
-    Portal(region="room_tundra_iceentrance", destination="Ice Hole Fall", origin_letter="D"),
     Portal(region="room_tundra_iceentrance", destination="room_tundra_iceexit_new", origin_letter="B"),
     Portal(region="room_tundra_iceentrance", destination="room_tundra_poffzone", origin_letter="X"),
-
-    Portal(region="Ice Hole Fall", destination="room_tundra_iceentrance", origin_letter="C"),
 
     Portal(region="room_tundra_icehole", destination="room_tundra_iceentrance", origin_letter="B"),
 
@@ -514,7 +746,7 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_tundra_xoxopuzz": RegionInfo("room_tundra_xoxopuzz"),
     "room_tundra_randoblock": RegionInfo("room_tundra_randoblock"),
     "room_tundra_lesserdog": RegionInfo("room_tundra_lesserdog"),
-    "room_tundra_icehole": RegionInfo("room_tundra_icehole"),
+    "room_tundra_icehole": RegionInfo("room_tundra_icehole", dead_end=True),
     "room_tundra_iceentrance": RegionInfo("room_tundra_iceentrance"),
     "room_tundra_iceexit_new": RegionInfo("room_tundra_iceexit_new"),
     "room_tundra_iceexit": RegionInfo("room_tundra_iceexit"),
@@ -562,6 +794,7 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_water_waterfall": RegionInfo("room_water_waterfall"),
     "room_water_waterfall2": RegionInfo("room_water_waterfall2"),
     "room_water_waterfall3": RegionInfo("room_water_waterfall3"),
+    "Metta Entrance": RegionInfo("room_fire_core_premett"),
     "room_water_waterfall4": RegionInfo("room_water_waterfall4"),
     "room_water_preundyne": RegionInfo("room_water_preundyne"),
     "room_water_undynebridge": RegionInfo("room_water_undynebridge"),
@@ -587,7 +820,6 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_fire2": RegionInfo("room_fire2"),
     "Toriel Basement 2": RegionInfo("room_basement1"),
     "Trash Zone Fall": RegionInfo("room_water_trashzone1"),
-    "Ice Hole Fall": RegionInfo("room_tundra_icehole"),
     "Ruins Pit Circle B": RegionInfo("room_ruins15E"),
     "Ruins Pit Circle C": RegionInfo("room_ruins15E"),
     "Ruins Pit Circle D": RegionInfo("room_ruins15E"),
@@ -596,15 +828,12 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "Ruins Entrance": RegionInfo("room_area1"),
     "Snowdin Entrance": RegionInfo("room_area1"),
     "Waterfall Entrance": RegionInfo("room_area1"),
-    "Ruins Exit": RegionInfo("room_area1"),
-    "Snowdin Exit": RegionInfo("room_area1"),
-    "Waterfall Exit": RegionInfo("room_area1"),
+    "Ruins Exit": RegionInfo("room_area1", dead_end=True),
+    "Snowdin Exit": RegionInfo("room_area1", dead_end=True),
+    "Waterfall Exit": RegionInfo("room_area1", dead_end=True),
+    "Hotland Exit": RegionInfo("room_area1", dead_end=True),
     "Monster Kid Raised Ledge": RegionInfo("room_water_waterfall4"),
     "Menu": RegionInfo("Fake", dead_end=True),
-}
-
-
-to_implement = {
     "room_shop3": RegionInfo("room_shop3", dead_end=True),
     "room_shop4": RegionInfo("room_shop4", dead_end=True),
     "Hotland Entrance": RegionInfo("room_area1"),
@@ -630,7 +859,7 @@ to_implement = {
     "room_fire_elevator_r2": RegionInfo("room_fire_elevator_r2"),
     "room_fire_hotdog": RegionInfo("room_fire_hotdog"),
     "room_fire_walkandbranch": RegionInfo("room_fire_walkandbranch"),
-    "room_fire_sorry": RegionInfo("room_fire_sorry"),
+    "room_fire_sorry": RegionInfo("room_fire_sorry", dead_end=True),
     "room_fire_apron": RegionInfo("room_fire_apron", dead_end=True),
     "room_fire10": RegionInfo("room_fire10"),
     "room_fire_rpuzzle": RegionInfo("room_fire_rpuzzle"),
@@ -650,11 +879,11 @@ to_implement = {
     "room_fire_spider": RegionInfo("room_fire_spider"),
     "room_fire_pacing": RegionInfo("room_fire_pacing"),
     "room_fire_operatest": RegionInfo("room_fire_operatest"),
-    "room_fire_multitile": RegionInfo("room_fire_multitile"),
+    "room_fire_multitile": RegionInfo("room_fire_multitile", dead_end=True),
     "room_fire_hotelfront_1": RegionInfo("room_fire_hotelfront_1"),
     "room_fire_hotelfront_2": RegionInfo("room_fire_hotelfront_2"),
     "room_fire_hotellobby": RegionInfo("room_fire_hotellobby"),
-    "room_fire_restaurant": RegionInfo("room_fire_restaurant"),
+    "room_fire_restaurant": RegionInfo("room_fire_restaurant", dead_end=True),
     "room_fire_hoteldoors": RegionInfo("room_fire_hoteldoors"),
     "room_fire_hotelbed": RegionInfo("room_fire_hotelbed", dead_end=True),
     "room_fire_elevator_r3": RegionInfo("room_fire_elevator_r3"),
@@ -706,6 +935,15 @@ to_implement = {
     "room_castle_coffins1": RegionInfo("room_castle_coffins1"),
     "room_castle_coffins2": RegionInfo("room_castle_coffins2", dead_end=True),
     "room_castle_throneroom": RegionInfo("room_castle_throneroom", dead_end=True),
+    "Hotland/Core Grind Rooms": RegionInfo("Hotland/Core Grind Rooms", dead_end=True),
+    "Waterfall Grind Rooms": RegionInfo("Waterfall Grind Rooms", dead_end=True),
+    "Snowdin Grind Rooms": RegionInfo("Snowdin Grind Rooms", dead_end=True),
+    "Ruins Grind Rooms": RegionInfo("Ruins Grind Rooms", dead_end=True),
+    "Fire Door 1": RegionInfo("room_fire7"),
+    "Fire Door 2": RegionInfo("room_fire_walkandbranch2"),
+    "Fire Turn Part 2": RegionInfo("room_fire_turn"),
+    "Bed Door One-way": RegionInfo("room_fire_hoteldoors"),
+    "???": RegionInfo("???", dead_end=True),
     "room_fire_labelevator": RegionInfo("room_fire_labelevator"),
                 }
 
@@ -730,10 +968,18 @@ class StaticCxn(NamedTuple):
 # the key is the region you have, the value is the regions you get for having that region
 # this is mostly so we don't have to do something overly complex to get this information
 dependent_regions: Dict[Tuple[str, ...], List[str]] = {
-    ("Ice Hole Fall",):
-         ["room_tundra_icehole", "Ice Hole Fall"],
     ("Ruins Pit Circle B",):
          ["room_ruins15E", "Ruins Pit Circle B"],
+    ("Metta Entrance", "room_fire_core_premett"):
+         ["Metta Entrance", "room_fire_core_premett"],
+    ("Bed Door One-way",):
+         ["room_fire_hoteldoors", "Bed Door One-way"],
+    ("room_fire_turn",):
+         ["room_fire_turn", "Fire Turn Part 2"],
+    ("room_fire7", "Fire Door 1"):
+         ["room_fire7", "Fire Door 1"],
+    ("room_fire_walkandbranch2", "Fire Door 2"):
+         ["room_fire_walkandbranch2", "Fire Door 2"],
     ("Ruins Pit Circle C",):
          ["room_ruins15E", "Ruins Pit Circle C"],
     ("Ruins Pit Circle D",):
@@ -752,10 +998,79 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_water_undynefinal", "room_fire2"],
     ("room_area1",):
          ["room_area1", "Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"],
-    ("Ruins Exit",):
-         ["room_area1", "Ruins Exit"],
-    ("Snowdin Exit",):
-         ["room_area1", "Snowdin Exit"],
-    ("Waterfall Exit",):
-         ["room_area1", "Waterfall Exit"]
+    ("room_fire_core_bottomleft",):
+         ["room_fire_core_bottomleft","Hotland/Core Grind Rooms"],
+    ("room_fire_core_topleft",):
+         ["room_fire_core_topleft","Hotland/Core Grind Rooms"],
+    ("room_fire_core_topright",):
+         ["room_fire_core_topright","Hotland/Core Grind Rooms"],
+    ("room_fire_core_bottomright",):
+         ["room_fire_core_bottomright","Hotland/Core Grind Rooms"],
+    ("room_fire_core_center",):
+         ["room_fire_core_center","Hotland/Core Grind Rooms"],
+    ("room_fire_core_bridge",):
+         ["room_fire_core_bridge","Hotland/Core Grind Rooms"],
+    ("room_fire5",):
+         ["room_fire5","Hotland/Core Grind Rooms"],
+    ("room_fire6",):
+         ["room_fire6","Hotland/Core Grind Rooms"],
+    ("room_fire_walkandbranch",):
+         ["room_fire_walkandbranch","Hotland/Core Grind Rooms"],
+    ("room_fire_preshootguy4",):
+         ["room_fire_preshootguy4","Hotland/Core Grind Rooms"],
+    ("room_water5",):
+         ["room_water5","Waterfall Grind Rooms"],
+    ("room_water6",):
+         ["room_water6","Waterfall Grind Rooms"],
+    ("room_water12",):
+         ["room_water12","Waterfall Grind Rooms"],
+    ("room_water15",):
+         ["room_water15","Waterfall Grind Rooms"],
+    ("room_water16",):
+         ["room_water16","Waterfall Grind Rooms"],
+    ("room_water17",):
+         ["room_water17","Waterfall Grind Rooms"],
+    ("room_tundra3",):
+         ["room_tundra3","Snowdin Grind Rooms"],
+    ("room_tundra4",):
+         ["room_tundra4","Snowdin Grind Rooms"],
+    ("room_tundra6",):
+         ["room_tundra6","Snowdin Grind Rooms"],
+    ("room_tundra_snowpuzz",):
+         ["room_tundra_snowpuzz","Snowdin Grind Rooms"],
+    ("room_tundra_dangerbridge",):
+         ["room_tundra_dangerbridge","Snowdin Grind Rooms"],
+    ("room_ruins7",):
+         ["room_ruins7","Ruins Grind Rooms"],
+    ("room_ruins9",):
+         ["room_ruins9","Ruins Grind Rooms"],
+    ("room_ruins8",):
+         ["room_ruins8","Ruins Grind Rooms"],
+    ("room_ruins15A",):
+         ["room_ruins15A","Ruins Grind Rooms"],
+    ("room_ruins10",):
+         ["room_ruins10","Ruins Grind Rooms"],
+    ("room_ruins11",):
+         ["room_ruins11","Ruins Grind Rooms"],
+    ("room_ruins15B",):
+         ["room_ruins15B","Ruins Grind Rooms"],
+    ("room_ruins15C",):
+         ["room_ruins15C","Ruins Grind Rooms"],
+    ("room_ruins15D",):
+         ["room_ruins15D","Ruins Grind Rooms"],
+    ("room_ruins14",):
+         ["room_ruins14","Ruins Grind Rooms"],
+    ("room_ruins13",):
+         ["room_ruins13","Ruins Grind Rooms"],
+    ("room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"):
+         ["room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"],
+    ("room_fire_core_metttest", "room_fire_core_final", "room_fire_finalelevator"):
+        ["room_fire_core_metttest", "room_fire_core_final", "room_fire_finalelevator", "room_castle_elevatorout",
+         "room_castle_precastle", "room_castle_hook", "room_castle_front", "room_asghouse1", "room_asghouse2",
+         "room_asghouse2", "room_kitchen_final", "room_asrielroom_final", "room_asgoreroom", "room_basement1_final",
+         "room_basement2_final", "room_basement3_final", "room_basement4_final", "room_lastruins_corridor",
+         "room_sanscorridor", "room_castle_finalshoehorn", "room_castle_coffins1", "room_castle_coffins2",
+         "room_castle_throneroom"],
+    ("room_fire_lab1",):
+         ["room_fire_lab1", "room_fire_labelevator"],
 }
