@@ -179,16 +179,10 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
 
     portals_and_hints = (portal_pairs, er_hint_data)
 
-    state = world.multiworld.get_all_state(False)
-    state.update_reachable_regions(world.player)
-    Utils.visualize_regions(world.multiworld.get_region("Menu", world.player), "undertale_check.puml", show_entrance_names=True, highlight_regions=state.reachable_regions[world.player])
-
     return portals_and_hints
 
 
 def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[str, Region]):
-    world.multiworld.register_indirect_condition(regions["room_torhouse2"], world.multiworld.get_entrance("Toriel Basement Block", world.player))
-
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_2"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_1"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
 

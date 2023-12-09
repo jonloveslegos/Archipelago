@@ -19,7 +19,7 @@ class RandomizeJump(Toggle):
 
 
 class StartingArea(Choice):
-    """Which area to start with access to."""
+    """Which area to start with access to. (Ignored with entrance rando enabled)"""
     display_name = "Starting Area"
     option_ruins = 0
     option_snowdin = 1
@@ -148,7 +148,7 @@ class SpareSanityPackSize(Range):
 
 
 class EntranceRando(Toggle):
-    """Randomize the connections between scenes."""
+    """Randomize the connections between scenes. You also always start with the Ruins, Snowdin, Waterfall, Hotland, and Core keys."""
     display_name = "Entrance Rando"
 
 

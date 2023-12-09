@@ -33,10 +33,8 @@ portal_mapping: List[Portal] = [
 
     Portal(region="room_fire_lab1", destination="room_fire_prelab", origin_letter="C"),
     Portal(region="room_fire_lab1", destination="room_fire_lab2", origin_letter="B"),
-    Portal(region="room_fire_lab1", destination="room_fire_lab2", origin_letter="A"),
     Portal(region="room_fire_lab1", destination="room_fire3", origin_letter="D"),
 
-    Portal(region="room_fire_lab2", destination="room_fire_lab1", origin_letter="B"),
     Portal(region="room_fire_lab2", destination="room_fire_lab1", origin_letter="A"),
 
     Portal(region="room_fire3", destination="room_fire_lab1", origin_letter="C"),
@@ -166,9 +164,6 @@ portal_mapping: List[Portal] = [
     Portal(region="room_fire_hotelbed", destination="Bed Door One-way", origin_letter="A"),
 
     Portal(region="room_fire_precore", destination="room_fire_hotellobby", origin_letter="X"),
-    Portal(region="room_fire_precore", destination="Hotland Exit", origin_letter="B"),
-
-    Portal(region="Hotland Exit", destination="room_fire_precore", origin_letter="A"),
 
     Portal(region="room_fire_core1", destination="Core Entrance", origin_letter="A"),
     Portal(region="room_fire_core1", destination="room_fire_core2", origin_letter="B"),
@@ -289,9 +284,9 @@ portal_mapping: List[Portal] = [
     Portal(region="room_water6", destination="room_water7", origin_letter="B"),
 
     Portal(region="room_water7", destination="room_water6", origin_letter="A"),
-    Portal(region="room_water7", destination="room_water8", origin_letter="B"),
+    Portal(region="Room Water 7 One Way", destination="room_water8", origin_letter="B"),
 
-    Portal(region="room_water8", destination="room_water7", origin_letter="A"),
+    Portal(region="room_water8", destination="Room Water 7 One Way", origin_letter="A"),
     Portal(region="room_water8", destination="room_water9", origin_letter="B"),
 
     Portal(region="room_water9", destination="room_water8", origin_letter="A"),
@@ -402,10 +397,6 @@ portal_mapping: List[Portal] = [
     Portal(region="room_water19", destination="room_water20", origin_letter="B"),
 
     Portal(region="room_water20", destination="room_water19", origin_letter="A"),
-
-    Portal(region="room_fire2", destination="Waterfall Exit", origin_letter="B"),
-
-    Portal(region="Waterfall Exit", destination="room_fire2", origin_letter="A"),
 
     Portal(region="room_shop5", destination="room_water_temvillage", origin_letter="X"),
 
@@ -520,9 +511,9 @@ portal_mapping: List[Portal] = [
 
     Portal(region="room_basement1", destination="room_torhouse1", origin_letter="X"),
 
-    Portal(region="Toriel Basement 2", destination="room_basement2", origin_letter="B"),
+    Portal(region="room_basement1", destination="room_basement2", origin_letter="B"),
 
-    Portal(region="room_basement2", destination="Toriel Basement 2", origin_letter="A"),
+    Portal(region="room_basement2", destination="room_basement1", origin_letter="A"),
     Portal(region="room_basement2", destination="room_basement3", origin_letter="B"),
 
     Portal(region="room_basement3", destination="room_basement2", origin_letter="A"),
@@ -535,11 +526,8 @@ portal_mapping: List[Portal] = [
     Portal(region="room_basement5", destination="room_ruinsexit", origin_letter="B"),
 
     Portal(region="room_ruinsexit", destination="room_basement5", origin_letter="A"),
-    Portal(region="room_ruinsexit", destination="Ruins Exit", origin_letter="B"),
 
-    Portal(region="Ruins Exit", destination="room_ruinsexit", origin_letter="A"),
-
-    Portal(region="room_tundra1", destination="Snowdin Entrance", origin_letter="A"),
+    Portal(region="room_tundra1", destination="Snowdin Entrance", origin_letter="S"),
     Portal(region="room_tundra1", destination="room_tundra2", origin_letter="B"),
 
     Portal(region="room_tundra2", destination="room_tundra1", origin_letter="A"),
@@ -646,9 +634,6 @@ portal_mapping: List[Portal] = [
     Portal(region="room_dogshrine", destination="room_tundra_sanshouse", origin_letter="X"),
 
     Portal(region="room_fogroom", destination="room_tundra_town", origin_letter="X"),
-    Portal(region="room_fogroom", destination="Snowdin Exit", origin_letter="B"),
-
-    Portal(region="Snowdin Exit", destination="room_fogroom", origin_letter="A"),
 
     Portal(region="room_shop1", destination="room_tundra_town", origin_letter="R"),
 
@@ -660,13 +645,11 @@ for item in portal_mapping:
         portal_mapping[portal_mapping.index(item)] = Portal(region=item.region, name=item.region+" "+item.origin_letter, destination=item.destination, origin_letter=item.origin_letter)
 
 
-
-
 class RegionInfo(NamedTuple):
     game_scene: str  # the name of the scene in the actual game
     dead_end: bool = False  # if the region only has one exit
     dead_end_override: bool = False  # if the region only has one exit
-    hint: int = 1  # what kind of hint text you should have
+    hint: int = 2  # what kind of hint text you should have
 
 
 class Hint(IntEnum):
@@ -806,7 +789,6 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_water21": RegionInfo("room_water21"),
     "room_water_undynefinal": RegionInfo("room_water_undynefinal"),
     "room_fire2": RegionInfo("room_fire2"),
-    "Toriel Basement 2": RegionInfo("room_basement1"),
     "Trash Zone Fall": RegionInfo("room_water_trashzone1"),
     "Ruins Pit Circle B": RegionInfo("room_ruins15E"),
     "Ruins Pit Circle C": RegionInfo("room_ruins15E"),
@@ -816,10 +798,10 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "Ruins Entrance": RegionInfo("room_area1"),
     "Snowdin Entrance": RegionInfo("room_area1"),
     "Waterfall Entrance": RegionInfo("room_area1"),
-    "Ruins Exit": RegionInfo("room_area1", dead_end=True),
-    "Snowdin Exit": RegionInfo("room_area1", dead_end=True),
-    "Waterfall Exit": RegionInfo("room_area1", dead_end=True),
-    "Hotland Exit": RegionInfo("room_area1", dead_end=True),
+    "Ruins Exit": RegionInfo("room_area1"),
+    "Snowdin Exit": RegionInfo("room_area1"),
+    "Waterfall Exit": RegionInfo("room_area1"),
+    "Hotland Exit": RegionInfo("room_area1"),
     "Monster Kid Raised Ledge": RegionInfo("room_water_waterfall4"),
     "Menu": RegionInfo("Fake", dead_end=True),
     "room_shop3": RegionInfo("room_shop3", dead_end=True),
@@ -923,15 +905,16 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_castle_coffins1": RegionInfo("room_castle_coffins1"),
     "room_castle_coffins2": RegionInfo("room_castle_coffins2", dead_end=True),
     "room_castle_throneroom": RegionInfo("room_castle_throneroom", dead_end=True),
-    "Hotland/Core Grind Rooms": RegionInfo("Hotland/Core Grind Rooms", dead_end=True),
-    "Waterfall Grind Rooms": RegionInfo("Waterfall Grind Rooms", dead_end=True),
-    "Snowdin Grind Rooms": RegionInfo("Snowdin Grind Rooms", dead_end=True),
-    "Ruins Grind Rooms": RegionInfo("Ruins Grind Rooms", dead_end=True),
+    "Hotland/Core Grind Rooms": RegionInfo("Hotland/Core Grind Rooms", dead_end=True, hint=0),
+    "Waterfall Grind Rooms": RegionInfo("Waterfall Grind Rooms", dead_end=True, hint=0),
+    "Snowdin Grind Rooms": RegionInfo("Snowdin Grind Rooms", dead_end=True, hint=0),
+    "Ruins Grind Rooms": RegionInfo("Ruins Grind Rooms", dead_end=True, hint=0),
     "Fire Door 1": RegionInfo("room_fire7"),
     "Fire Door 2": RegionInfo("room_fire_walkandbranch2"),
     "Fire Turn Part 2": RegionInfo("room_fire_turn"),
     "Bed Door One-way": RegionInfo("room_fire_hoteldoors"),
-    "???": RegionInfo("???", dead_end=True),
+    "Room Water 7 One Way": RegionInfo("room_water7"),
+    "???": RegionInfo("???", dead_end=True, hint=0),
     "room_fire_labelevator": RegionInfo("room_fire_labelevator"),
                 }
 
@@ -958,6 +941,8 @@ class StaticCxn(NamedTuple):
 dependent_regions: Dict[Tuple[str, ...], List[str]] = {
     ("Ruins Pit Circle B",):
          ["room_ruins15E", "Ruins Pit Circle B"],
+    ("room_water7",):
+         ["room_water7", "Room Water 7 One Way"],
     ("Metta Entrance", "room_fire_core_premett"):
          ["Metta Entrance", "room_fire_core_premett"],
     ("Bed Door One-way",):
@@ -982,8 +967,8 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_water_undynebridge", "room_water_undynebridgeend"],
     ("Trash Zone Fall",):
          ["room_water_trashzone1", "Trash Zone Fall"],
-    ("room_water20", "room_water21", "room_water_undynefinal", "room_fire2"):
-         ["room_water20", "room_water21", "room_water_undynefinal", "room_fire2"],
+    ("room_water20", "room_water21", "room_water_undynefinal", "room_fire2", "Waterfall Exit"):
+         ["room_water20", "room_water21", "room_water_undynefinal", "room_fire2", "Waterfall Exit"],
     ("room_area1",):
          ["room_area1", "Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"],
     ("room_fire_core_bottomleft",):
@@ -1050,6 +1035,12 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_ruins14","Ruins Grind Rooms"],
     ("room_ruins13",):
          ["room_ruins13","Ruins Grind Rooms"],
+    ("room_fogroom","Snowdin Exit"):
+         ["room_fogroom","Snowdin Exit"],
+    ("room_ruinsexit","Ruins Exit"):
+         ["room_ruinsexit","Ruins Exit"],
+    ("room_fire_precore","Hotland Exit"):
+         ["room_fire_precore","Hotland Exit"],
     ("room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"):
          ["room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"],
     ("room_fire_core_metttest", "room_fire_core_final", "room_fire_finalelevator", "room_castle_elevatorout",

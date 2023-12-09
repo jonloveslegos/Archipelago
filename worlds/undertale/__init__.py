@@ -205,6 +205,12 @@ class UndertaleWorld(World):
         starting_key = self.multiworld.starting_area[self.player].current_key.title() + " Key"
         itempool.remove(starting_key)
         self.multiworld.push_precollected(self.create_item(starting_key))
+        all_keys = ["Ruins Key", "Snowdin Key", "Waterfall Key", "Hotland Key", "Core Key"]
+        all_keys.remove(starting_key)
+        if self.multiworld.entrance_rando[self.player]:
+            for item in all_keys:
+                itempool.remove(item)
+                self.multiworld.push_precollected(self.create_item(item))
         # Choose locations to automatically exclude based on settings
         exclusion_pool.update(exclusion_table[self.multiworld.route_required[self.player].current_key])
         if not self.multiworld.rando_love[self.player] or \
@@ -305,7 +311,7 @@ class UndertaleWorld(World):
 
         state = self.multiworld.get_all_state(False)
         state.update_reachable_regions(self.player)
-        Utils.visualize_regions(self.multiworld.get_region("Menu", self.player), "undertale_check.puml", show_entrance_names=True, highlight_regions=state.reachable_regions[self.player])
+        Utils.visualize_regions(self.multiworld.get_region("Menu", self.player), "undertale_check_player_"+str(self.multiworld.player_name[self.player])+".puml", show_entrance_names=True, highlight_regions=state.reachable_regions[self.player])
         return slot_data
 
     def create_item(self, name: str) -> Item:

@@ -18,9 +18,6 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_water_undynebridge"].connect(
         connecting_region=regions["room_water_undynebridgeend"])
 
-    regions["room_water_undynebridgeend"].connect(
-        connecting_region=regions["room_water_undynebridge"])
-
     regions["room_water20"].connect(
         connecting_region=regions["room_water21"])
 
@@ -54,13 +51,16 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_water_waterfall4"].connect(
         connecting_region=regions["Monster Kid Raised Ledge"])
 
+    regions["room_water7"].connect(
+        connecting_region=regions["Room Water 7 One Way"])
+
     regions["room_tundra_sanshouse"].connect(
         connecting_region=regions["Papyrus Rocks"],
-        rule=lambda state: state.has("Complete Skeleton", player))
+        rule=lambda state: state.has("Complete Skeleton", player) or not (world.multiworld.route_required[world.player].current_key == "pacifist" or world.multiworld.route_required[world.player].current_key == "all_routes"))
 
     regions["Papyrus Rocks"].connect(
         connecting_region=regions["room_tundra_sanshouse"],
-        rule=lambda state: state.has("Complete Skeleton", player))
+        rule=lambda state: state.has("Complete Skeleton", player) or not (world.multiworld.route_required[world.player].current_key == "pacifist" or world.multiworld.route_required[world.player].current_key == "all_routes"))
 
     regions["room_water_friendlyhub"].connect(
         connecting_region=regions["Undyne Rocks"],
@@ -392,6 +392,30 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_ruins13"].connect(
         connecting_region=regions["Ruins Grind Rooms"])
 
+    regions["room_fogroom"].connect(
+        connecting_region=regions["Snowdin Exit"])
+
+    regions["Snowdin Exit"].connect(
+        connecting_region=regions["room_fogroom"])
+
+    regions["room_fire_precore"].connect(
+        connecting_region=regions["Hotland Exit"])
+
+    regions["Hotland Exit"].connect(
+        connecting_region=regions["room_fire_precore"])
+
+    regions["room_fire2"].connect(
+        connecting_region=regions["Waterfall Exit"])
+
+    regions["Waterfall Exit"].connect(
+        connecting_region=regions["room_fire2"])
+
+    regions["room_ruinsexit"].connect(
+        connecting_region=regions["Ruins Exit"])
+
+    regions["Ruins Exit"].connect(
+        connecting_region=regions["room_ruinsexit"])
+
     regions["room_fire7"].connect(
         connecting_region=regions["Fire Door 1"],
         name="Fire Door 1 Block")
@@ -399,12 +423,6 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_fire_walkandbranch2"].connect(
         connecting_region=regions["Fire Door 2"],
         name="Fire Door 2 Block")
-
-    regions["Toriel Basement 2"].connect(
-        connecting_region=regions["room_basement1"])
-    regions["room_basement1"].connect(
-        connecting_region=regions["Toriel Basement 2"],
-        name="Toriel Basement Block")
 
 
 def set_er_location_rules(world: "UndertaleWorld") -> None:
