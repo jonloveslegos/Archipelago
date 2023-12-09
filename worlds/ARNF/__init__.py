@@ -7,8 +7,8 @@ from typing import List, Dict
 from BaseClasses import Region, Entrance, Item, ItemClassification, MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import set_rule
-from .Items import ARNFItem, item_table, item_data_table
-from .Locations import ARNFLocation, location_table, get_ordered_item_pickups, normal_mode_total_locations, classic_boss_rush_total_locations
+from .Items import ARNFItem, item_table, item_data_table, normal_item_prefix, classic_boss_rush_item_prefix
+from .Locations import ARNFLocation, location_table, get_ordered_item_pickups, normal_total_locations, classic_boss_rush_total_locations
 from .Options import ARNFOptions
 from .Regions import region_data_table
 
@@ -56,28 +56,16 @@ class ARNFWorld(World):
     def create_items(self) -> None:
         #Initialize item pool
         item_pool: List[ARNFItem] = []
-        
-        #Get numbers for each mode in play
-        normal_mode_locations = normal_mode_total_locations
-        if self.options.normal_mode_included.value == 0:
-            normal_mode_locations = 0
-        classic_boss_rush_locations = classic_boss_rush_total_locations
-        if self.options.classic_boss_rush_included.value == 0:
-            classic_boss_rush_locations = 0
+        logger = logging.getLogger()
         
         #Generate the items
-        # name = "NormalItem"
-        # item = item_data_table[name]
         for name, item in item_data_table.items():
-            if item.code and item.can_create(self.multiworld, self.player):
+            if (    (name.startswith(normal_item_prefix) and self.options.normal_included.value == 1) or
+                    (name.startswith(classic_boss_rush_item_prefix) and self.options.classic_boss_rush_included.value == 1)):
                 item_pool.append(self.create_item(name))
         
-        # name = "CBRItem"
-        # item = item_data_table[name]
-        # if item.code and item.can_create(self.multiworld, self.player):
-            # while len(item_pool) < classic_boss_rush_locations:
-                # item_pool.append(self.create_item(name))
-
+        logger.info(item_pool)
+        
         self.multiworld.itempool += item_pool
 
 
@@ -104,7 +92,7 @@ class ARNFWorld(World):
         #   which can then determine the availability of the victory.
         victory_region = create_region(self.multiworld, self.player, "Victory")
         self.multiworld.regions.append(victory_region)
-        ace_items = get_ordered_item_pickups()
+        ace_items = get_ordered_item_pickups(self.options.normal_included.value, self.options.classic_boss_rush_included.value)
         # shuffled = list(ace_items.values())
         # random.shuffle(shuffled)
         # shuffled_items = dict(zip(ace_items, shuffled))

@@ -2,7 +2,6 @@ import logging
 
 from typing import Callable, Dict, NamedTuple, Optional
 from BaseClasses import Location
-from .Options import NormalModeIncluded, ClassicBossRushIncluded
 
 
 class ARNFLocation(Location):
@@ -10,21 +9,22 @@ class ARNFLocation(Location):
 
 
 arnf_locations_start_id = 73310000
-normal_mode_total_locations = 35
-classic_boss_rush_total_locations = 11
+normal_total_locations = 36
+classic_boss_rush_offset = 50
+classic_boss_rush_total_locations = 13
 
-def get_ordered_item_pickups() -> Dict[str, int]:
+
+def get_ordered_item_pickups(normal_included: int = 1, classic_boss_rush_included: int = 1) -> Dict[str, int]:
     item_return: Dict[str, int] = {}
     logger = logging.getLogger()
-    #logger.info(f'TotalLocations.range_end {TotalLocations.range_end}, max {max(n, 0)}, min {min(n, TotalLocations.range_end)}')
     
     #Add items for Normal Mode
-    if NormalModeIncluded:
-        item_return = {**item_return, **{ f"Normal{i+1}": arnf_locations_start_id+i for i in range(normal_mode_total_locations) }}
+    if normal_included == 1:
+        item_return = {**item_return, **{ f"Normal{i+1}": arnf_locations_start_id+i for i in range(normal_total_locations) }}
     
     #Add items for Classic Boss Rush
-    if ClassicBossRushIncluded:
-        item_return = {**item_return, **{ f"CBR{i+1}": arnf_locations_start_id+normal_mode_total_locations+i for i in range(classic_boss_rush_total_locations) }}
+    if classic_boss_rush_included:
+        item_return = {**item_return, **{ f"CBR{i+1}": arnf_locations_start_id+classic_boss_rush_offset+i for i in range(classic_boss_rush_total_locations) }}
     
     return item_return
 
