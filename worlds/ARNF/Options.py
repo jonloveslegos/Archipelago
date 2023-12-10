@@ -3,15 +3,15 @@ from Options import Toggle, DefaultOnToggle, DeathLink, Range, Choice, PerGameCo
 
 
 class NormalIncluded(Toggle):
-    """Whether a playthrough of normal mode is included for this player.  Please note that approximately 35 non-progress items are in each run."""
+    """Whether a playthrough of normal mode is included for this player.  Please note that approximately 32 minor items and 4 non-progress major items are in each run."""
     display_name = "Normal Mode Included"
     default = 'true'
 
 
 class ClassicBossRushIncluded(Toggle):
-    """Whether a playthrough of Classic Boss Rush is included for this player.  Please note that 11 items are in each run."""
+    """Whether a playthrough of Classic Boss Rush is included for this player.  Please note that 13 items are in each run."""
     display_name = "Classic Boss Rush Included"
-    default = 'true'
+    default = 'false'
 
 
 @dataclass
