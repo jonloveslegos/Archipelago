@@ -1,6 +1,7 @@
 from typing import Dict, List, Set, Tuple, TYPE_CHECKING
 from BaseClasses import Region, ItemClassification, Item, Location
-from .Locations import advancement_table as location_table, exclusion_table
+from .Locations import exclusion_table
+from .Locations import advancement_table as location_table
 from .er_data import Portal, undertale_er_regions, portal_mapping, dependent_regions, hallway_helper
 from .er_rules import set_er_region_rules
 import Utils
@@ -38,41 +39,42 @@ def create_er_regions_vanilla(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     # make better start region stuff when/if implementing random start
     start_region = "room_area1"
     connected_regions.update(add_dependent_regions(start_region))
-    for item in portal_mapping:
-        if Portal(item.destination, item.region, origin_letter_flip[item.origin_letter], item.destination+" "+origin_letter_flip[item.origin_letter]) not in portal_mapping:
+    temp_portal_mapping = portal_mapping.copy()
+    for item in temp_portal_mapping:
+        if Portal(item.destination, item.region, origin_letter_flip[item.origin_letter], item.destination+" "+origin_letter_flip[item.origin_letter]) not in temp_portal_mapping:
             if item.region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
                                             "Hotland Entrance", "Core Entrance"]:
                 if item.destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
                                             "Hotland Entrance", "Core Entrance"]:
                     print("Could not find corresponding location for "+item.region+item.origin_letter)
-    while len(portal_mapping) > 0:
+    while len(temp_portal_mapping) > 0:
 
         portal2: Portal = Portal(region="", destination="", origin_letter="")
-        if portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
+        if temp_portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
                                             "Hotland Entrance", "Core Entrance"]:
-            if portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
+            if temp_portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
                                                      "Hotland Entrance", "Core Entrance"]:
-                for port in portal_mapping:
-                    if port.region == portal_mapping[0].destination and port.origin_letter == origin_letter_flip[portal_mapping[0].origin_letter]:
+                for port in temp_portal_mapping:
+                    if port.region == temp_portal_mapping[0].destination and port.origin_letter == origin_letter_flip[temp_portal_mapping[0].origin_letter]:
                         portal2 = port
         if len(portal2.region) == 0:
-            if portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "Core Entrance"]:
-                if portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "Core Entrance"]:
-                    raise Warning("CANNOT FIND PORTAL OF REGION "+portal_mapping[0].destination+" WITH LETTER OF "+origin_letter_flip[portal_mapping[0].origin_letter])
+            if temp_portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "Core Entrance"]:
+                if temp_portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "Core Entrance"]:
+                    raise Warning("CANNOT FIND PORTAL OF REGION "+temp_portal_mapping[0].destination+" WITH LETTER OF "+origin_letter_flip[temp_portal_mapping[0].origin_letter])
                 else:
-                    for port in portal_mapping:
-                        if port.region == portal_mapping[0].destination:
+                    for port in temp_portal_mapping:
+                        if port.region == temp_portal_mapping[0].destination:
                             portal2 = port
             else:
-                for port in portal_mapping:
-                    if port.destination == portal_mapping[0].region:
+                for port in temp_portal_mapping:
+                    if port.destination == temp_portal_mapping[0].region:
                         portal2 = port
 
-        # print(portal_mapping[0].name+" <-> "+portal2.name)
+        # print(temp_portal_mapping[0].name+" <-> "+portal2.name)
         connected_regions.update(add_dependent_regions(portal2.region))
-        portal_pairs[portal_mapping[0]] = portal2
-        portal_mapping.remove(portal2)
-        portal_mapping.remove(portal_mapping[0])
+        portal_pairs[temp_portal_mapping[0]] = portal2
+        temp_portal_mapping.remove(portal2)
+        temp_portal_mapping.remove(temp_portal_mapping[0])
 
     regions: Dict[str, Region] = {}
 
