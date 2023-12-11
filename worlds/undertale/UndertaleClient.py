@@ -179,7 +179,7 @@ class UndertaleContext(CommonContext):
         for root, dirs, files in os.walk(path):
             for file in files:
                 try:
-                    if "check.spot" == file or "scout" == file:
+                    if "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
                     elif file.endswith(("disconnected", ".item", ".victory", ".route", ".playerspot", ".mad",
                                                 ".youDied", ".LV", ".flag", ".hint", ".pack", "roomrando")):
@@ -515,14 +515,56 @@ async def game_watcher(ctx: UndertaleContext):
                 if "victory" in file:
                     if str(ctx.route) == "all_routes":
                         if "neutral" in file and ctx.completed_routes["neutral"] != 1:
+                            text = ""
+                            if not ctx.completed_routes["pacifist"]:
+                                text += "Pacifist"
+                            if not ctx.completed_routes["genocide"]:
+                                if len(text) > 0:
+                                    text += " and "
+                                text += "Genocide"
+                            if len(text) == 0:
+                                logger.info("Goal: Completed Neutral route! Nothing is left.")
+                            elif text.__contains__(", "):
+                                logger.info("Goal: Completed Neutral route! "+text+" are left.")
+                            else:
+                                logger.info("Goal: Completed Neutral route! Only "+text+" is left.")
+                            ctx.completed_routes["neutral"] = 1
                             await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot)+" RoutesDone neutral",
                                                   "default": 0, "want_reply": True, "operations": [{"operation": "max",
                                                                                                     "value": 1}]}])
                         elif "pacifist" in file and ctx.completed_routes["pacifist"] != 1:
+                            text = ""
+                            if not ctx.completed_routes["neutral"]:
+                                text += "Neutral"
+                            if not ctx.completed_routes["genocide"]:
+                                if len(text) > 0:
+                                    text += " and "
+                                text += "Genocide"
+                            if len(text) == 0:
+                                logger.info("Goal: Completed Pacifist route! Nothing is left.")
+                            elif text.__contains__(", "):
+                                logger.info("Goal: Completed Pacifist route! "+text+" are left.")
+                            else:
+                                logger.info("Goal: Completed Pacifist route! Only "+text+" is left.")
+                            ctx.completed_routes["pacifist"] = 1
                             await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot)+" RoutesDone pacifist",
                                                   "default": 0, "want_reply": True, "operations": [{"operation": "max",
                                                                                                     "value": 1}]}])
                         elif "genocide" in file and ctx.completed_routes["genocide"] != 1:
+                            text = ""
+                            if not ctx.completed_routes["pacifist"]:
+                                text += "Pacifist"
+                            if not ctx.completed_routes["neutral"]:
+                                if len(text) > 0:
+                                    text += " and "
+                                text += "Neutral"
+                            if len(text) == 0:
+                                logger.info("Goal: Completed Genocide route! Nothing is left.")
+                            elif text.__contains__(", "):
+                                logger.info("Goal: Completed Genocide route! "+text+" are left.")
+                            else:
+                                logger.info("Goal: Completed Genocide route! Only "+text+" is left.")
+                            ctx.completed_routes["genocide"] = 1
                             await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot)+" RoutesDone genocide",
                                                   "default": 0, "want_reply": True, "operations": [{"operation": "max",
                                                                                                     "value": 1}]}])
