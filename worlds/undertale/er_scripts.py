@@ -251,19 +251,19 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     portal_region_count = {}
     for portal in portal_mapping:
         if portal_region_count.keys().__contains__(undertale_er_regions[portal.region].game_scene):
-            portal_region_count[undertale_er_regions[portal.region].game_scene] += len(add_dependent_regions(portal.region))
+            portal_region_count[undertale_er_regions[portal.region].game_scene] += 1
         else:
-            portal_region_count[undertale_er_regions[portal.region].game_scene] = len(add_dependent_regions(portal.region))
+            portal_region_count[undertale_er_regions[portal.region].game_scene] = 1
 
-    for portal in two_plus:
+    for portal in portal_mapping:
         if portal_region_count.keys().__contains__(undertale_er_regions[portal.region].game_scene):
-            if portal_region_count[undertale_er_regions[portal.region].game_scene] <= 1:
-                print("TWO_PLUS IS A DEAD END: "+portal.region+" "+portal.origin_letter+ " : "+str(portal_region_count[undertale_er_regions[portal.region].game_scene])+" connections")
-
-    for portal in dead_ends:
-        if portal_region_count.keys().__contains__(undertale_er_regions[portal.region].game_scene):
-            if portal_region_count[undertale_er_regions[portal.region].game_scene] > 1:
-                print("DEAD_END IS A TWO PLUS: "+portal.region+" "+portal.origin_letter+ " : "+str(portal_region_count[undertale_er_regions[portal.region].game_scene])+" connections")
+            if portal_region_count[undertale_er_regions[portal.region].game_scene] > 0:
+                if portal_region_count[undertale_er_regions[portal.region].game_scene] <= 1 and portal in two_plus and not undertale_er_regions[portal.region].dead_end_override:
+                    pass
+                    # print("TWO_PLUS IS A DEAD END: "+portal.region+" "+portal.origin_letter+" : "+str(portal_region_count[undertale_er_regions[portal.region].game_scene])+" connections")
+                if portal_region_count[undertale_er_regions[portal.region].game_scene] > 1 and portal in dead_ends and not undertale_er_regions[portal.region].dead_end_override:
+                    pass
+                    # print("DEAD_END IS A TWO PLUS: "+portal.region+" "+portal.origin_letter + " : "+str(portal_region_count[undertale_er_regions[portal.region].game_scene])+" connections")
 
     connected_regions: Set[str] = set()
     # make better start region stuff when/if implementing random start
@@ -327,6 +327,13 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
             connected_regions.update(add_dependent_regions(portal2.region))
             portal_pairs[portal1] = portal2
             check_success = 0
+            for portal in dead_ends:
+                if portal.region in connected_regions:
+                    two_plus.append(portal)
+                    dead_ends.remove(portal)
+            for regi in connected_regions:
+                if regi not in non_dead_end_regions:
+                    non_dead_end_regions.add(regi)
             world.random.shuffle(two_plus)
 
     # connect dead ends to random non-dead ends
@@ -335,43 +342,9 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     if len(dead_ends)-len(two_plus) > 0:
         pass
     while len(dead_ends) > 0:
-            # then we find a portal in a connected region
-            if check_success == 0:
-                for portal in two_plus:
-                    if portal.region in connected_regions:
-                        # if there's risk of self-locking, start over
-                        if gate_before_switch(portal, two_plus):
-                            world.random.shuffle(two_plus)
-                            break
-                        portal1 = portal
-                        two_plus.remove(portal)
-                        check_success = 1
-                        break
-
-            # find a portal in an inaccessible region
-            if check_success == 1:
-                for portal in dead_ends:
-                    if portal.region not in connected_regions:
-                        # if there's risk of self-locking, shuffle and try again
-                        if gate_before_switch(portal, dead_ends):
-                            world.random.shuffle(dead_ends)
-                            break
-                        portal2 = portal
-                        dead_ends.remove(portal)
-                        check_success = 2
-                        break
-
-            if check_success == 1:
-                print(two_plus.__str__())
-                print(dead_ends.__str__())
-
-            # once we have both portals, connect them and add the new region(s) to connected_regions
-            if check_success == 2:
-                connected_regions.update(add_dependent_regions(portal2.region))
-                portal_pairs[portal1] = portal2
-                check_success = 0
-                world.random.shuffle(two_plus)
-                world.random.shuffle(dead_ends)
+        portal1 = two_plus.pop()
+        portal2 = dead_ends.pop()
+        portal_pairs[portal1] = portal2
 
     # then randomly connect the remaining portals to each other
     # every region is accessible, so gate_before_switch is not necessary
@@ -405,6 +378,7 @@ def add_dependent_regions(region_name: str) -> Set[str]:
     for origin_regions, destination_regions in dependent_regions.items():
         if region_name in origin_regions:
             # if you matched something in the first set, you get the regions in its paired set
+            # print(region_name+": "+destination_regions.__str__())
             region_set.update(destination_regions)
             return region_set
     # if you didn't match anything in the first sets, just gives you the region
@@ -415,24 +389,24 @@ def add_dependent_regions(region_name: str) -> Set[str]:
 # we're checking if an event-locked portal is being placed before the regions where its key(s) is/are
 # doing this ensures the keys will not be locked behind the event-locked portal
 def gate_before_switch(check_portal: Portal, two_plus: List[Portal]) -> bool:
-    if check_portal.scene_destination() == "room_tundra_townS":
-        i = 0
+    if check_portal.scene_destination() == "Fire Door 1 Block":
+        i = j = k = 0
         for portal in two_plus:
-            if portal.scene_destination() == "room_fogroomX":
+            if portal.scene() == "room_fire_shootguy_2":
                 i += 1
-                break
-        if i == 1:
+            if portal.scene() == "room_fire_shootguy_1":
+                j += 1
+        if i == 1 and j == 1:
             return True
-    if check_portal.scene_destination() == "room_basement1S":
-        i = 0
+    if check_portal.scene_destination() == "Fire Door 2 Block":
+        i = j = k = 0
         for portal in two_plus:
-            if portal.scene_destination() == "room_torhouse2X":
+            if portal.scene() == "room_fire_shootguy_3":
                 i += 1
-            elif portal.scene_destination() == "room_torhouse2A":
-                i += 1
-        if i == 2:
+            if portal.scene() == "room_fire_shootguy_4":
+                j += 1
+        if i == 1 and j == 1:
             return True
-
     # false means you're good to place the portal
     return False
 

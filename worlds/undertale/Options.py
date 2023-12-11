@@ -26,6 +26,7 @@ class StartingArea(Choice):
     option_waterfall = 2
     option_hotland = 3
     option_core = 4
+    option_all = 5
     default = 0
 
 

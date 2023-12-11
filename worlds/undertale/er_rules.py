@@ -18,6 +18,12 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_water_undynebridge"].connect(
         connecting_region=regions["room_water_undynebridgeend"])
 
+    regions["Trash Zone Fall"].connect(
+        connecting_region=regions["room_water_undynebridgeend"])
+
+    regions["room_water_undynebridgeend"].connect(
+        connecting_region=regions["Trash Zone Fall"])
+
     regions["room_water20"].connect(
         connecting_region=regions["room_water21"])
 
@@ -56,19 +62,19 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
 
     regions["room_tundra_sanshouse"].connect(
         connecting_region=regions["Papyrus Rocks"],
-        rule=lambda state: state.has("Complete Skeleton", player) or not (world.multiworld.route_required[world.player].current_key == "pacifist" or world.multiworld.route_required[world.player].current_key == "all_routes"))
+        rule=lambda state: state.has("Complete Skeleton", player) or not (_undertale_is_route(multiworld.state, player, 1)))
 
     regions["Papyrus Rocks"].connect(
         connecting_region=regions["room_tundra_sanshouse"],
-        rule=lambda state: state.has("Complete Skeleton", player) or not (world.multiworld.route_required[world.player].current_key == "pacifist" or world.multiworld.route_required[world.player].current_key == "all_routes"))
+        rule=lambda state: state.has("Complete Skeleton", player) or not (_undertale_is_route(multiworld.state, player, 1)))
 
     regions["room_water_friendlyhub"].connect(
         connecting_region=regions["Undyne Rocks"],
-        rule=lambda state: state.has("Fish", player))
+        rule=lambda state: state.has("Fish", player) or not (_undertale_is_route(multiworld.state, player, 1)))
 
     regions["Undyne Rocks"].connect(
         connecting_region=regions["room_water_friendlyhub"],
-        rule=lambda state: state.has("Fish", player))
+        rule=lambda state: state.has("Fish", player) or not (_undertale_is_route(multiworld.state, player, 1)))
 
     regions["room_area1"].connect(
         connecting_region=regions["Ruins Entrance"],
