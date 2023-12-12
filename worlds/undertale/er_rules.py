@@ -177,6 +177,30 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_fire_core_final"].connect(
         connecting_region=regions["room_fire_finalelevator"])
 
+    regions["room_water5"].connect(
+        connecting_region=regions["water bridge puzzle 2 after"])
+
+    regions["room_water_bridgepuzz1"].connect(
+        connecting_region=regions["water bridge puzzle after"])
+
+    regions["room_tundra_snowpuzz"].connect(
+        connecting_region=regions["Snow Puzz After Puzzle"])
+
+    regions["room_ruins15B"].connect(
+        connecting_region=regions["Ruins 15B Past Puzzles"])
+
+    regions["room_ruins15C"].connect(
+        connecting_region=regions["Ruins 15C Past Puzzles"])
+
+    regions["room_ruins15D"].connect(
+        connecting_region=regions["Ruins 15D Past Puzzles"])
+
+    regions["room_tundra_xoxosmall"].connect(
+        connecting_region=regions["small xoxo after puzzle"])
+
+    regions["room_tundra_xoxopuzz"].connect(
+        connecting_region=regions["xoxo puzz after puzzle"])
+
     regions["room_fire_core_metttest"].connect(
         connecting_region=regions["room_fire_core_final"],
         rule=lambda state: (not bool(state.multiworld.kill_sanity[player].value) or not _undertale_is_route(state, player, 2) or state.has("Hotland Population Pack", player, math.ceil(40/state.multiworld.kill_sanity_pack_size[player].value))))
@@ -184,6 +208,13 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["Metta Entrance"].connect(
         connecting_region=regions["room_fire_core_premett"],
         rule=lambda state: state.has("Mettaton Plush", player))
+
+    regions["room_water_blookyard"].connect(
+        connecting_region=regions["hapsta door"],
+        rule=lambda state: state.has("Mystery Key", player))
+
+    regions["hapsta door"].connect(
+        connecting_region=regions["room_water_blookyard"])
 
     regions["room_fire_core_premett"].connect(
         connecting_region=regions["Metta Entrance"],
@@ -245,6 +276,21 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
 
     regions["room_basement3_final"].connect(
         connecting_region=regions["room_basement2_final"])
+
+    regions["room_ruins3"].connect(
+        connecting_region=regions["Ruins 3 Past Puzzles"])
+
+    regions["room_ruins14"].connect(
+        connecting_region=regions["Ruins 14 Past Puzzles"])
+
+    regions["room_ruins15A"].connect(
+        connecting_region=regions["Ruins 15A Past Puzzles"])
+
+    regions["room_ruins9"].connect(
+        connecting_region=regions["Ruins 9 Past Puzzles"])
+
+    regions["room_ruins11"].connect(
+        connecting_region=regions["Ruins 11 Past Puzzles"])
 
     regions["room_basement3_final"].connect(
         connecting_region=regions["room_basement4_final"])

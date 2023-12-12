@@ -272,15 +272,15 @@ portal_mapping: List[Portal] = [
     Portal(region="room_water4", destination="room_water_bridgepuzz1", origin_letter="B"),
 
     Portal(region="room_water_bridgepuzz1", destination="room_water4", origin_letter="A"),
-    Portal(region="room_water_bridgepuzz1", destination="room_water5", origin_letter="B"),
+    Portal(region="water bridge puzzle after", destination="room_water5", origin_letter="B"),
 
-    Portal(region="room_water5", destination="room_water_bridgepuzz1", origin_letter="A"),
+    Portal(region="room_water5", destination="water bridge puzzle after", origin_letter="A"),
     Portal(region="room_water5", destination="room_water5A", origin_letter="B"),
-    Portal(region="room_water5", destination="room_water6", origin_letter="D"),
+    Portal(region="water bridge puzzle 2 after", destination="room_water6", origin_letter="D"),
 
     Portal(region="room_water5A", destination="room_water5", origin_letter="A"),
 
-    Portal(region="room_water6", destination="room_water5", origin_letter="C"),
+    Portal(region="room_water6", destination="water bridge puzzle 2 after", origin_letter="C"),
     Portal(region="room_water6", destination="room_water7", origin_letter="B"),
 
     Portal(region="room_water7", destination="room_water6", origin_letter="A"),
@@ -362,6 +362,13 @@ portal_mapping: List[Portal] = [
 
     Portal(region="room_water_blookyard", destination="room_water_friendlyhub", origin_letter="W"),
     Portal(region="room_water_blookyard", destination="room_water_farm", origin_letter="S"),
+    Portal(region="room_water_blookyard", destination="room_water_blookhouse", origin_letter="B"),
+
+    Portal(region="hapsta door", destination="room_water_hapstablook", origin_letter="D"),
+
+    Portal(region="room_water_blookhouse", destination="room_water_blookyard", origin_letter="A"),
+
+    Portal(region="room_water_hapstablook", destination="hapsta door", origin_letter="C"),
 
     Portal(region="room_water_farm", destination="room_water_friendlyhub", origin_letter="V"),
     Portal(region="room_water_farm", destination="room_water_blookyard", origin_letter="S"),
@@ -410,9 +417,9 @@ portal_mapping: List[Portal] = [
     Portal(region="room_ruins2", destination="room_ruins3", origin_letter="B"),
 
     Portal(region="room_ruins3", destination="room_ruins2", origin_letter="A"),
-    Portal(region="room_ruins3", destination="room_ruins4", origin_letter="B"),
+    Portal(region="Ruins 3 Past Puzzles", destination="room_ruins4", origin_letter="B"),
 
-    Portal(region="room_ruins4", destination="room_ruins3", origin_letter="A"),
+    Portal(region="room_ruins4", destination="Ruins 3 Past Puzzles", origin_letter="A"),
     Portal(region="room_ruins4", destination="room_ruins5", origin_letter="B"),
 
     Portal(region="room_ruins5", destination="room_ruins4", origin_letter="A"),
@@ -431,15 +438,15 @@ portal_mapping: List[Portal] = [
     Portal(region="room_ruins8", destination="room_ruins9", origin_letter="B"),
 
     Portal(region="room_ruins9", destination="room_ruins8", origin_letter="A"),
-    Portal(region="room_ruins9", destination="room_ruins10", origin_letter="B"),
+    Portal(region="Ruins 9 Past Puzzles", destination="room_ruins10", origin_letter="B"),
 
-    Portal(region="room_ruins10", destination="room_ruins9", origin_letter="A"),
+    Portal(region="room_ruins10", destination="Ruins 9 Past Puzzles", origin_letter="A"),
     Portal(region="room_ruins10", destination="room_ruins11", origin_letter="B"),
 
     Portal(region="room_ruins11", destination="room_ruins10", origin_letter="A"),
-    Portal(region="room_ruins11", destination="room_ruins12A", origin_letter="B"),
+    Portal(region="Ruins 11 Past Puzzles", destination="room_ruins12A", origin_letter="B"),
 
-    Portal(region="room_ruins12A", destination="room_ruins11", origin_letter="A"),
+    Portal(region="room_ruins12A", destination="Ruins 11 Past Puzzles", origin_letter="A"),
     Portal(region="room_ruins12A", destination="room_ruins12", origin_letter="B"),
 
     Portal(region="room_ruins12", destination="room_ruins12A", origin_letter="A"),
@@ -452,22 +459,22 @@ portal_mapping: List[Portal] = [
     Portal(region="room_ruins13", destination="room_ruins14", origin_letter="B"),
 
     Portal(region="room_ruins14", destination="room_ruins13", origin_letter="A"),
-    Portal(region="room_ruins14", destination="room_ruins15A", origin_letter="B"),
+    Portal(region="Ruins 14 Past Puzzles", destination="room_ruins15A", origin_letter="B"),
 
-    Portal(region="room_ruins15A", destination="room_ruins14", origin_letter="A"),
-    Portal(region="room_ruins15A", destination="room_ruins15B", origin_letter="B"),
+    Portal(region="room_ruins15A", destination="Ruins 14 Past Puzzles", origin_letter="A"),
+    Portal(region="Ruins 15A Past Puzzles", destination="room_ruins15B", origin_letter="B"),
     Portal(region="room_ruins15A", destination="room_ruins15E", origin_letter="X"),
 
-    Portal(region="room_ruins15B", destination="room_ruins15A", origin_letter="A"),
-    Portal(region="room_ruins15B", destination="room_ruins15C", origin_letter="B"),
+    Portal(region="room_ruins15B", destination="Ruins 15A Past Puzzles", origin_letter="A"),
+    Portal(region="Ruins 15B Past Puzzles", destination="room_ruins15C", origin_letter="B"),
     Portal(region="room_ruins15B", destination="Ruins Pit Circle B", origin_letter="X"),
 
-    Portal(region="room_ruins15C", destination="room_ruins15B", origin_letter="A"),
-    Portal(region="room_ruins15C", destination="room_ruins15D", origin_letter="B"),
+    Portal(region="room_ruins15C", destination="Ruins 15B Past Puzzles", origin_letter="A"),
+    Portal(region="Ruins 15C Past Puzzles", destination="room_ruins15D", origin_letter="B"),
     Portal(region="room_ruins15C", destination="Ruins Pit Circle C", origin_letter="X"),
 
-    Portal(region="room_ruins15D", destination="room_ruins15C", origin_letter="A"),
-    Portal(region="room_ruins15D", destination="room_ruins16", origin_letter="D"),
+    Portal(region="room_ruins15D", destination="Ruins 15C Past Puzzles", origin_letter="A"),
+    Portal(region="Ruins 15D Past Puzzles", destination="room_ruins16", origin_letter="D"),
     Portal(region="room_ruins15D", destination="Ruins Pit Circle D", origin_letter="X"),
 
     Portal(region="Ruins Pit Circle B", destination="room_ruins15B", origin_letter="X"),
@@ -476,7 +483,7 @@ portal_mapping: List[Portal] = [
 
     Portal(region="room_ruins15E", destination="room_ruins15A", origin_letter="X"),
 
-    Portal(region="room_ruins16", destination="room_ruins15D", origin_letter="C"),
+    Portal(region="room_ruins16", destination="Ruins 15D Past Puzzles", origin_letter="C"),
     Portal(region="room_ruins16", destination="room_ruins17", origin_letter="B"),
     Portal(region="room_ruins16", destination="room_ruins19", origin_letter="X"),
 
@@ -563,15 +570,15 @@ portal_mapping: List[Portal] = [
     Portal(region="room_tundra_spaghetti", destination="room_tundra_snowpuzz", origin_letter="B"),
 
     Portal(region="room_tundra_snowpuzz", destination="room_tundra_spaghetti", origin_letter="A"),
-    Portal(region="room_tundra_snowpuzz", destination="room_tundra_xoxosmall", origin_letter="B"),
+    Portal(region="Snow Puzz After Puzzle", destination="room_tundra_xoxosmall", origin_letter="B"),
 
-    Portal(region="room_tundra_xoxosmall", destination="room_tundra_snowpuzz", origin_letter="A"),
-    Portal(region="room_tundra_xoxosmall", destination="room_tundra_xoxopuzz", origin_letter="B"),
+    Portal(region="room_tundra_xoxosmall", destination="Snow Puzz After Puzzle", origin_letter="A"),
+    Portal(region="small xoxo after puzzle", destination="room_tundra_xoxopuzz", origin_letter="B"),
 
-    Portal(region="room_tundra_xoxopuzz", destination="room_tundra_xoxosmall", origin_letter="A"),
-    Portal(region="room_tundra_xoxopuzz", destination="room_tundra_randoblock", origin_letter="B"),
+    Portal(region="room_tundra_xoxopuzz", destination="small xoxo after puzzle", origin_letter="A"),
+    Portal(region="xoxo puzz after puzzle", destination="room_tundra_randoblock", origin_letter="B"),
 
-    Portal(region="room_tundra_randoblock", destination="room_tundra_xoxopuzz", origin_letter="A"),
+    Portal(region="room_tundra_randoblock", destination="xoxo puzz after puzzle", origin_letter="A"),
     Portal(region="room_tundra_randoblock", destination="room_tundra_lesserdog", origin_letter="B"),
 
     Portal(region="room_tundra_lesserdog", destination="room_tundra_randoblock", origin_letter="A"),
@@ -711,8 +718,11 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_tundra9": RegionInfo("room_tundra9"),
     "room_tundra_spaghetti": RegionInfo("room_tundra_spaghetti"),
     "room_tundra_snowpuzz": RegionInfo("room_tundra_snowpuzz"),
+    "Snow Puzz After Puzzle": RegionInfo("room_tundra_snowpuzz", dead_end=True),
     "room_tundra_xoxosmall": RegionInfo("room_tundra_xoxosmall"),
+    "small xoxo after puzzle": RegionInfo("room_tundra_xoxosmall", dead_end=True),
     "room_tundra_xoxopuzz": RegionInfo("room_tundra_xoxopuzz"),
+    "xoxo puzz after puzzle": RegionInfo("room_tundra_xoxopuzz", dead_end=True),
     "room_tundra_randoblock": RegionInfo("room_tundra_randoblock"),
     "room_tundra_lesserdog": RegionInfo("room_tundra_lesserdog"),
     "room_tundra_icehole": RegionInfo("room_tundra_icehole", dead_end=True),
@@ -741,7 +751,9 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_water3A": RegionInfo("room_water3A", dead_end=True),
     "room_water4": RegionInfo("room_water4"),
     "room_water_bridgepuzz1": RegionInfo("room_water_bridgepuzz1"),
+    "water bridge puzzle after": RegionInfo("room_water_bridgepuzz1", dead_end=True),
     "room_water5": RegionInfo("room_water5"),
+    "water bridge puzzle 2 after": RegionInfo("room_water5", dead_end=True),
     "room_water5A": RegionInfo("room_water5A", dead_end=True),
     "room_water6": RegionInfo("room_water6"),
     "room_water7": RegionInfo("room_water7"),
@@ -771,6 +783,9 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_water_trashzone2": RegionInfo("room_water_trashzone2"),
     "room_water_friendlyhub": RegionInfo("room_water_friendlyhub"),
     "room_water_undyneyard": RegionInfo("room_water_undyneyard", dead_end=True),
+    "room_water_blookhouse": RegionInfo("room_water_blookhouse", dead_end=True),
+    "room_water_hapstablook": RegionInfo("room_water_hapstablook", dead_end=True),
+    "hapsta door": RegionInfo("room_water_blookyard"),
     "room_water_blookyard": RegionInfo("room_water_blookyard"),
     "room_water_farm": RegionInfo("room_water_farm"),
     "room_water_shop": RegionInfo("room_water_shop"),
@@ -909,6 +924,14 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "Fire Door 2": RegionInfo("room_fire_walkandbranch2"),
     "Fire Turn Part 2": RegionInfo("room_fire_turn", dead_end=True),
     "Bed Door One-way": RegionInfo("room_fire_hoteldoors"),
+    "Ruins 3 Past Puzzles": RegionInfo("room_ruins3", dead_end=True),
+    "Ruins 14 Past Puzzles": RegionInfo("room_ruins14", dead_end=True),
+    "Ruins 15A Past Puzzles": RegionInfo("room_ruins15A", dead_end=True),
+    "Ruins 15B Past Puzzles": RegionInfo("room_ruins15B", dead_end=True),
+    "Ruins 15C Past Puzzles": RegionInfo("room_ruins15C", dead_end=True),
+    "Ruins 15D Past Puzzles": RegionInfo("room_ruins15D", dead_end=True),
+    "Ruins 11 Past Puzzles": RegionInfo("room_ruins11", dead_end=True),
+    "Ruins 9 Past Puzzles": RegionInfo("room_ruins9", dead_end=True),
     "Room Water 7 One Way": RegionInfo("room_water7", dead_end=True),
     "???": RegionInfo("???", dead_end=True, hint=0),
     "room_fire_labelevator": RegionInfo("room_fire_labelevator"),
@@ -951,6 +974,8 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_fire_walkandbranch2", "Fire Door 2"],
     ("Ruins Pit Circle C",):
          ["room_ruins15E", "Ruins Pit Circle C"],
+    ("room_tundra_xoxosmall",):
+         ["room_tundra_xoxosmall", "small xoxo after puzzle"],
     ("Ruins Pit Circle D",):
          ["room_ruins15E", "Ruins Pit Circle D"],
     ("room_water_waterfall4",):
@@ -986,7 +1011,7 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
     ("room_fire_preshootguy4",):
          ["room_fire_preshootguy4","Hotland/Core Grind Rooms"],
     ("room_water5",):
-         ["room_water5","Waterfall Grind Rooms"],
+         ["room_water5","Waterfall Grind Rooms", "water bridge puzzle 2 after"],
     ("room_water6",):
          ["room_water6","Waterfall Grind Rooms"],
     ("room_water12",):
@@ -1004,29 +1029,29 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
     ("room_tundra6",):
          ["room_tundra6","Snowdin Grind Rooms"],
     ("room_tundra_snowpuzz",):
-         ["room_tundra_snowpuzz","Snowdin Grind Rooms"],
+         ["room_tundra_snowpuzz","Snowdin Grind Rooms", "Snow Puzz After Puzzle"],
     ("room_tundra_dangerbridge",):
          ["room_tundra_dangerbridge","Snowdin Grind Rooms"],
     ("room_ruins7",):
          ["room_ruins7","Ruins Grind Rooms"],
     ("room_ruins9",):
-         ["room_ruins9","Ruins Grind Rooms"],
+         ["room_ruins9","Ruins Grind Rooms", "Ruins 9 Past Puzzles"],
     ("room_ruins8",):
          ["room_ruins8","Ruins Grind Rooms"],
     ("room_ruins15A",):
-         ["room_ruins15A","Ruins Grind Rooms"],
+         ["room_ruins15A","Ruins Grind Rooms", "Ruins 15A Past Puzzles"],
     ("room_ruins10",):
          ["room_ruins10","Ruins Grind Rooms"],
     ("room_ruins11",):
-         ["room_ruins11","Ruins Grind Rooms"],
+         ["room_ruins11","Ruins Grind Rooms", "Ruins 11 Past Puzzles"],
     ("room_ruins15B",):
-         ["room_ruins15B","Ruins Grind Rooms"],
+         ["room_ruins15B","Ruins Grind Rooms", "Ruins 15B Past Puzzles"],
     ("room_ruins15C",):
-         ["room_ruins15C","Ruins Grind Rooms"],
+         ["room_ruins15C","Ruins Grind Rooms", "Ruins 15C Past Puzzles"],
     ("room_ruins15D",):
-         ["room_ruins15D","Ruins Grind Rooms"],
+         ["room_ruins15D","Ruins Grind Rooms", "Ruins 15D Past Puzzles"],
     ("room_ruins14",):
-         ["room_ruins14","Ruins Grind Rooms"],
+         ["room_ruins14","Ruins Grind Rooms", "Ruins 14 Past Puzzles"],
     ("room_ruins13",):
          ["room_ruins13","Ruins Grind Rooms"],
     ("room_fogroom",):
@@ -1051,12 +1076,20 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          "room_castle_throneroom"],
     ("room_fire_lab1",):
          ["room_fire_lab1", "room_fire_labelevator"],
+    ("room_ruins3",):
+         ["room_ruins3", "Ruins 3 Past Puzzles"],
+    ("room_tundra_xoxopuzz",):
+         ["room_tundra_xoxopuzz", "xoxo puzz after puzzle"],
+    ("room_water_bridgepuzz1",):
+         ["room_water_bridgepuzz1", "water bridge puzzle after"],
+    ("room_water_blookyard",):
+         ["room_water_blookyard", "hapsta door"],
 }
 
 names = []
-for item in dependent_regions:
-    for ind in item:
+for itm in dependent_regions:
+    for ind in itm:
         names.append(ind)
-for item in names:
-    if names.count(item) > 1:
-        print("DUPLICATE PORTAL NAME " + item)
+for iteem in names:
+    if names.count(iteem) > 1:
+        print("DUPLICATE PORTAL NAME " + iteem)
