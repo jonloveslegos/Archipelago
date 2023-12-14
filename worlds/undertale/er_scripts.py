@@ -300,7 +300,7 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
             for portal in two_plus:
                 if portal.region in connected_regions:
                     # if there's risk of self-locking, start over
-                    if gate_before_switch(portal, two_plus):
+                    if gate_before_switch(portal, two_plus, dead_ends):
                         world.random.shuffle(two_plus)
                         break
                     portal1 = portal
@@ -313,7 +313,7 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
             for portal in two_plus:
                 if portal.region not in connected_regions:
                     # if there's risk of self-locking, shuffle and try again
-                    if gate_before_switch(portal, two_plus):
+                    if gate_before_switch(portal, two_plus, dead_ends):
                         world.random.shuffle(two_plus)
                         break
                     portal2 = portal
@@ -339,11 +339,17 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
             world.random.shuffle(two_plus)
 
     # connect dead ends to random non-dead ends
-    # none of the key events are in dead ends, so we don't need to do gate_before_switch
     # print(len(dead_ends)-len(two_plus))
     if len(dead_ends)-len(two_plus) > 0:
         pass
     while len(dead_ends) > 0:
+        if gate_before_switch(two_plus[-1], two_plus, dead_ends):
+            world.random.shuffle(two_plus)
+            continue
+        if gate_before_switch(dead_ends[-1], two_plus, dead_ends):
+            world.random.shuffle(dead_ends)
+            continue
+
         portal1 = two_plus.pop()
         portal2 = dead_ends.pop()
         portal_pairs[portal1] = portal2
@@ -390,22 +396,22 @@ def add_dependent_regions(region_name: str) -> Set[str]:
 
 # we're checking if an event-locked portal is being placed before the regions where its key(s) is/are
 # doing this ensures the keys will not be locked behind the event-locked portal
-def gate_before_switch(check_portal: Portal, two_plus: List[Portal]) -> bool:
-    if check_portal.scene_destination() == "Fire Door 1 Block":
-        i = j = k = 0
-        for portal in two_plus:
-            if portal.scene() == "room_fire_shootguy_2":
+def gate_before_switch(check_portal: Portal, two_plus: List[Portal], dead_ends: List[Portal]) -> bool:
+    if check_portal.region == "Fire Door 1":
+        i = j = 0
+        for portal in two_plus+dead_ends:
+            if portal.region == "room_fire_shootguy_2":
                 i += 1
-            if portal.scene() == "room_fire_shootguy_1":
+            if portal.region == "room_fire_shootguy_1":
                 j += 1
         if i == 1 and j == 1:
             return True
-    if check_portal.scene_destination() == "Fire Door 2 Block":
-        i = j = k = 0
-        for portal in two_plus:
-            if portal.scene() == "room_fire_shootguy_3":
+    if check_portal.region == "Fire Door 2":
+        i = j = 0
+        for portal in two_plus+dead_ends:
+            if portal.region == "room_fire_shootguy_3":
                 i += 1
-            if portal.scene() == "room_fire_shootguy_4":
+            if portal.region == "room_fire_shootguy_4":
                 j += 1
         if i == 1 and j == 1:
             return True

@@ -111,7 +111,6 @@ item_table = {
 
 non_key_items = {
     "Butterscotch Pie": 1,
-    "1000G": 2,
     "Face Steak": 1,
     "Snowman Piece": 1,
     "Instant Noodles": 1,
@@ -166,6 +165,7 @@ key_items = {
     "Core Key": 1,
     "Mystery Key": 1,
     "Jump": 1,
+    "1000G": 2,
 }
 
 junk_weights_all = {
