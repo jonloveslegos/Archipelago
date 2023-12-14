@@ -470,11 +470,13 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
 
     regions["room_fire7"].connect(
         connecting_region=regions["Fire Door 1"],
-        name="Fire Door 1 Block")
+        name="Fire Door 1 Block",
+        rule=lambda state: state.can_reach(regions["room_fire_shootguy_2"]) and state.can_reach(regions["room_fire_shootguy_1"]))
 
     regions["room_fire_walkandbranch2"].connect(
         connecting_region=regions["Fire Door 2"],
-        name="Fire Door 2 Block")
+        name="Fire Door 2 Block",
+        rule=lambda state: state.can_reach(regions["room_fire_shootguy_3"]) and state.can_reach(regions["room_fire_shootguy_4"]))
 
 
 def set_er_location_rules(world: "UndertaleWorld") -> None:
