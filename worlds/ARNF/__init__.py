@@ -113,6 +113,13 @@ class ARNFWorld(World):
         create_events(self.multiworld, self.player)
 
 
+    def fill_slot_data(self):
+        options_dict = self.options.as_dict("normal_included", "classic_boss_rush_included", "start_with_explorb", "death_link", casing="camel")
+        logger = logging.getLogger()
+        logger.info(options_dict)
+        return options_dict
+
+
     def set_rules(self) -> None:
         # set_rule(self.multiworld.get_location("Victory", self.player),
              # lambda state: state.can_reach(f"VictoryCheck", "Location", self.player))

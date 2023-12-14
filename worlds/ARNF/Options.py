@@ -14,8 +14,14 @@ class ClassicBossRushIncluded(Toggle):
     default = 'false'
 
 
+class StartWithExplorb(Toggle):
+    """Whether this player starts with an Explorb in all game modes.  This orb points out where items are hidden, making it easier for players unfamiliar with the hidden locations."""
+    display_name = "Start With Explorb"
+    default = 'true'
+
 @dataclass
 class ARNFOptions(PerGameCommonOptions):
     normal_included: NormalIncluded
     classic_boss_rush_included: ClassicBossRushIncluded
+    start_with_explorb: StartWithExplorb
     death_link: DeathLink
