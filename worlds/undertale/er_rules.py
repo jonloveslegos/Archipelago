@@ -503,14 +503,10 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
     if _undertale_is_route(multiworld.state, player, 1):
         set_rule(multiworld.get_location("Undyne Date", player),
                 lambda state: state.has("Papyrus Date", player) and state.has("Undyne Fight (Event)", player))
-        set_rule(multiworld.get_location("Papyrus Date", player),
-                lambda state: state.has("Papyrus Fight (Event)", player))
         set_rule(multiworld.get_location("Alphys Date", player),
                  lambda state: state.can_reach("room_water_trashzone1", "Region", player) and state.can_reach("room_fire_core_final", "Region", player) and state.has("Undyne Letter EX", player) and state.has("Undyne Date", player))
         set_rule(multiworld.get_location("Undyne Cook-off", player),
                  lambda state: state.has("Papyrus Date", player) and state.has("Undyne Fight (Event)", player))
-        set_rule(multiworld.get_location("Papyrus Hangout", player),
-                 lambda state: state.has("Papyrus Fight (Event)", player))
         set_rule(multiworld.get_location("True Lab Key", player),
                  lambda state: state.has("Alphys Date", player))
         set_rule(multiworld.get_location("Donut Sale", player),
@@ -542,8 +538,10 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5", "Region", player))
     if _undertale_is_route(multiworld.state, player, 2) and (not _undertale_is_route(multiworld.state, player, 3)) and bool(multiworld.kill_sanity[player].value):
         set_rule(multiworld.get_location("Toriel Fight", player), lambda state: state.has("Ruins Population Pack", player, math.ceil(20/state.multiworld.kill_sanity_pack_size[player].value)))
-        set_rule(multiworld.get_location("Papyrus Fight", player), lambda state: state.has("Snowdin Population Pack", player, math.ceil(16/state.multiworld.kill_sanity_pack_size[player].value)))
+        set_rule(multiworld.get_location("Papyrus Fight", player), lambda state: state.has("Jump", player) and state.has("Snowdin Population Pack", player, math.ceil(16/state.multiworld.kill_sanity_pack_size[player].value)))
+        set_rule(multiworld.get_location("Papyrus Fight (Event)", player), lambda state: state.has("Jump", player) and state.has("Snowdin Population Pack", player, math.ceil(16/state.multiworld.kill_sanity_pack_size[player].value)))
         set_rule(multiworld.get_location("Undyne Fight", player), lambda state: state.has("Waterfall Population Pack", player, math.ceil(18/state.multiworld.kill_sanity_pack_size[player].value)))
+        set_rule(multiworld.get_location("Undyne Fight (Event)", player), lambda state: state.has("Waterfall Population Pack", player, math.ceil(18/state.multiworld.kill_sanity_pack_size[player].value)))
     if _undertale_is_route(multiworld.state, player, 2) and bool(multiworld.kill_sanity[player].value):
         for i in range(0, 16):
             set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
