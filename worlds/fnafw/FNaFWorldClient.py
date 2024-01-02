@@ -1,13 +1,12 @@
 from __future__ import annotations
-import os
-import asyncio
 import bsdiff4
+import shutil
 import multiprocessing
 
-import Utils
+import platform
 
-from NetUtils import NetworkItem, ClientStatus
 from worlds import fnafw
+from MultiServer import mark_raw
 from CommonClient import *
 
 
@@ -22,11 +21,66 @@ class FNaFWCommandProcessor(ClientCommandProcessor):
 
     def _cmd_patch(self):
         """Patch the vanilla game."""
-        with open(os.path.join(os.getcwd(), "FNaFW Game", "fnaf-world.exe"), "rb") as f:
-            patchedFile = bsdiff4.patch(f.read(), fnafw.data_path("patch.bsdiff"))
-        with open(os.path.join(os.getcwd(), "FNaFW Game", "FNaFW Modded.exe"), "wb") as f:
-            f.write(patchedFile)
+        if platform.system() == "Linux":
+            with open(os.path.expanduser("~/Archipelago/FNaFW Game/fnaf-world.exe"), "rb") as f:
+                patchedFile = bsdiff4.patch(f.read(), fnafw.data_path("patch.bsdiff"))
+            with open(os.path.expanduser("~/Archipelago/FNaFW Game/FNaFW Modded.exe"), "wb") as f:
+                f.write(patchedFile)
+        else:
+            with open(os.path.join(os.getcwd(), "FNaFW Game", "fnaf-world.exe"), "rb") as f:
+                patchedFile = bsdiff4.patch(f.read(), fnafw.data_path("patch.bsdiff"))
+            with open(os.path.join(os.getcwd(), "FNaFW Game", "FNaFW Modded.exe"), "wb") as f:
+                f.write(patchedFile)
         self.output(f"Done!")
+
+    @mark_raw
+    def _cmd_savepath(self, directory: str):
+        """Redirect to proper save data folder. (Use before connecting!)"""
+        self.ctx.save_game_folder = directory
+        self.output("Changed to the following directory: " + self.ctx.save_game_folder)
+
+    @mark_raw
+    def _cmd_auto_patch(self, steaminstall: typing.Optional[str] = None):
+        """Patch the game automatically."""
+        if platform.system() == "Linux":
+            os.makedirs(name=os.path.expanduser("~/Archipelago/FNaFW Game"), exist_ok=True)
+        else:
+            os.makedirs(name=os.path.join(os.getcwd(), "FNaFW Game"), exist_ok=True)
+        tempInstall = steaminstall
+        if tempInstall is not None:
+            if not os.path.isfile(os.path.join(tempInstall, "FNaF_World.exe")):
+                tempInstall = None
+        if tempInstall is None:
+            if platform.system() == "Linux":
+                tempInstall = os.path.expanduser("~/.steam/steam/steamapps/common/FNaF World/")
+            else:
+                tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\FNaF World"
+                if not os.path.exists(tempInstall):
+                    tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\FNaF World"
+        elif not os.path.exists(tempInstall):
+            tempInstall = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\FNaF World"
+            if not os.path.exists(tempInstall):
+                tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\FNaF World"
+        if not os.path.exists(tempInstall) or not os.path.isfile(os.path.join(tempInstall, "FNaF_World.exe")):
+            self.output("ERROR: Cannot find FNaF World. Please rerun the command with the correct folder."
+                        " command. \"/auto_patch (Steam directory)\".")
+        else:
+            if platform.system() == "Linux":
+                shutil.copy(os.path.join(tempInstall, "FNaF_World.exe"),
+                            os.path.expanduser("~/Archipelago/FNaFW Game/FNaF_World.exe"))
+                with open(os.path.expanduser("~/Archipelago/FNaFW Game/FNaF_World.exe"), "rb") as f:
+                    patchedFile = bsdiff4.patch(f.read(), fnafw.data_path("patch.bsdiff"))
+                with open(os.path.expanduser("~/Archipelago/FNaFW Game/FNaFW Modded.exe"), "wb") as f:
+                    f.write(patchedFile)
+                self.output(f"Done!")
+            else:
+                shutil.copy(os.path.join(tempInstall, "FNaF_World.exe"),
+                            os.path.join(os.getcwd(), "FNaFW Game", "FNaF_World.exe"))
+                with open(os.path.join(os.getcwd(), "FNaFW Game", "FNaF_World.exe"), "rb") as f:
+                    patchedFile = bsdiff4.patch(f.read(), fnafw.data_path("patch.bsdiff"))
+                with open(os.path.join(os.getcwd(), "FNaFW Game", "FNaFW Modded.exe"), "wb") as f:
+                    f.write(patchedFile)
+                self.output(f"Done!")
 
     def _cmd_deathlink(self):
         """Toggles deathlink"""
@@ -45,6 +99,12 @@ class FNaFWContext(CommonContext):
     progressive_anims_order = []
     progressive_chips_order = []
     progressive_bytes_order = []
+    cheap_endo = True
+    if platform.system() == "Linux":
+        save_game_folder = os.path.expanduser(
+            "~/.steam/steam/steamapps/compatdata/427920/pfx/drive_c/users/steamuser/AppData/Roaming/MMFApplications/")
+    else:
+        save_game_folder = os.path.expandvars("%appdata%/MMFApplications")
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -52,9 +112,16 @@ class FNaFWContext(CommonContext):
         self.game = 'FNaFW'
         self.got_deathlink = False
         self.deathlink_status = False
+        self.cheap_endo = True
+        # self.save_game_folder: files go in this path to pass data between us and the actual game
+        if platform.system() == "Linux":
+            self.save_game_folder = os.path.expanduser("~/.steam/steam/steamapps/compatdata/427920/pfx/drive_c/users"
+                                                       "/steamuser/AppData/Roaming/MMFApplications/")
+        else:
+            self.save_game_folder = os.path.expandvars("%appdata%/MMFApplications")
 
-    def on_package(self, cmd: str, args: dict):
-        asyncio.create_task(process_fnafw_cmd(self, cmd, args))
+    def on_package(self, cmd: str, arguments: dict):
+        asyncio.create_task(process_fnafw_cmd(self, cmd, arguments))
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -83,16 +150,17 @@ async def not_in_use(filename):
     try:
         os.rename(filename, filename)
         return True
-    except:
+    except PermissionError:
         return False
 
 
-async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
+async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
     if cmd == 'Connected':
-        ctx.progressive_anims_order = args["slot_data"]["Progressive Animatronics Order"]
-        ctx.progressive_chips_order = args["slot_data"]["Progressive Chips Order"]
-        ctx.progressive_bytes_order = args["slot_data"]["Progressive Bytes Order"]
-        path = os.path.expandvars("%appdata%/MMFApplications/fnafw5")
+        ctx.progressive_anims_order = arguments["slot_data"]["Progressive Animatronics Order"]
+        ctx.progressive_chips_order = arguments["slot_data"]["Progressive Chips Order"]
+        ctx.progressive_bytes_order = arguments["slot_data"]["Progressive Bytes Order"]
+        ctx.cheap_endo = arguments["slot_data"]["cheap_endo"]
+        path = os.path.join(ctx.save_game_folder, "fnafw5")
         if not os.path.exists(path):
             while True:
                 try:
@@ -102,16 +170,20 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
                     break
                 except PermissionError:
                     continue
-        path = os.path.expandvars("%appdata%/MMFApplications/fnafwAP5")
+        path = os.path.join(ctx.save_game_folder, "fnafwAP5")
         while True:
             try:
                 with open(path, "w") as f:
                     f.write("[fnafw]\n")
+                    if ctx.cheap_endo:
+                        f.write("cheapendo=1\n")
+                    else:
+                        f.write("cheapendo=0\n")
                     f.close()
                 break
             except PermissionError:
                 continue
-        path = os.path.expandvars("%appdata%/MMFApplications/fnafwAPSCOUT5")
+        path = os.path.join(ctx.save_game_folder, "fnafwAPSCOUT5")
         while True:
             try:
                 with open(path, "w") as f:
@@ -121,21 +193,22 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
             except PermissionError:
                 continue
     elif cmd == "LocationInfo":
-        for l in args["locations"]:
+        for loc in arguments["locations"]:
             while True:
                 try:
-                    if not os.path.exists(os.path.expandvars("%appdata%/MMFApplications/fnafwAPSCOUT5")):
-                        with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAPSCOUT5"), "w") as file:
+                    if not os.path.exists(os.path.join(ctx.save_game_folder, "fnafwAPSCOUT5")):
+                        with open(os.path.join(ctx.save_game_folder, "fnafwAPSCOUT5"), "w") as file:
                             file.write("[fnafw]\n")
                             file.close()
-                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAPSCOUT5"), 'a') as file:
-                        file.write(str(fnafw.location_table[ctx.location_names[l.location]].setId)+"SCOUT="+ctx.player_names[l.player]+"'s "+str(ctx.item_names[l.item])+"\n")
+                    with open(os.path.join(ctx.save_game_folder, "fnafwAPSCOUT5"), 'a') as file:
+                        file.write(str(fnafw.location_table[ctx.location_names[loc.location]].setId) + "SCOUT=" +
+                                   ctx.player_names[loc.player] + "'s " + str(ctx.item_names[loc.item]) + "\n")
                         file.close()
                     break
                 except PermissionError:
                     continue
     elif cmd == 'ReceivedItems':
-        start_index = args["index"]
+        start_index = arguments["index"]
 
         if start_index == 0:
             ctx.items_received = []
@@ -146,12 +219,11 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
                                  "locations": list(ctx.locations_checked)})
             await ctx.send_msgs(sync_msg)
         if start_index == len(ctx.items_received):
-            if os.path.exists(os.path.expandvars("%appdata%/MMFApplications/fnafwAP5")):
-                temp_progressive = {}
-                temp_progressive["anims"] = ctx.progressive_anims_order.copy()
-                temp_progressive["bytes"] = ctx.progressive_bytes_order.copy()
-                temp_progressive["chips"] = ctx.progressive_chips_order.copy()
-                for item in args['items']:
+            if os.path.exists(os.path.join(ctx.save_game_folder, "fnafwAP5")):
+                temp_progressive = {"anims": ctx.progressive_anims_order.copy(),
+                                    "bytes": ctx.progressive_bytes_order.copy(),
+                                    "chips": ctx.progressive_chips_order.copy()}
+                for item in arguments['items']:
                     if fnafw.FNaFWWorld.item_id_to_name[NetworkItem(*item).item] == "Progressive Animatronic":
                         if len(temp_progressive["anims"]) > 0:
                             item_got = fnafw.item_table[temp_progressive["anims"].pop(0)].setId
@@ -171,26 +243,34 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
                         item_got = fnafw.item_table[fnafw.FNaFWWorld.item_id_to_name[NetworkItem(*item).item]].setId
                     while True:
                         try:
-                            with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAP5"), 'r+') as f:
+                            with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), 'r+') as f:
                                 lines = f.read()
-                                if not item_got == "armor":
-                                    f.write(str(item_got)+"=1\n")
+                                if not item_got == "armor" and not item_got.__contains__("tokens"):
+                                    f.write(str(item_got) + "=1\n")
                                 if not lines.__contains__("armor="):
                                     f.write("armor=0\n")
+                                if not lines.__contains__("tokens="):
+                                    f.write("tokens=0\n")
                                 f.close()
-                            with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAP5"), "r") as file:
+                            with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), "r") as file:
                                 replacement = ""
                                 for line in file:
                                     line = line.strip()
                                     if item_got == "armor":
-                                        if (line.__contains__("armor=10")):
+                                        if line.__contains__("armor=10"):
                                             changes = line
-                                        elif (line.__contains__("armor=0")):
+                                        elif line.__contains__("armor=0"):
                                             changes = line.replace("armor=0", "armor=1")
-                                        elif (line.__contains__("armor=1")):
+                                        elif line.__contains__("armor=1"):
                                             changes = line.replace("armor=1", "armor=2")
-                                        elif (line.__contains__("armor=2")):
+                                        elif line.__contains__("armor=2"):
                                             changes = line.replace("armor=2", "armor=10")
+                                        else:
+                                            changes = line
+                                    elif item_got.__contains__("tokens"):
+                                        if line.__contains__("tokens="):
+                                            changes = "tokens=" + str(
+                                                int(line.split("=")[1]) + int(item_got.split("=")[1]))
                                         else:
                                             changes = line
                                     else:
@@ -205,12 +285,12 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, args: dict):
                     if lines_to_simplify.count("[fnafw]") <= 0:
                         temp_lines.append("[fnafw]\n")
                     for ln in lines_to_simplify:
-                        if temp_lines.count(ln+"\n") <= 0:
-                            temp_lines.append(ln+"\n")
+                        if temp_lines.count(ln + "\n") <= 0:
+                            temp_lines.append(ln + "\n")
                     lines_to_simplify = temp_lines
                     while True:
                         try:
-                            with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAP5"), "w") as f:
+                            with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), "w") as f:
                                 f.writelines(lines_to_simplify)
                                 f.close()
                             break
@@ -229,21 +309,21 @@ async def game_watcher(ctx: FNaFWContext):
                 sync_msg.append({"cmd": "LocationChecks", "locations": list(ctx.locations_checked)})
             await ctx.send_msgs(sync_msg)
             ctx.syncing = False
-        path = os.path.expandvars("%appdata%/MMFApplications/fnafwAP5")
+        path = os.path.join(ctx.save_game_folder, "fnafwAP5")
         if ctx.got_deathlink:
             ctx.got_deathlink = False
             while True:
                 try:
-                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAP5"), 'r+') as f:
+                    with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), 'r+') as f:
                         lines = f.read()
                         if not lines.__contains__("deathlink="):
                             f.write("deathlink=0\n")
                         f.close()
-                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAP5"), "r") as file:
+                    with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), "r") as file:
                         replacement = ""
                         for line in file:
                             line = line.strip()
-                            if (line.__contains__("deathlink=0")):
+                            if line.__contains__("deathlink=0"):
                                 changes = line.replace("deathlink=0", "deathlink=1")
                             else:
                                 changes = line
@@ -257,12 +337,12 @@ async def game_watcher(ctx: FNaFWContext):
             if lines_to_simplify.count("[fnafw]") <= 0:
                 temp_lines.append("[fnafw]\n")
             for ln in lines_to_simplify:
-                if temp_lines.count(ln+"\n") <= 0:
-                    temp_lines.append(ln+"\n")
+                if temp_lines.count(ln + "\n") <= 0:
+                    temp_lines.append(ln + "\n")
             lines_to_simplify = temp_lines
             while True:
                 try:
-                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafwAP5"), "w") as f:
+                    with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), "w") as f:
                         f.writelines(lines_to_simplify)
                         f.close()
                     break
@@ -272,19 +352,19 @@ async def game_watcher(ctx: FNaFWContext):
         hinting = []
         victory = False
         filesread = []
-        if os.path.exists(os.path.expandvars("%appdata%/MMFApplications/fnafw5")):
+        if os.path.exists(os.path.join(ctx.save_game_folder, "fnafw5")):
             while True:
                 try:
-                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafw5"), 'r') as f:
+                    with open(os.path.join(ctx.save_game_folder, "fnafw5"), 'r') as f:
                         filesread = f.readlines()
                         f.close()
                     break
                 except PermissionError:
                     continue
-        if os.path.exists(os.path.expandvars("%appdata%/MMFApplications/fnafwDEATH5")):
+        if os.path.exists(os.path.join(ctx.save_game_folder, "fnafwDEATH5")):
             while True:
                 try:
-                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafwDEATH5"), 'r') as f:
+                    with open(os.path.join(ctx.save_game_folder, "fnafwDEATH5"), 'r') as f:
                         if "deathlink=1\n" in f.readlines():
                             if "DeathLink" in ctx.tags:
                                 await ctx.send_death()
@@ -298,17 +378,19 @@ async def game_watcher(ctx: FNaFWContext):
                     with open(path, 'r+') as f:
                         lines = f.readlines()
                         for name, data in fnafw.location_table.items():
-                            if data.setId+"=1\n" in filesread and data.setId != "" and not str(data.id)+"=sent\n" in lines:
-                                sending = sending+[(int(data.id))]
-                                f.write(str(data.id)+"=sent\n")
-                            if data.hintId+"=1\n" in filesread and data.hintId != "" and not str(data.id)+"HINT=sent\n" in lines:
-                                hinting = hinting+[(int(data.id))]
-                                f.write(str(data.id)+"HINT=sent\n")
+                            if data.setId + "=1\n" in filesread and data.setId != "" and not str(
+                                    data.id) + "=sent\n" in lines:
+                                sending = sending + [(int(data.id))]
+                                f.write(str(data.id) + "=sent\n")
+                            if data.hintId + "=1\n" in filesread and data.hintId != "" and not str(
+                                    data.id) + "HINT=sent\n" in lines:
+                                hinting = hinting + [(int(data.id))]
+                                f.write(str(data.id) + "HINT=sent\n")
                         f.close()
                     break
                 except PermissionError:
                     continue
-        path = os.path.expandvars("%appdata%/MMFApplications/fnafwAP5")
+        path = os.path.join(ctx.save_game_folder, "fnafwAP5")
         if os.path.exists(path):
             while True:
                 try:
@@ -320,10 +402,10 @@ async def game_watcher(ctx: FNaFWContext):
                     break
                 except PermissionError:
                     continue
-        if os.path.exists(os.path.expandvars("%appdata%/MMFApplications/fnafwDEATH5")):
+        if os.path.exists(os.path.join(ctx.save_game_folder, "fnafwDEATH5")):
             while True:
                 try:
-                    with open(os.path.expandvars("%appdata%/MMFApplications/fnafwDEATH5"), "w") as f:
+                    with open(os.path.join(ctx.save_game_folder, "fnafwDEATH5"), "w") as f:
                         f.writelines(["[fnafw]", "deathlink=0"])
                         f.close()
                     break
@@ -348,7 +430,7 @@ def main():
 
     async def _main():
         multiprocessing.freeze_support()
-        parser = get_base_parser()
+        parser = get_base_parser(description="FNaFW Client, for text interfacing.")
         args = parser.parse_args()
 
         ctx = FNaFWContext(args.connect, args.password)
@@ -357,8 +439,12 @@ def main():
             ctx.run_gui()
         ctx.run_cli()
 
-        if not os.path.exists(os.getcwd() + "/FNaFW Game"):
-            os.mkdir(os.getcwd() + "/FNaFW Game")
+        if platform.system() == "Linux":
+            if not os.path.exists(os.path.expanduser("~/Archipelago/FNaFW Game")):
+                os.makedirs(name=os.path.expanduser("~/Archipelago/FNaFW Game"))
+        else:
+            if not os.path.exists(os.getcwd() + "/FNaFW Game"):
+                os.mkdir(os.getcwd() + "/FNaFW Game")
 
         progression_watcher = asyncio.create_task(
             game_watcher(ctx), name="FNaFWProgressionWatcher")
@@ -379,9 +465,4 @@ def main():
 
 
 if __name__ == "__main__":
-
-    parser = get_base_parser(description="FNaFW Client, for text interfacing.")
-
-    args, rest = parser.parse_known_args()
     main()
-

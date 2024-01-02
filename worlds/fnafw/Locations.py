@@ -1,10 +1,10 @@
 from BaseClasses import Location
-import typing
+from typing import NamedTuple, Optional, Dict, Set
 from .Items import item_table
 
 
-class LocData(typing.NamedTuple):
-    id: typing.Optional[int]
+class LocData(NamedTuple):
+    id: Optional[int]
     region: str
     setId: str
     hintId: str = "NULL"
@@ -13,10 +13,89 @@ class LocData(typing.NamedTuple):
 class FNaFWLocations(Location):
     game: str = "FNaFW"
 
-    def __init__(self, player: int, name: str, address: typing.Optional[int], parent):
+    def __init__(self, player: int, name: str, address: Optional[int], parent):
         super().__init__(player, name, address, parent)
         self.event = not address
 
+
+location_groups: Dict[str, Set[str]] = {
+    "shops": {
+        "Fazbear Hills: Endo Shop 1",
+        "Fazbear Hills: Endo Shop 2",
+        "Fazbear Hills: Endo Shop 3",
+        "Fazbear Hills: Lolbit Shop 1",
+        "Fazbear Hills: Lolbit Shop 2",
+        "Fazbear Hills: Lolbit Shop 3",
+        "Choppy's Woods: Lolbit Shop 1",
+        "Choppy's Woods: Lolbit Shop 2",
+        "Choppy's Woods: Lolbit Shop 3",
+        "Dusting Fields: Lolbit Shop 1",
+        "Dusting Fields: Lolbit Shop 2",
+        "Dusting Fields: Lolbit Shop 3",
+        "Pinwheel Circus: Lolbit Shop 1",
+        "Pinwheel Circus: Lolbit Shop 2",
+        "Pinwheel Circus: Lolbit Shop 3",
+        "Mysterious Mine: Lolbit Shop 1",
+        "Mysterious Mine: Lolbit Shop 2",
+        "Mysterious Mine: Lolbit Shop 3",
+        "Blacktomb Yard: Lolbit Shop 1",
+        "Blacktomb Yard: Lolbit Shop 2",
+        "Blacktomb Yard: Lolbit Shop 3",
+        "Deep-Metal Mine: Lolbit Shop 1",
+        "Deep-Metal Mine: Lolbit Shop 2",
+        "Deep-Metal Mine: Lolbit Shop 3",
+    },
+    "characters": {
+        "Freddy",
+        "Bonnie",
+        "Chica",
+        "Foxy",
+        "Toy Bonnie",
+        "Toy Chica",
+        "Toy Freddy",
+        "Mangle",
+        "Balloon Boy",
+        "JJ",
+        "Phantom Freddy",
+        "Phantom Chica",
+        "Phantom BB",
+        "Phantom Foxy",
+        "Phantom Mangle",
+        "Withered Bonnie",
+        "Withered Chica",
+        "Withered Freddy",
+        "Withered Foxy",
+        "Shadow Freddy",
+        "Marionette",
+        "Phantom Marionette",
+        "Golden Freddy",
+        "Paperpals",
+        "Nightmare Freddy",
+        "Nightmare Bonnie",
+        "Nightmare Chica",
+        "Nightmare Foxy",
+        "Endo 01",
+        "Endo 02",
+        "Plushtrap",
+        "Endoplush",
+        "Springtrap",
+        "RWQ",
+        "Crying Child",
+        "Funtime Foxy",
+        "Nightmare Fredbear",
+        "Nightmare",
+        "Fredbear",
+        "Spring Bonnie",
+        "Jack-O-Bonnie",
+        "Jack-O-Chica",
+        "Animdude",
+        "Mr. Chipper",
+        "Nightmare BB",
+        "Nightmarionne",
+        "Coffee",
+        "Purpleguy",
+    }
+}
 
 location_table = {
     "Fazbear Hills: Endo Shop 1": LocData(797197, "World", "ar1", "arHINT1"),
@@ -122,6 +201,7 @@ location_table = {
     "Lilygear Lake: Laser Switch": LocData(797297, "World", "sw8"),
     "Deep-Metal Mine: Laser Switch": LocData(797298, "World", "sw9"),
     "Lilygear Lake: Key": LocData(797299, "World", "key"),
+    "Fazbear Hills: Pearl": LocData(797300, "World", "gotpearl"),
 }
 
 exclusion_table = {
@@ -130,4 +210,4 @@ exclusion_table = {
 events_table = {
 }
 
-lookup_id_to_name: typing.Dict[int, str] = {data.id: item_name for item_name, data in location_table.items() if data.id}
+lookup_id_to_name: Dict[int, str] = {data.id: item_name for item_name, data in location_table.items() if data.id}

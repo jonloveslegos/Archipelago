@@ -1,16 +1,114 @@
 from BaseClasses import Item, ItemClassification
-import typing
+from typing import Dict, Set, NamedTuple, Optional
 
 
-class ItemData(typing.NamedTuple):
-    code: typing.Optional[int]
+class ItemData(NamedTuple):
+    code: Optional[int]
     classification: any
     setId: str
 
 
 class FNaFWItem(Item):
-    game: str = "FFPS"
+    game: str = "FNaFW"
 
+
+item_groups: Dict[str, Set[str]] = {
+    "byte": {
+        "Gnat",
+        "Neon Bee",
+        "Medpod 1",
+        "Medpod 2",
+        "Neon Wasp",
+        "Mini-Reaper",
+        "Reaper",
+        "Mini-FO",
+        "UFO",
+        "Block5",
+        "Block20",
+        "BossDrain01",
+        "Mega-Med",
+        "X-Reaper",
+        "X-FO",
+        "Block50",
+        "Pop-Pop",
+        "BOOM!",
+        "KABOOM!",
+        "BossDrain02",
+        "BossDrain-X"
+    },
+    "chip": {
+        "Headstart Defense",
+        "Headstart Strength",
+        "Headstart Speed",
+        "Evercomet Weak",
+        "Quickstart Party",
+        "Block Jumpscare",
+        "Run Luck",
+        "Evercomet Strong",
+        "Endless Speed",
+        "Auto Giftboxes",
+        "Auto Regen",
+        "Endless Defense",
+        "Endless Strength",
+        "Curse Status",
+        "Freddle Fury",
+        "Auto Shield",
+        "Auto Mimic",
+        "Counter Bite",
+        "Pizza Fury",
+        "Block Unscrew"
+    },
+    "character": {
+        "Freddy",
+        "Bonnie",
+        "Chica",
+        "Foxy",
+        "Toy Bonnie",
+        "Toy Chica",
+        "Toy Freddy",
+        "Mangle",
+        "Balloon Boy",
+        "JJ",
+        "Phantom Freddy",
+        "Phantom BB",
+        "Phantom Chica",
+        "Phantom Mangle",
+        "Withered Foxy",
+        "Phantom Foxy",
+        "Withered Chica",
+        "Withered Freddy",
+        "Withered Bonnie",
+        "Shadow Freddy",
+        "Marionette",
+        "Phantom Marionette",
+        "Golden Freddy",
+        "Paperpals",
+        "Nightmare Freddy",
+        "Nightmare Bonnie",
+        "Nightmare Chica",
+        "Nightmare Foxy",
+        "Endo 01",
+        "Endo 02",
+        "Plushtrap",
+        "Endoplush",
+        "Springtrap",
+        "RWQ",
+        "Crying Child",
+        "Funtime Foxy",
+        "Nightmare Fredbear",
+        "Nightmare",
+        "Fredbear",
+        "Spring Bonnie",
+        "Jack-O-Chica",
+        "Nightmare BB",
+        "Coffee",
+        "Jack-O-Bonnie",
+        "Purpleguy",
+        "Nightmarionne",
+        "Mr. Chipper",
+        "Animdude"
+    },
+}
 
 item_table = {
     "Progressive Endoskeleton": ItemData(797199, ItemClassification.useful, "armor"),
@@ -117,6 +215,15 @@ item_table = {
     "Progressive Animatronic": ItemData(797300, ItemClassification.useful, "-"),
     "Progressive Chip": ItemData(797301, ItemClassification.progression, "-"),
     "Progressive Byte": ItemData(797302, ItemClassification.useful, "-"),
+    "25 Tokens": ItemData(797303, ItemClassification.filler, "tokens=25"),
+    "50 Tokens": ItemData(797304, ItemClassification.filler, "tokens=50"),
+    "100 Tokens": ItemData(797305, ItemClassification.filler, "tokens=100"),
+    "250 Tokens": ItemData(797306, ItemClassification.filler, "tokens=250"),
+    "500 Tokens": ItemData(797307, ItemClassification.filler, "tokens=500"),
+    "1000 Tokens": ItemData(797308, ItemClassification.filler, "tokens=1000"),
+    "2500 Tokens": ItemData(797309, ItemClassification.filler, "tokens=2500"),
+    "5000 Tokens": ItemData(797310, ItemClassification.filler, "tokens=5000"),
+    "Pearl": ItemData(797311, ItemClassification.useful, "gotpearl"),
 }
 
 start_anim_table = [
@@ -364,7 +471,8 @@ to_add_to_pool = {
     "Laser Switch 2": 1,
     "Laser Switch 3": 1,
     "Laser Switch 4": 1,
-    "Key": 1
+    "Key": 1,
+    "Pearl": 1,
 }
 
-lookup_id_to_name: typing.Dict[int, str] = {data.code: item_name for item_name, data in item_table.items() if data.code}
+lookup_id_to_name: Dict[int, str] = {data.code: item_name for item_name, data in item_table.items() if data.code}

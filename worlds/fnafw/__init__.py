@@ -2,7 +2,7 @@ import os
 
 import BaseClasses
 from .Items import *
-from .Locations import FNaFWLocations, location_table, exclusion_table
+from .Locations import FNaFWLocations, location_table, exclusion_table, location_groups
 from .Regions import FNaFW_regions, link_FNaFW_structures
 from .Rules import set_rules, set_completion_rules
 
@@ -12,6 +12,7 @@ from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components, Type
 from multiprocessing import Process
 import math
+import typing
 
 
 def run_client():
@@ -42,6 +43,8 @@ class FNaFWWorld(World):
     """
     game = "FNaFW"
     web = FNaFWWeb()
+    item_name_groups = item_groups
+    location_name_groups = location_groups
     option_definitions = FNaFW_options
 
     anims_0 = []
@@ -87,8 +90,21 @@ class FNaFWWorld(World):
             'progressive_anims': bool(self.multiworld.progressive_anims[self.player].value),
             'progressive_bytes': bool(self.multiworld.progressive_bytes[self.player].value),
             'progressive_chips': bool(self.multiworld.progressive_chips[self.player].value),
-            'vanilla_lasers': bool(self.multiworld.vanilla_lasers[self.player].value)
+            'vanilla_lasers': bool(self.multiworld.vanilla_lasers[self.player].value),
+            'cheap_endo': bool(self.multiworld.cheap_endo[self.player].value),
+            'vanilla_pearl': bool(self.multiworld.vanilla_pearl[self.player].value),
         }
+
+    def get_filler_item_name(self) -> str:
+        choice_and_weight = {"25 Tokens": 15,
+                             "50 Tokens": 20,
+                             "100 Tokens": 25,
+                             "250 Tokens": 15,
+                             "500 Tokens": 10,
+                             "1000 Tokens": 10,
+                             "2500 Tokens": 5}
+        chosen_item_name = self.random.choices(choice_and_weight)
+        return chosen_item_name
 
     def create_items(self):
 
@@ -101,13 +117,15 @@ class FNaFWWorld(World):
 
         if not self.multiworld.initial_characters[self.player]:
             for item in start_anim_table:
-                self.multiworld.get_location(item, self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(item))))
+                self.multiworld.get_location(item, self.player).place_locked_item(
+                    self.create_item(itempool.pop(itempool.index(item))))
         else:
             chooseable_anim_table = []
-            chooseable_anim_table += start_anim_table+fazbear_hills_anim_table+choppys_woods_anim_table
+            chooseable_anim_table += start_anim_table + fazbear_hills_anim_table + choppys_woods_anim_table
             for item in start_anim_table:
                 chosen_anim = self.random.choice(chooseable_anim_table)
-                self.multiworld.get_location(item, self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(chosen_anim))))
+                self.multiworld.get_location(item, self.player).place_locked_item(
+                    self.create_item(itempool.pop(itempool.index(chosen_anim))))
                 chooseable_anim_table.remove(chosen_anim)
 
         if self.multiworld.progressive_anims[self.player]:
@@ -135,21 +153,31 @@ class FNaFWWorld(World):
             self.random.shuffle(self.anims_9)
             self.random.shuffle(self.anims_10)
             self.random.shuffle(self.anims_11)
-            self.all_anims = self.anims_0+self.anims_1+self.anims_2+self.anims_3+self.anims_4+self.anims_5+self.anims_6+self.anims_7+self.anims_8+self.anims_9+self.anims_10+self.anims_11
+            self.all_anims = self.anims_0 + self.anims_1 + self.anims_2 + self.anims_3 + self.anims_4 + self.anims_5 + self.anims_6 + self.anims_7 + self.anims_8 + self.anims_9 + self.anims_10 + self.anims_11
             itempool = ["Progressive Animatronic" if item in self.all_anims else item for item in itempool]
 
         if self.multiworld.exclude_halloween[self.player]:
             for item in halloween_anim_table:
                 if self.multiworld.progressive_anims[self.player]:
-                    self.multiworld.get_location(item, self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Progressive Animatronic"))))
+                    self.multiworld.get_location(item, self.player).place_locked_item(
+                        self.create_item(itempool.pop(itempool.index("Progressive Animatronic"))))
                 else:
-                    self.multiworld.get_location(item, self.player).place_locked_item(self.create_item(itempool.pop(itempool.index(item))))
+                    self.multiworld.get_location(item, self.player).place_locked_item(
+                        self.create_item(itempool.pop(itempool.index(item))))
+
+        if self.multiworld.vanilla_pearl[self.player]:
+            self.multiworld.get_location("Fazbear Hills: Pearl", self.player).place_locked_item(
+                self.create_item(itempool.pop(itempool.index("Pearl"))))
 
         if self.multiworld.vanilla_lasers[self.player]:
-            self.multiworld.get_location("Dusting Fields: Laser Switch", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Laser Switch 1"))))
-            self.multiworld.get_location("Fazbear Hills: Laser Switch", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Laser Switch 2"))))
-            self.multiworld.get_location("Lilygear Lake: Laser Switch", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Laser Switch 3"))))
-            self.multiworld.get_location("Deep-Metal Mine: Laser Switch", self.player).place_locked_item(self.create_item(itempool.pop(itempool.index("Laser Switch 4"))))
+            self.multiworld.get_location("Dusting Fields: Laser Switch", self.player).place_locked_item(
+                self.create_item(itempool.pop(itempool.index("Laser Switch 1"))))
+            self.multiworld.get_location("Fazbear Hills: Laser Switch", self.player).place_locked_item(
+                self.create_item(itempool.pop(itempool.index("Laser Switch 2"))))
+            self.multiworld.get_location("Lilygear Lake: Laser Switch", self.player).place_locked_item(
+                self.create_item(itempool.pop(itempool.index("Laser Switch 3"))))
+            self.multiworld.get_location("Deep-Metal Mine: Laser Switch", self.player).place_locked_item(
+                self.create_item(itempool.pop(itempool.index("Laser Switch 4"))))
 
         if self.multiworld.progressive_chips[self.player]:
             self.chips_1 = [item for item in itempool if item in green_chip_table]
@@ -160,9 +188,8 @@ class FNaFWWorld(World):
             self.random.shuffle(self.chips_1)
             self.random.shuffle(self.chips_2)
             self.random.shuffle(self.chips_3)
-            self.all_chips = self.chips_1+self.chips_2+self.chips_3
+            self.all_chips = self.chips_1 + self.chips_2 + self.chips_3
             itempool = ["Progressive Chip" if item in self.all_chips else item for item in itempool]
-
 
         if self.multiworld.progressive_bytes[self.player]:
             self.bytes_1 = [item for item in itempool if item in weak_byte_table]
@@ -171,9 +198,8 @@ class FNaFWWorld(World):
             self.random.shuffle(self.bytes_1)
             self.random.shuffle(self.bytes_2)
             self.random.shuffle(self.bytes_3)
-            self.all_bytes = self.bytes_1+self.bytes_2+self.bytes_3
+            self.all_bytes = self.bytes_1 + self.bytes_2 + self.bytes_3
             itempool = ["Progressive Byte" if item in self.all_bytes else item for item in itempool]
-
 
         # Convert itempool into real items
 
@@ -185,13 +211,13 @@ class FNaFWWorld(World):
         player_name = self.multiworld.get_player_name(self.player)
         spoiler_handle.write(f"\n\nProgressive Animatronics ({player_name}): ")
         for item in self.all_anims:
-            spoiler_handle.write(f"{self.all_anims.index(item)+1}={item}, ")
+            spoiler_handle.write(f"{self.all_anims.index(item) + 1}={item}, ")
         spoiler_handle.write(f"\nProgressive Chips ({player_name}): ")
         for item in self.all_chips:
-            spoiler_handle.write(f"{self.all_chips.index(item)+1}={item}, ")
+            spoiler_handle.write(f"{self.all_chips.index(item) + 1}={item}, ")
         spoiler_handle.write(f"\nProgressive Bytes ({player_name}): ")
         for item in self.all_bytes:
-            spoiler_handle.write(f"{self.all_bytes.index(item)+1}={item}, ")
+            spoiler_handle.write(f"{self.all_bytes.index(item) + 1}={item}, ")
 
     def set_rules(self):
         set_rules(self.multiworld, self.player)

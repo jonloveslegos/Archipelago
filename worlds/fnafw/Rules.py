@@ -43,6 +43,7 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Fazbear Hills: Lolbit Shop 1", player), lambda state: True)
     set_rule(world.get_location("Choppy's Woods: Switch", player), lambda state: True)
     set_rule(world.get_location("Choppy's Woods: Lolbit Shop 1", player), lambda state: True)
+    set_rule(world.get_location("Fazbear Hills: Pearl", player), lambda state: True)
     set_rule(world.get_location("Withered Foxy", player), lambda state: (not world.require_find_char[player] or _fnaf_world_has_chip(state, player, "Find Characters")))
     set_rule(world.get_location("Phantom Foxy", player), lambda state: (not world.require_find_char[player] or _fnaf_world_has_chip(state, player, "Find Characters")))
     set_rule(world.get_location("Phantom Mangle", player), lambda state: (not world.require_find_char[player] or _fnaf_world_has_chip(state, player, "Find Characters")))
