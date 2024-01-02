@@ -43,23 +43,23 @@ def create_er_regions_vanilla(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     for item in temp_portal_mapping:
         if Portal(item.destination, item.region, origin_letter_flip[item.origin_letter], item.destination+" "+origin_letter_flip[item.origin_letter]) not in temp_portal_mapping:
             if item.region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
-                                            "Hotland Entrance", "Core Entrance"]:
+                                            "Hotland Entrance", "New Home Entrance"]:
                 if item.destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
-                                            "Hotland Entrance", "Core Entrance"]:
+                                            "Hotland Entrance", "New Home Entrance"]:
                     print("Could not find corresponding location for "+item.region+item.origin_letter)
     while len(temp_portal_mapping) > 0:
 
         portal2: Portal = Portal(region="", destination="", origin_letter="")
         if temp_portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
-                                            "Hotland Entrance", "Core Entrance"]:
+                                            "Hotland Entrance", "New Home Entrance"]:
             if temp_portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
-                                                     "Hotland Entrance", "Core Entrance"]:
+                                                     "Hotland Entrance", "New Home Entrance"]:
                 for port in temp_portal_mapping:
                     if port.region == temp_portal_mapping[0].destination and port.origin_letter == origin_letter_flip[temp_portal_mapping[0].origin_letter]:
                         portal2 = port
         if len(portal2.region) == 0:
-            if temp_portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "Core Entrance"]:
-                if temp_portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "Core Entrance"]:
+            if temp_portal_mapping[0].region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "New Home Entrance"]:
+                if temp_portal_mapping[0].destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance", "Hotland Entrance", "New Home Entrance"]:
                     raise Warning("CANNOT FIND PORTAL OF REGION "+temp_portal_mapping[0].destination+" WITH LETTER OF "+origin_letter_flip[temp_portal_mapping[0].origin_letter])
                 else:
                     for port in temp_portal_mapping:
@@ -105,7 +105,7 @@ def create_er_regions_vanilla(world: "UndertaleWorld") -> Dict[Portal, Portal]:
                         UndertaleERLocation(world.player, "Waterfall Spare " + str(i + 1), 78213 + i,
                                             regions[region_name]) for i in
                         range(world.multiworld.spare_sanity_max[world.player].value)]
-            elif region_name == "Hotland/Core Grind Rooms":
+            elif region_name == "Hotland Grind Rooms":
                 regions[region_name].locations += [
                         UndertaleERLocation(world.player, "Hotland Spare " + str(i + 1), 78313 + i,
                                             regions[region_name]) for i in
@@ -169,7 +169,7 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
                 regions[region_name].locations += [UndertaleERLocation(world.player, "Snowdin Spare "+str(i+1), 78113+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
             elif region_name == "Waterfall Grind Rooms":
                 regions[region_name].locations += [UndertaleERLocation(world.player, "Waterfall Spare "+str(i+1), 78213+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
-            elif region_name == "Hotland/Core Grind Rooms":
+            elif region_name == "Hotland Grind Rooms":
                 regions[region_name].locations += [UndertaleERLocation(world.player, "Hotland Spare "+str(i+1), 78313+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
     
     create_randomized_entrances(portal_pairs, regions)
@@ -185,8 +185,6 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
 
 
 def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[str, Region]):
-    world.multiworld.register_indirect_condition(regions["room_sanscorridor"], world.multiworld.get_entrance("room_fire_labelevator", world.player))
-    
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_2"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_1"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
 
@@ -288,9 +286,9 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     for item in portal_mapping:
         if Portal(item.destination, item.region, origin_letter_flip[item.origin_letter], item.destination+" "+origin_letter_flip[item.origin_letter]) not in portal_mapping:
             if item.region not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
-                                            "Hotland Entrance", "Core Entrance"]:
+                                            "Hotland Entrance", "New Home Entrance"]:
                 if item.destination not in ["Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance",
-                                            "Hotland Entrance", "Core Entrance"]:
+                                            "Hotland Entrance", "New Home Entrance"]:
                     print("Could not find corresponding location for "+item.region+item.origin_letter)
         names.append(item.name)
     for item in names:

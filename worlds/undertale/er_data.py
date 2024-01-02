@@ -20,7 +20,7 @@ portal_mapping: List[Portal] = [
     Portal(region="Snowdin Entrance", destination="room_tundra1", origin_letter="A"),
     Portal(region="Waterfall Entrance", destination="room_water1", origin_letter="D"),
     Portal(region="Hotland Entrance", destination="room_fire_prelab", origin_letter="C"),
-    Portal(region="Core Entrance", destination="room_fire_core1", origin_letter="X"),
+    Portal(region="New Home Entrance", destination="room_castle_elevatorout", origin_letter="X"),
 
     Portal(region="room_fire_prelab", destination="Hotland Entrance", origin_letter="A"),
     Portal(region="room_fire_prelab", destination="room_fire_lab1", origin_letter="D"),
@@ -164,8 +164,9 @@ portal_mapping: List[Portal] = [
     Portal(region="room_fire_hotelbed", destination="Bed Door One-way", origin_letter="A"),
 
     Portal(region="room_fire_precore", destination="room_fire_hotellobby", origin_letter="X"),
+    Portal(region="room_fire_precore", destination="room_fire_core1", origin_letter="B"),
 
-    Portal(region="room_fire_core1", destination="Core Entrance", origin_letter="A"),
+    Portal(region="room_fire_core1", destination="room_fire_precore", origin_letter="A"),
     Portal(region="room_fire_core1", destination="room_fire_core2", origin_letter="B"),
     Portal(region="room_fire_core1", destination="room_fire_core3", origin_letter="D"),
     Portal(region="room_fire_core1", destination="room_fire_core_premett", origin_letter="U"),
@@ -241,6 +242,35 @@ portal_mapping: List[Portal] = [
     Portal(region="Metta Entrance", destination="room_fire_core_metttest", origin_letter="B"),
 
     Portal(region="room_fire_core_metttest", destination="Metta Entrance", origin_letter="A"),
+
+    Portal(region="room_castle_elevatorout", destination="New Home Entrance", origin_letter="S"),
+    Portal(region="room_castle_elevatorout", destination="room_castle_precastle", origin_letter="B"),
+
+    Portal(region="room_castle_precastle", destination="room_castle_elevatorout", origin_letter="A"),
+    Portal(region="room_castle_precastle", destination="room_castle_hook", origin_letter="B"),
+
+    Portal(region="room_castle_hook", destination="room_castle_precastle", origin_letter="A"),
+    Portal(region="room_castle_hook", destination="room_castle_front", origin_letter="B"),
+
+    Portal(region="room_castle_front", destination="room_castle_hook", origin_letter="A"),
+    Portal(region="room_castle_front", destination="room_asghouse1", origin_letter="B"),
+
+    Portal(region="room_asghouse1", destination="room_castle_front", origin_letter="A"),
+    Portal(region="room_asghouse1", destination="room_asghouse2", origin_letter="B"),
+    Portal(region="room_asghouse1", destination="room_asghouse3", origin_letter="D"),
+
+    Portal(region="room_asghouse2", destination="room_asghouse1", origin_letter="A"),
+    Portal(region="room_asghouse2", destination="room_kitchen_final", origin_letter="X"),
+
+    Portal(region="room_kitchen_final", destination="room_asghouse2", origin_letter="X"),
+
+    Portal(region="room_asghouse3", destination="room_asghouse1", origin_letter="C"),
+    Portal(region="room_asghouse3", destination="room_asrielroom_final", origin_letter="D"),
+    Portal(region="room_asghouse3", destination="room_asgoreroom", origin_letter="B"),
+
+    Portal(region="room_asrielroom_final", destination="room_asghouse3", origin_letter="C"),
+
+    Portal(region="room_asgoreroom", destination="room_asghouse3", origin_letter="A"),
 
     Portal(region="room_shop3", destination="room_fire_hotelfront_2", origin_letter="X"),
 
@@ -818,7 +848,7 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_shop3": RegionInfo("room_shop3", dead_end=True),
     "room_shop4": RegionInfo("room_shop4", dead_end=True),
     "Hotland Entrance": RegionInfo("room_area1"),
-    "Core Entrance": RegionInfo("room_area1"),
+    "New Home Entrance": RegionInfo("room_area1"),
     "room_fire_prelab": RegionInfo("room_fire_prelab"),
     "room_fire_dock": RegionInfo("room_fire_dock", dead_end=True),
     "room_fire_lab1": RegionInfo("room_fire_lab1"),
@@ -895,7 +925,6 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_fire_core_final": RegionInfo("room_fire_core_final"),
     "room_fire_elevator": RegionInfo("room_fire_elevator"),
     "room_fire_elevator_l1": RegionInfo("room_fire_elevator_l1"),
-    "room_fire_finalelevator": RegionInfo("room_fire_finalelevator"),
     "room_castle_elevatorout": RegionInfo("room_castle_elevatorout"),
     "room_castle_precastle": RegionInfo("room_castle_precastle"),
     "room_castle_hook": RegionInfo("room_castle_hook"),
@@ -916,7 +945,7 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_castle_coffins1": RegionInfo("room_castle_coffins1"),
     "room_castle_coffins2": RegionInfo("room_castle_coffins2", dead_end=True),
     "room_castle_throneroom": RegionInfo("room_castle_throneroom", dead_end=True),
-    "Hotland/Core Grind Rooms": RegionInfo("Hotland/Core Grind Rooms", dead_end=True, hint=0),
+    "Hotland Grind Rooms": RegionInfo("Hotland Grind Rooms", dead_end=True, hint=0),
     "Waterfall Grind Rooms": RegionInfo("Waterfall Grind Rooms", dead_end=True, hint=0),
     "Snowdin Grind Rooms": RegionInfo("Snowdin Grind Rooms", dead_end=True, hint=0),
     "Ruins Grind Rooms": RegionInfo("Ruins Grind Rooms", dead_end=True, hint=0),
@@ -991,25 +1020,25 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
     ("room_area1",):
          ["room_area1", "Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"],
     ("room_fire_core_bottomleft",):
-         ["room_fire_core_bottomleft","Hotland/Core Grind Rooms"],
+         ["room_fire_core_bottomleft","Hotland Grind Rooms"],
     ("room_fire_core_topleft",):
-         ["room_fire_core_topleft","Hotland/Core Grind Rooms"],
+         ["room_fire_core_topleft","Hotland Grind Rooms"],
     ("room_fire_core_topright",):
-         ["room_fire_core_topright","Hotland/Core Grind Rooms"],
+         ["room_fire_core_topright","Hotland Grind Rooms"],
     ("room_fire_core_bottomright",):
-         ["room_fire_core_bottomright","Hotland/Core Grind Rooms"],
+         ["room_fire_core_bottomright","Hotland Grind Rooms"],
     ("room_fire_core_center",):
-         ["room_fire_core_center","Hotland/Core Grind Rooms"],
+         ["room_fire_core_center","Hotland Grind Rooms"],
     ("room_fire_core_bridge",):
-         ["room_fire_core_bridge","Hotland/Core Grind Rooms"],
+         ["room_fire_core_bridge","Hotland Grind Rooms"],
     ("room_fire5",):
-         ["room_fire5","Hotland/Core Grind Rooms"],
+         ["room_fire5","Hotland Grind Rooms"],
     ("room_fire6",):
-         ["room_fire6","Hotland/Core Grind Rooms"],
+         ["room_fire6","Hotland Grind Rooms"],
     ("room_fire_walkandbranch",):
-         ["room_fire_walkandbranch","Hotland/Core Grind Rooms"],
+         ["room_fire_walkandbranch","Hotland Grind Rooms"],
     ("room_fire_preshootguy4",):
-         ["room_fire_preshootguy4","Hotland/Core Grind Rooms"],
+         ["room_fire_preshootguy4","Hotland Grind Rooms"],
     ("room_water5",):
          ["room_water5","Waterfall Grind Rooms", "water bridge puzzle 2 after"],
     ("room_water6",):
@@ -1058,22 +1087,16 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_fogroom","Snowdin Exit"],
     ("room_ruinsexit",):
          ["room_ruinsexit","Ruins Exit"],
-    ("room_fire_precore",):
-         ["room_fire_precore","Hotland Exit"],
     ("room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"):
          ["room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"],
-    ("room_fire_core_metttest", "room_fire_core_final", "room_fire_finalelevator", "room_castle_elevatorout",
-         "room_castle_precastle", "room_castle_hook", "room_castle_front", "room_asghouse1", "room_asghouse3",
-         "room_asghouse2", "room_kitchen_final", "room_asrielroom_final", "room_asgoreroom", "room_basement1_final",
-         "room_basement2_final", "room_basement3_final", "room_basement4_final", "room_lastruins_corridor",
-         "room_sanscorridor", "room_castle_finalshoehorn", "room_castle_coffins1", "room_castle_coffins2",
-         "room_castle_throneroom"):
-        ["room_fire_core_metttest", "room_fire_core_final", "room_fire_finalelevator", "room_castle_elevatorout",
-         "room_castle_precastle", "room_castle_hook", "room_castle_front", "room_asghouse1", "room_asghouse3",
-         "room_asghouse2", "room_kitchen_final", "room_asrielroom_final", "room_asgoreroom", "room_basement1_final",
-         "room_basement2_final", "room_basement3_final", "room_basement4_final", "room_lastruins_corridor",
-         "room_sanscorridor", "room_castle_finalshoehorn", "room_castle_coffins1", "room_castle_coffins2",
-         "room_castle_throneroom"],
+    ("room_fire_core_metttest", "room_fire_core_final"):
+        ["room_fire_core_metttest", "room_fire_core_final","Hotland Exit"],
+    ("room_asghouse1", "room_basement1_final", "room_basement2_final", "room_basement3_final",
+         "room_basement4_final", "room_lastruins_corridor", "room_sanscorridor", "room_castle_finalshoehorn",
+         "room_castle_coffins1", "room_castle_coffins2", "room_castle_throneroom"):
+        ["room_asghouse1", "room_basement1_final", "room_basement2_final", "room_basement3_final",
+         "room_basement4_final", "room_lastruins_corridor", "room_sanscorridor", "room_castle_finalshoehorn",
+         "room_castle_coffins1", "room_castle_coffins2", "room_castle_throneroom"],
     ("room_fire_lab1",):
          ["room_fire_lab1", "room_fire_labelevator"],
     ("room_ruins3",):

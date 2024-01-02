@@ -1,6 +1,6 @@
 from typing import Dict, TYPE_CHECKING
 from worlds.generic.Rules import set_rule, forbid_item, add_rule
-from .Rules import _undertale_is_route, _undertale_exp_available, _undertale_return_reachable_level
+from .Rules import _undertale_is_route, _undertale_exp_available, _undertale_return_reachable_level, _undertale_has_keys
 from BaseClasses import Region, CollectionState
 import math
 
@@ -105,10 +105,9 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
         connecting_region=regions["room_area1"])
 
     regions["room_area1"].connect(
-        connecting_region=regions["Core Entrance"],
-        rule=lambda state: state.has("Core Key", player))
+        connecting_region=regions["New Home Entrance"])
 
-    regions["Core Entrance"].connect(
+    regions["New Home Entrance"].connect(
         connecting_region=regions["room_area1"])
 
     regions["Trash Zone Fall"].connect(
@@ -171,12 +170,6 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_fire_elevator_r3"].connect(
         connecting_region=regions["room_fire_elevator"])
 
-    regions["room_fire_finalelevator"].connect(
-        connecting_region=regions["room_fire_core_final"])
-
-    regions["room_fire_core_final"].connect(
-        connecting_region=regions["room_fire_finalelevator"])
-
     regions["room_water5"].connect(
         connecting_region=regions["water bridge puzzle 2 after"])
 
@@ -223,41 +216,15 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_fire_core_final"].connect(
         connecting_region=regions["room_fire_core_metttest"])
 
-    regions["room_castle_elevatorout"].connect(
-        connecting_region=regions["room_castle_precastle"])
+    regions["room_fire_core_final"].connect(
+        connecting_region=regions["Hotland Exit"])
 
-    regions["room_castle_precastle"].connect(
-        connecting_region=regions["room_castle_elevatorout"])
-
-    regions["room_castle_precastle"].connect(
-        connecting_region=regions["room_castle_hook"])
-
-    regions["room_castle_hook"].connect(
-        connecting_region=regions["room_castle_precastle"])
-
-    regions["room_castle_hook"].connect(
-        connecting_region=regions["room_castle_front"])
-
-    regions["room_castle_front"].connect(
-        connecting_region=regions["room_castle_hook"])
-
-    regions["room_castle_front"].connect(
-        connecting_region=regions["room_asghouse1"])
-
-    regions["room_asghouse1"].connect(
-        connecting_region=regions["room_castle_front"])
-
-    regions["room_asghouse1"].connect(
-        connecting_region=regions["room_asghouse2"])
-
-    regions["room_asghouse1"].connect(
-        connecting_region=regions["room_asghouse3"])
+    regions["Hotland Exit"].connect(
+        connecting_region=regions["room_fire_core_final"])
 
     regions["room_asghouse1"].connect(
         connecting_region=regions["room_basement1_final"],
-        rule=lambda state: ((state.has("Left Home Key", player) and
-                            state.has("Right Home Key", player)) or
-                           state.has("Key Piece", player, state.multiworld.key_pieces[player].value))
+        rule=lambda state: _undertale_has_keys(state, player)
                            and (
                                    not bool(state.multiworld.kill_sanity[player].value) or not _undertale_is_route(state, player, 2) or state.has("Hotland Population Pack", player, math.ceil(40/state.multiworld.kill_sanity_pack_size[player].value))
                            ))
@@ -312,11 +279,11 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
 
     regions["room_fire_labelevator"].connect(
         connecting_region=regions["room_castle_elevatorout"],
-        rule=lambda state: (state.has("Alphys Date", player) and state.can_reach("room_sanscorridor", "Region", player) and state.has("DT Extractor", player)) or not _undertale_is_route(state, player, 2))
+        rule=lambda state: (state.has("Alphys Date", player) and _undertale_has_keys(state, player) and state.has("DT Extractor", player)) or not _undertale_is_route(state, player, 2))
 
     regions["room_fire_lab1"].connect(
         connecting_region=regions["room_fire_labelevator"],
-        rule=lambda state: (state.has("Alphys Date", player) and state.can_reach("room_sanscorridor", "Region", player) and state.has("DT Extractor", player)) or not _undertale_is_route(state, player, 2))
+        rule=lambda state: (state.has("Alphys Date", player) and _undertale_has_keys(state, player) and state.has("DT Extractor", player)) or not _undertale_is_route(state, player, 2))
 
     regions["room_sanscorridor"].connect(
         connecting_region=regions["room_castle_finalshoehorn"],
@@ -343,36 +310,6 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_castle_coffins2"].connect(
         connecting_region=regions["room_castle_coffins1"])
 
-    regions["room_asghouse2"].connect(
-        connecting_region=regions["room_asghouse1"])
-
-    regions["room_asghouse3"].connect(
-        connecting_region=regions["room_asghouse1"])
-
-    regions["room_asghouse3"].connect(
-        connecting_region=regions["room_asgoreroom"])
-
-    regions["room_asghouse3"].connect(
-        connecting_region=regions["room_asrielroom_final"])
-
-    regions["room_asgoreroom"].connect(
-        connecting_region=regions["room_asghouse3"])
-
-    regions["room_asrielroom_final"].connect(
-        connecting_region=regions["room_asghouse3"])
-
-    regions["room_asghouse2"].connect(
-        connecting_region=regions["room_kitchen_final"])
-
-    regions["room_kitchen_final"].connect(
-        connecting_region=regions["room_asghouse2"])
-
-    regions["room_fire_finalelevator"].connect(
-        connecting_region=regions["room_castle_elevatorout"])
-
-    regions["room_castle_elevatorout"].connect(
-        connecting_region=regions["room_fire_finalelevator"])
-
     regions["Bed Door One-way"].connect(
         connecting_region=regions["room_fire_hoteldoors"])
 
@@ -380,25 +317,25 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
         connecting_region=regions["room_fire_hotelbed"])
 
     regions["room_fire_core_bottomleft"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire_core_topleft"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire_core_topright"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire_core_bottomright"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire_core_center"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire_core_bridge"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire5"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire6"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire_walkandbranch"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_fire_preshootguy4"].connect(
-        connecting_region=regions["Hotland/Core Grind Rooms"])
+        connecting_region=regions["Hotland Grind Rooms"])
     regions["room_water5"].connect(
         connecting_region=regions["Waterfall Grind Rooms"])
     regions["room_water6"].connect(
@@ -450,12 +387,6 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["Snowdin Exit"].connect(
         connecting_region=regions["room_fogroom"])
 
-    regions["room_fire_precore"].connect(
-        connecting_region=regions["Hotland Exit"])
-
-    regions["Hotland Exit"].connect(
-        connecting_region=regions["room_fire_precore"])
-
     regions["room_fire2"].connect(
         connecting_region=regions["Waterfall Exit"])
 
@@ -487,7 +418,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
             set_rule(multiworld.get_location("Ruins Spare "+str(i+1), player), lambda state, i=i: state.has("Ruins Spare", player, math.ceil((i+1)/state.multiworld.spare_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Snowdin Spare "+str(i+1), player), lambda state, i=i: state.has("Snowdin Spare", player, math.ceil((i+1)/state.multiworld.spare_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Waterfall Spare "+str(i+1), player), lambda state, i=i: state.has("Waterfall Spare", player, math.ceil((i+1)/state.multiworld.spare_sanity_pack_size[player].value)))
-            set_rule(multiworld.get_location("Hotland Spare "+str(i+1), player), lambda state, i=i: state.has("Hotland Spare", player, math.ceil((i+1)/state.multiworld.spare_sanity_pack_size[player].value)) and (state.can_reach("Hotland/Core Grind Rooms", "Region", player)))
+            set_rule(multiworld.get_location("Hotland Spare "+str(i+1), player), lambda state, i=i: state.has("Hotland Spare", player, math.ceil((i+1)/state.multiworld.spare_sanity_pack_size[player].value)) and (state.can_reach("Hotland Grind Rooms", "Region", player)))
     set_rule(multiworld.get_location("Diary 1", player),
                  lambda state: state.has("Mystery Key", player, 1))
     set_rule(multiworld.get_location("Diary 2", player),
@@ -547,16 +478,16 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
             set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Snowdin Kill "+str(i+1), player), lambda state, i=i: state.has("Snowdin Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Waterfall Kill "+str(i+1), player), lambda state, i=i: state.has("Waterfall Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland/Core Grind Rooms", "Region", player)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland Grind Rooms", "Region", player)))
         for i in range(16, 18):
             set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
             set_rule(multiworld.get_location("Waterfall Kill "+str(i+1), player), lambda state, i=i: state.has("Waterfall Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland/Core Grind Rooms", "Region", player)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland Grind Rooms", "Region", player)))
         for i in range(18, 20):
             set_rule(multiworld.get_location("Ruins Kill "+str(i+1), player), lambda state, i=i: state.has("Ruins Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)))
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland/Core Grind Rooms", "Region", player)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland Grind Rooms", "Region", player)))
         for i in range(20, 40):
-            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland/Core Grind Rooms", "Region", player)))
+            set_rule(multiworld.get_location("Hotland Kill "+str(i+1), player), lambda state, i=i: state.has("Hotland Population Pack", player, math.ceil((i+1)/state.multiworld.kill_sanity_pack_size[player].value)) and (state.can_reach("Hotland Grind Rooms", "Region", player)))
     if _undertale_is_route(multiworld.state, player, 2) and \
                 (bool(multiworld.rando_love[player].value) or bool(multiworld.rando_stats[player].value)):
             maxlv = 1

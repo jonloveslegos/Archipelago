@@ -25,8 +25,7 @@ class StartingArea(Choice):
     option_snowdin = 1
     option_waterfall = 2
     option_hotland = 3
-    option_core = 4
-    option_all = 5
+    option_all = 4
     default = 0
 
 

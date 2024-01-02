@@ -17,6 +17,11 @@ def _undertale_is_route(state: CollectionState, player: int, route: int):
     return False
 
 
+def _undertale_has_keys(state: CollectionState, player: int):
+    return ((state.has("Left Home Key", player) and state.has("Right Home Key", player)) or
+            state.has("Key Piece", player, state.multiworld.key_pieces[player].value))
+
+
 def _undertale_exp_available(state: CollectionState, player: int):
     exp = 0
     pack_size = state.multiworld.kill_sanity_pack_size[player].value

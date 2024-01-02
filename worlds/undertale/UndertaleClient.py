@@ -162,7 +162,7 @@ class UndertaleContext(CommonContext):
                 f.write(patchedFile)
         os.makedirs(name=os.path.join(os.getcwd(), "Undertale", "Custom Sprites"), exist_ok=True)
         with open(os.path.expandvars(os.path.join(os.getcwd(), "Undertale", "Custom Sprites",
-                                     "Which Character.txt")), "w") as f:
+                                     "which_character.txt")), "w") as f:
             f.writelines(["// Put the folder name of the sprites you want to play as, make sure it is the only "
                           "line other than this one.\n", "frisk"])
             f.close()
@@ -182,7 +182,7 @@ class UndertaleContext(CommonContext):
                     if "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
                     elif file.endswith(("disconnected", ".item", ".victory", ".route", ".playerspot", ".mad",
-                                                ".youDied", ".LV", ".flag", ".hint", ".pack", "roomrando")):
+                                                ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando")):
                         os.remove(os.path.join(root, file))
                 except Exception as error:
                     print(str(error))
@@ -256,7 +256,7 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                                                            str(ctx.slot)+" RoutesDone pacifist",
                                                            str(ctx.slot)+" RoutesDone genocide"]}])
         if args["slot_data"]["only_flakes"]:
-            with open(os.path.join(ctx.save_game_folder, "GenoNoChest.flag"), "w") as f:
+            with open(os.path.join(ctx.save_game_folder, "genonochest.flag"), "w") as f:
                 f.close()
         if args["slot_data"]["entrance_rando"]:
             with open(os.path.join(ctx.save_game_folder, "roomrando.enabled"), "w") as f:
@@ -264,11 +264,11 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
         if not args["slot_data"]["key_hunt"]:
             ctx.pieces_needed = 0
         if args["slot_data"]["rando_love"]:
-            filename = f"LOVErando.LV"
+            filename = f"loverando.lv"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 f.close()
         if args["slot_data"]["rando_stats"]:
-            filename = f"STATrando.LV"
+            filename = f"statrando.lv"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 f.close()
         filename = f"{ctx.route}.route"
@@ -349,7 +349,7 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                     id -= 1
                 if NetworkItem(*item).location < 0:
                     counter -= 1
-                filename = f"{str(id)}PLR{str(NetworkItem(*item).player)}.item"
+                filename = f"{str(id)}plr{str(NetworkItem(*item).player)}.item"
                 with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                     if NetworkItem(*item).item == 77701:
                         if placedWeapon == 0:
@@ -405,11 +405,11 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                     f.close()
                 ctx.items_received.append(NetworkItem(*item))
                 if [item.item for item in ctx.items_received].count(77000) >= ctx.pieces_needed > 0:
-                    filename = f"{str(-99999)}PLR{str(0)}.item"
+                    filename = f"{str(-99999)}plr{str(0)}.item"
                     with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                         f.write(str(77787 - 11000))
                         f.close()
-                    filename = f"{str(-99998)}PLR{str(0)}.item"
+                    filename = f"{str(-99998)}plr{str(0)}.item"
                     with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                         f.write(str(77789 - 11000))
                         f.close()
@@ -428,7 +428,7 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
         if "Online" in tags:
             data = args.get("data", {})
             if data["player"] != ctx.slot and data["player"] is not None:
-                filename = f"FRISK" + str(data["player"]) + ".playerspot"
+                filename = f"frisk" + str(data["player"]) + ".playerspot"
                 with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                     f.write(str(data["x"]) + str(data["y"]) + str(data["room"]) + str(
                         data["spr"]) + str(data["frm"]))
@@ -472,14 +472,14 @@ async def game_watcher(ctx: UndertaleContext):
             ctx.syncing = False
         if ctx.got_deathlink:
             ctx.got_deathlink = False
-            with open(os.path.join(ctx.save_game_folder, "WelcomeToTheDead.youDied"), "w") as f:
+            with open(os.path.join(ctx.save_game_folder, "welcometothedead.youdied"), "w") as f:
                 f.close()
         sending = []
         victory = False
         found_routes = 0
         for root, dirs, files in os.walk(path):
             for file in files:
-                if "DontBeMad.mad" in file:
+                if "dontbemad.mad" in file:
                     os.remove(os.path.join(root, file))
                     if "DeathLink" in ctx.tags:
                         await ctx.send_death()

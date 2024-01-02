@@ -203,7 +203,7 @@ class UndertaleWorld(World):
             itempool = [item for item in itempool if item not in non_key_items]
 
         if self.multiworld.starting_area[self.player].current_key.title() == "All" or self.multiworld.entrance_rando[self.player]:
-            all_keys = ["Ruins Key", "Snowdin Key", "Waterfall Key", "Hotland Key", "Core Key"]
+            all_keys = ["Ruins Key", "Snowdin Key", "Waterfall Key", "Hotland Key"]
             for item in all_keys:
                 itempool.remove(item)
                 self.multiworld.push_precollected(self.create_item(item))
@@ -309,9 +309,9 @@ class UndertaleWorld(World):
             elif slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
                 slot_data[option_name] = int(option.value)
 
-        # state = self.multiworld.get_all_state(False)
-        # state.update_reachable_regions(self.player)
-        # Utils.visualize_regions(self.multiworld.get_region("Menu", self.player), "undertale_check_player_"+str(self.multiworld.player_name[self.player])+".puml", show_entrance_names=True, highlight_regions=state.reachable_regions[self.player])
+        state = self.multiworld.get_all_state(False)
+        state.update_reachable_regions(self.player)
+        Utils.visualize_regions(self.multiworld.get_region("Menu", self.player), "undertale_check_player_"+str(self.multiworld.player_name[self.player])+".puml", show_entrance_names=True, highlight_regions=state.reachable_regions[self.player])
         return slot_data
 
     def create_item(self, name: str) -> Item:
