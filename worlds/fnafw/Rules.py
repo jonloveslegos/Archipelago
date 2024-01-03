@@ -6,9 +6,15 @@ def _fnaf_world_can_access(state: CollectionState, player: int, name: str):
     if name == "Choppy's Woods":
         return state.has("Choppy's Woods Access Switch", player)
     elif name == "Lilygear Lake":
-        return state.has("Lilygear Lake Access Switch", player) or state.has("Blacktomb Yard Access Switch", player) or (state.has("Pinwheel Circus Access Switch", player) and state.has("Key Shortcut Switch", player))
+        return state.has("Lilygear Lake Access Switch", player)
+    elif name == "Dusting Fields":
+        return _fnaf_world_can_access(state, player, "Choppy's Woods")
     elif name == "Blacktomb Yard":
-        return state.has("Blacktomb Yard Access Switch", player) or state.has("Pinwheel Circus Access Switch", player)
+        return state.has("Blacktomb Yard Access Switch", player) and _fnaf_world_can_access(state, player, "Lilygear Lake")
+    elif name == "Pinwheel Funhouse":
+        return _fnaf_world_can_access(state, player, "Blacktomb Yard") or (state.has("Pinwheel Circus Access Switch", player) and _fnaf_world_can_access(state, player, "Lilygear Lake"))
+    elif name == "Pinwheel Circus":
+        return _fnaf_world_can_access(state, player, "Lilygear Lake") or (state.has("Pinwheel Circus Access Switch", player) and _fnaf_world_can_access(state, player, "Blacktomb Yard"))
     else:
         return False
 
@@ -141,5 +147,31 @@ def set_rules(world: MultiWorld, player: int):
 
 # Sets rules on completion condition
 def set_completion_rules(world: MultiWorld, player: int):
-    completion_requirements = lambda state: _fnaf_world_can_access(state, player, "Blacktomb Yard") and _fnaf_world_can_access(state, player, "Choppy's Woods") and _fnaf_world_can_access(state, player, "Lilygear Lake") and state.has("Laser Switch 1", player) and state.has("Laser Switch 2", player) and state.has("Laser Switch 3", player) and state.has("Laser Switch 4", player)
+    completion_requirements = lambda state: True
+    if world.ending_goal[player].current_key == "scott":
+        completion_requirements = lambda state: _fnaf_world_can_access(state, player, "Pinwheel Circus")\
+                                                and state.has("Laser Switch 1", player)\
+                                                and state.has("Laser Switch 2", player)\
+                                                and state.has("Laser Switch 3", player)\
+                                                and state.has("Laser Switch 4", player)
+    elif world.ending_goal[player].current_key == "clock":
+        completion_requirements = lambda state: _fnaf_world_can_access(state, player, "Blacktomb Yard")\
+                                                and _fnaf_world_can_access(state, player, "Choppy's Woods")\
+                                                and _fnaf_world_can_access(state, player, "Dusting Fields")\
+                                                and _fnaf_world_can_access(state, player, "Lilygear Lake")\
+                                                and _fnaf_world_can_access(state, player, "Pinwheel Funhouse")\
+                                                and state.has("Key", player)
+    elif world.ending_goal[player].current_key == "fourth_glitch":
+        completion_requirements = lambda state: _fnaf_world_can_access(state, player, "Pinwheel Funhouse")
+    elif world.ending_goal[player].current_key == "universe_end":
+        completion_requirements = lambda state: state.has("Fredbear", player)
+    elif world.ending_goal[player].current_key == "chipper":
+        completion_requirements = lambda state: _fnaf_world_can_access(state, player, "Dusting Fields")\
+                                                and state.has("Key", player)
+    elif world.ending_goal[player].current_key == "magic_rainbow":
+        completion_requirements = lambda state: True
+    else:
+        print(world.ending_goal[player].current_key)
+        completion_requirements = lambda state: False
+
     world.completion_condition[player] = lambda state: completion_requirements(state)

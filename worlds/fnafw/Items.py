@@ -150,7 +150,7 @@ item_table = {
     "Funtime Foxy": ItemData(797235, ItemClassification.useful, "36have"),
     "Nightmare Fredbear": ItemData(797236, ItemClassification.useful, "37have"),
     "Nightmare": ItemData(797237, ItemClassification.useful, "38have"),
-    "Fredbear": ItemData(797238, ItemClassification.useful, "39have"),
+    "Fredbear": ItemData(797238, ItemClassification.progression, "39have"),
     "Spring Bonnie": ItemData(797239, ItemClassification.useful, "40have"),
     "Jack-O-Bonnie": ItemData(797240, ItemClassification.useful, "41have"),
     "Jack-O-Chica": ItemData(797241, ItemClassification.useful, "42have"),
@@ -295,7 +295,6 @@ top_layer_anim_table = [
 
 pinwheel_funhouse_anim_table = [
     "Nightmare",
-    "Fredbear",
     "Spring Bonnie",
 ]
 

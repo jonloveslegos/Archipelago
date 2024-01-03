@@ -62,15 +62,28 @@ class FNaFWVanillaPearl(Toggle):
     default = 0
 
 
+class FNaFWGoal(Choice):
+    """Which ending do you want to be the goal."""
+    display_name = "Ending Goal"
+    option_scott = 0
+    option_clock = 1
+    option_fourth_glitch = 2
+    option_universe_end = 3
+    option_chipper = 4
+    option_magic_rainbow = 5
+    default = 0
+
+
 FNaFW_options: typing.Dict[str, type(Option)] = {
-    "exclude_halloween":                            FNaFWVanillaHalloween,
+    "ending_goal":                                  FNaFWGoal,
     "initial_characters":                           FNaFWInitialCharacters,
+    "exclude_halloween":                            FNaFWVanillaHalloween,
+    "vanilla_lasers":                               FNaFWVanillaLasers,
+    "vanilla_pearl":                                FNaFWVanillaPearl,
     "hard_logic":                                   FNaFWHardLogic,
     "cheap_endo":                                   FNaFWCheapEndo,
     "require_find_char":                            FNaFWRequireFindChar,
     "progressive_anims":                            FNaFWProgressiveAnims,
     "progressive_bytes":                            FNaFWProgressiveBytes,
     "progressive_chips":                            FNaFWProgressiveChips,
-    "vanilla_lasers":                               FNaFWVanillaLasers,
-    "vanilla_pearl":                                FNaFWVanillaPearl,
 }

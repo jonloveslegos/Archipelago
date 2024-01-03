@@ -100,6 +100,7 @@ class FNaFWContext(CommonContext):
     progressive_chips_order = []
     progressive_bytes_order = []
     cheap_endo = True
+    ending_goal = ""
     if platform.system() == "Linux":
         save_game_folder = os.path.expanduser(
             "~/.steam/steam/steamapps/compatdata/427920/pfx/drive_c/users/steamuser/AppData/Roaming/MMFApplications/")
@@ -113,6 +114,7 @@ class FNaFWContext(CommonContext):
         self.got_deathlink = False
         self.deathlink_status = False
         self.cheap_endo = True
+        self.ending_goal = ""
         # self.save_game_folder: files go in this path to pass data between us and the actual game
         if platform.system() == "Linux":
             self.save_game_folder = os.path.expanduser("~/.steam/steam/steamapps/compatdata/427920/pfx/drive_c/users"
@@ -159,6 +161,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
         ctx.progressive_anims_order = arguments["slot_data"]["Progressive Animatronics Order"]
         ctx.progressive_chips_order = arguments["slot_data"]["Progressive Chips Order"]
         ctx.progressive_bytes_order = arguments["slot_data"]["Progressive Bytes Order"]
+        ctx.ending_goal = arguments["slot_data"]["ending_goal"]
         ctx.cheap_endo = arguments["slot_data"]["cheap_endo"]
         path = os.path.join(ctx.save_game_folder, "fnafw5")
         if not os.path.exists(path):
@@ -396,7 +399,7 @@ async def game_watcher(ctx: FNaFWContext):
                 try:
                     with open(path, 'r') as f:
                         filesread = f.readlines()
-                        if "fin=1\n" in filesread:
+                        if "fin"+ctx.ending_goal+"=1\n" in filesread:
                             victory = True
                         f.close()
                     break

@@ -93,6 +93,7 @@ class FNaFWWorld(World):
             'vanilla_lasers': bool(self.multiworld.vanilla_lasers[self.player].value),
             'cheap_endo': bool(self.multiworld.cheap_endo[self.player].value),
             'vanilla_pearl': bool(self.multiworld.vanilla_pearl[self.player].value),
+            'ending_goal': self.multiworld.ending_goal[self.player].current_key,
         }
 
     def get_filler_item_name(self) -> str:
@@ -140,6 +141,8 @@ class FNaFWWorld(World):
             self.anims_8 = [item for item in itempool if item in pinwheel_circus_anim_table]
             self.anims_9 = [item for item in itempool if item in top_layer_anim_table]
             self.anims_10 = [item for item in itempool if item in pinwheel_funhouse_anim_table]
+            if not self.multiworld.ending_goal[self.player].current_key == "universe_end":
+                self.anims_10 += ["Fredbear"]
             self.anims_11 = [item for item in itempool if item in halloween_anim_table]
             self.random.shuffle(self.anims_0)
             self.random.shuffle(self.anims_1)
