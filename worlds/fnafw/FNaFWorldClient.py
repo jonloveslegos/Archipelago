@@ -162,6 +162,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
         ctx.progressive_chips_order = arguments["slot_data"]["Progressive Chips Order"]
         ctx.progressive_bytes_order = arguments["slot_data"]["Progressive Bytes Order"]
         ctx.ending_goal = arguments["slot_data"]["ending_goal"]
+
         ctx.cheap_endo = arguments["slot_data"]["cheap_endo"]
         path = os.path.join(ctx.save_game_folder, "fnafw5")
         if not os.path.exists(path):
@@ -178,6 +179,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
             try:
                 with open(path, "w") as f:
                     f.write("[fnafw]\n")
+                    f.write("endinggoal="+ctx.ending_goal+"\n")
                     if ctx.cheap_endo:
                         f.write("cheapendo=1\n")
                     else:

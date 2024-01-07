@@ -79,7 +79,7 @@ location_groups: Dict[str, Set[str]] = {
         "Plushtrap",
         "Endoplush",
         "Springtrap",
-        "RWQ",
+        "RWQFSFASXC",
         "Crying Child",
         "Funtime Foxy",
         "Nightmare Fredbear",
@@ -134,7 +134,7 @@ location_table = {
     "Plushtrap": LocData(797230, "World", "31have"),
     "Endoplush": LocData(797231, "World", "32have"),
     "Springtrap": LocData(797232, "World", "33have"),
-    "RWQ": LocData(797233, "World", "34have"),
+    "RWQFSFASXC": LocData(797233, "World", "34have"),
     "Crying Child": LocData(797234, "World", "35have"),
     "Funtime Foxy": LocData(797235, "World", "36have"),
     "Nightmare Fredbear": LocData(797236, "World", "37have"),
@@ -202,6 +202,7 @@ location_table = {
     "Deep-Metal Mine: Laser Switch": LocData(797298, "World", "sw9"),
     "Lilygear Lake: Key": LocData(797299, "World", "key"),
     "Fazbear Hills: Pearl": LocData(797300, "World", "gotpearl"),
+    "Dusting Fields: Warp Unlock": LocData(797301, "World", "w3"),
 }
 
 exclusion_table = {

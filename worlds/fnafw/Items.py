@@ -92,7 +92,7 @@ item_groups: Dict[str, Set[str]] = {
         "Plushtrap",
         "Endoplush",
         "Springtrap",
-        "RWQ",
+        "RWQFSFASXC",
         "Crying Child",
         "Funtime Foxy",
         "Nightmare Fredbear",
@@ -145,7 +145,7 @@ item_table = {
     "Plushtrap": ItemData(797230, ItemClassification.useful, "31have"),
     "Endoplush": ItemData(797231, ItemClassification.useful, "32have"),
     "Springtrap": ItemData(797232, ItemClassification.useful, "33have"),
-    "RWQ": ItemData(797233, ItemClassification.useful, "34have"),
+    "RWQFSFASXC": ItemData(797233, ItemClassification.useful, "34have"),
     "Crying Child": ItemData(797234, ItemClassification.useful, "35have"),
     "Funtime Foxy": ItemData(797235, ItemClassification.useful, "36have"),
     "Nightmare Fredbear": ItemData(797236, ItemClassification.useful, "37have"),
@@ -224,6 +224,7 @@ item_table = {
     "2500 Tokens": ItemData(797309, ItemClassification.filler, "tokens=2500"),
     "5000 Tokens": ItemData(797310, ItemClassification.filler, "tokens=5000"),
     "Pearl": ItemData(797311, ItemClassification.useful, "gotpearl"),
+    "Dusting Fields Access": ItemData(797312, ItemClassification.progression, "w3"),
 }
 
 start_anim_table = [
@@ -241,20 +242,20 @@ fazbear_hills_anim_table = [
     "Balloon Boy",
     "JJ",
     "Phantom Freddy",
-    "Phantom BB",
-    "Phantom Chica"
+    "Phantom Chica",
+    "Phantom BB"
 ]
 
 choppys_woods_anim_table = [
+    "Phantom Foxy",
     "Phantom Mangle",
-    "Withered Foxy",
-    "Phantom Foxy"
+    "Withered Bonnie"
 ]
 
 dusting_fields_anim_table = [
     "Withered Chica",
     "Withered Freddy",
-    "Withered Bonnie"
+    "Withered Foxy"
 ]
 
 lilygear_lake_anim_table = [
@@ -272,10 +273,10 @@ mysterious_mine_anim_table = [
 blacktomb_yard_anim_table = [
     "Nightmare Bonnie",
     "Nightmare Chica",
-    "Nightmare Foxy",
 ]
 
 deep_metal_mine_anim_table = [
+    "Nightmare Foxy",
     "Endo 01",
     "Endo 02",
     "Plushtrap",
@@ -284,7 +285,7 @@ deep_metal_mine_anim_table = [
 pinwheel_circus_anim_table = [
     "Endoplush",
     "Springtrap",
-    "RWQ",
+    "RWQFSFASXC",
 ]
 
 top_layer_anim_table = [
@@ -404,7 +405,7 @@ to_add_to_pool = {
     "Plushtrap": 1,
     "Endoplush": 1,
     "Springtrap": 1,
-    "RWQ": 1,
+    "RWQFSFASXC": 1,
     "Crying Child": 1,
     "Funtime Foxy": 1,
     "Nightmare Fredbear": 1,
@@ -472,6 +473,7 @@ to_add_to_pool = {
     "Laser Switch 4": 1,
     "Key": 1,
     "Pearl": 1,
+    "Dusting Fields Access": 1,
 }
 
 lookup_id_to_name: Dict[int, str] = {data.code: item_name for item_name, data in item_table.items() if data.code}
