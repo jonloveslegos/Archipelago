@@ -92,7 +92,7 @@ class ARNFWorld(World):
         #   which can then determine the availability of the victory.
         victory_region = create_region(self.multiworld, self.player, "Victory")
         self.multiworld.regions.append(victory_region)
-        ace_items = get_ordered_item_pickups(self.options.normal_included.value, self.options.classic_boss_rush_included.value)
+        ace_items = get_ordered_item_pickups(self.options.normal_included.value, self.options.classic_boss_rush_included.value, self.options.exterminator_included.value)
         # shuffled = list(ace_items.values())
         # random.shuffle(shuffled)
         # shuffled_items = dict(zip(ace_items, shuffled))
@@ -114,7 +114,7 @@ class ARNFWorld(World):
 
 
     def fill_slot_data(self):
-        options_dict = self.options.as_dict("normal_included", "classic_boss_rush_included", "start_with_explorb", "death_link", casing="camel")
+        options_dict = self.options.as_dict("normal_included", "classic_boss_rush_included", "exterminator_included", "grant_achievements_mode", "start_with_explorb", "death_link", casing="camel")
         logger = logging.getLogger()
         logger.info(options_dict)
         return options_dict
