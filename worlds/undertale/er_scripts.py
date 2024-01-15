@@ -4,7 +4,6 @@ from .Locations import exclusion_table
 from .Locations import advancement_table as location_table
 from .er_data import Portal, undertale_er_regions, portal_mapping, dependent_regions, hallway_helper
 from .er_rules import set_er_region_rules
-import Utils
 
 if TYPE_CHECKING:
     from . import UndertaleWorld
@@ -84,32 +83,32 @@ def create_er_regions_vanilla(world: "UndertaleWorld") -> Dict[Portal, Portal]:
     set_er_region_rules(world, regions)
 
     for location_name, location_id in location_table.items():
-        if regions.__contains__(location_table[location_name].er_region) and (location_name not in exclusion_table["NoKills"] or (world.multiworld.kill_sanity[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoStats"] or (world.multiworld.rando_stats[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoLove"] or (world.multiworld.rando_love[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoSpare"]) and location_name not in exclusion_table[world.multiworld.route_required[world.player].current_key]:
+        if regions.__contains__(location_table[location_name].er_region) and (location_name not in exclusion_table["NoKills"] or (world.options.kill_sanity and (world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (location_name not in exclusion_table["NoStats"] or (world.options.rando_stats and (world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (location_name not in exclusion_table["NoLove"] or (world.options.rando_love and (world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (location_name not in exclusion_table["NoSpare"]) and location_name not in exclusion_table[world.options.route_required.current_key]:
             region = regions[location_table[location_name].er_region]
             location = UndertaleERLocation(world.player, location_name, location_id.id, region)
             region.locations.append(location)
 
     for region_name, region_data in undertale_er_regions.items():
-        if world.multiworld.spare_sanity[world.player] and world.multiworld.route_required[world.player] != "genocide":
+        if world.options.spare_sanity and world.options.route_required != "genocide":
             if region_name == "Ruins Grind Rooms":
                 regions[region_name].locations += [
                     UndertaleERLocation(world.player, "Ruins Spare " + str(i + 1), 78013 + i, regions[region_name])
-                    for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+                    for i in range(world.options.spare_sanity_max.value)]
             elif region_name == "Snowdin Grind Rooms":
                 regions[region_name].locations += [
                     UndertaleERLocation(world.player, "Snowdin Spare " + str(i + 1), 78113 + i,
                                         regions[region_name]) for i in
-                    range(world.multiworld.spare_sanity_max[world.player].value)]
+                    range(world.options.spare_sanity_max.value)]
             elif region_name == "Waterfall Grind Rooms":
                 regions[region_name].locations += [
                         UndertaleERLocation(world.player, "Waterfall Spare " + str(i + 1), 78213 + i,
                                             regions[region_name]) for i in
-                        range(world.multiworld.spare_sanity_max[world.player].value)]
+                        range(world.options.spare_sanity_max.value)]
             elif region_name == "Hotland Grind Rooms":
                 regions[region_name].locations += [
                         UndertaleERLocation(world.player, "Hotland Spare " + str(i + 1), 78313 + i,
                                             regions[region_name]) for i in
-                        range(world.multiworld.spare_sanity_max[world.player].value)]
+                        range(world.options.spare_sanity_max.value)]
 
     create_randomized_entrances(portal_pairs, regions)
 
@@ -153,7 +152,7 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
 
     er_hint_data: Dict[int, str] = {}
     for location_name, location_id in location_table.items():
-        if regions.__contains__(location_table[location_name].er_region) and (location_name not in exclusion_table["NoKills"] or (world.multiworld.kill_sanity[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoStats"] or (world.multiworld.rando_stats[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoLove"] or (world.multiworld.rando_love[world.player] and (world.multiworld.route_required[world.player] == "genocide" or world.multiworld.route_required[world.player] == "all_routes"))) and (location_name not in exclusion_table["NoSpare"]) and location_name not in exclusion_table[world.multiworld.route_required[world.player].current_key]:
+        if regions.__contains__(location_table[location_name].er_region) and (location_name not in exclusion_table["NoKills"] or (world.options.kill_sanity and (world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (location_name not in exclusion_table["NoStats"] or (world.options.rando_stats and (world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (location_name not in exclusion_table["NoLove"] or (world.options.rando_love and (world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (location_name not in exclusion_table["NoSpare"]) and location_name not in exclusion_table[world.options.route_required.current_key]:
             region = regions[location_table[location_name].er_region]
             location = UndertaleERLocation(world.player, location_name, location_id.id, region)
             region.locations.append(location)
@@ -162,15 +161,15 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
             er_hint_data[location.address] = region.hint_text
 
     for region_name, region_data in undertale_er_regions.items():
-        if world.multiworld.spare_sanity[world.player] and world.multiworld.route_required[world.player] != "genocide":
+        if world.options.spare_sanity and world.options.route_required != "genocide":
             if region_name == "Ruins Grind Rooms":
-                regions[region_name].locations += [UndertaleERLocation(world.player, "Ruins Spare "+str(i+1), 78013+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+                regions[region_name].locations += [UndertaleERLocation(world.player, "Ruins Spare "+str(i+1), 78013+i, regions[region_name]) for i in range(world.options.spare_sanity_max.value)]
             elif region_name == "Snowdin Grind Rooms":
-                regions[region_name].locations += [UndertaleERLocation(world.player, "Snowdin Spare "+str(i+1), 78113+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+                regions[region_name].locations += [UndertaleERLocation(world.player, "Snowdin Spare "+str(i+1), 78113+i, regions[region_name]) for i in range(world.options.spare_sanity_max.value)]
             elif region_name == "Waterfall Grind Rooms":
-                regions[region_name].locations += [UndertaleERLocation(world.player, "Waterfall Spare "+str(i+1), 78213+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+                regions[region_name].locations += [UndertaleERLocation(world.player, "Waterfall Spare "+str(i+1), 78213+i, regions[region_name]) for i in range(world.options.spare_sanity_max.value)]
             elif region_name == "Hotland Grind Rooms":
-                regions[region_name].locations += [UndertaleERLocation(world.player, "Hotland Spare "+str(i+1), 78313+i, regions[region_name]) for i in range(world.multiworld.spare_sanity_max[world.player].value)]
+                regions[region_name].locations += [UndertaleERLocation(world.player, "Hotland Spare "+str(i+1), 78313+i, regions[region_name]) for i in range(world.options.spare_sanity_max.value)]
     
     create_randomized_entrances(portal_pairs, regions)
 
@@ -185,13 +184,16 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
 
 
 def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[str, Region]):
+    if world.options.route_required.current_key == "pacifist" or world.options.route_required.current_key == "all_routes":
+        world.multiworld.register_indirect_condition(regions["room_sanscorridor"], world.multiworld.get_entrance("room_fire_labelevator", world.player))
+
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_2"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_1"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
 
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_3"], world.multiworld.get_entrance("Fire Door 2 Block", world.player))
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_4"], world.multiworld.get_entrance("Fire Door 2 Block", world.player))
 
-    if world.multiworld.route_required[world.player].current_key == "pacifist" or world.multiworld.route_required[world.player].current_key == "all_routes":
+    if world.options.route_required.current_key == "pacifist" or world.options.route_required.current_key == "all_routes":
 
         paps_region = regions["room_tundra_paproom"]
         paps_location = UndertaleERLocation(world.player, "Papyrus Date", None, paps_region)
@@ -228,11 +230,11 @@ def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[st
     throne_location.place_locked_item(UndertaleERItem("Throne Room", ItemClassification.progression, None, world.player))
     throne_region.locations.append(throne_location)
 
-    if world.multiworld.route_required[world.player].current_key == "neutral":
+    if world.options.route_required.current_key == "neutral":
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player)
-    elif world.multiworld.route_required[world.player].current_key == "pacifist" or world.multiworld.route_required[world.player].current_key == "all_routes":
+    elif world.options.route_required.current_key == "pacifist" or world.options.route_required.current_key == "all_routes":
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player) and state.has("True Lab Entrance", world.player)
-    elif world.multiworld.route_required[world.player].current_key == "genocide":
+    elif world.options.route_required.current_key == "genocide":
         world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player)
 
 

@@ -1,5 +1,5 @@
-import typing
-from Options import Choice, Option, Toggle, Range
+from dataclasses import dataclass
+from Options import Choice, Toggle, Range, PerGameCommonOptions
 
 
 class RouteRequired(Choice):
@@ -152,26 +152,26 @@ class EntranceRando(Toggle):
     display_name = "Entrance Rando"
 
 
-undertale_options: typing.Dict[str, type(Option)] = {
-    "route_required":                           RouteRequired,
-    "starting_area":                            StartingArea,
-    "key_hunt":                                 KeyHunt,
-    "key_pieces":                               KeyPieces,
-    "rando_item_button":                        RandoBattleOptions,
-    "rando_jump":                               RandomizeJump,
-    "rando_love":                               RandomizeLove,
-    "rando_stats":                              RandomizeStats,
-    "spare_sanity":                             SpareSanity,
-    "spare_sanity_max":                         SpareSanityMaxSpares,
-    "spare_sanity_pack_size":                   SpareSanityPackSize,
-    "kill_sanity":                              KillSanity,
-    "kill_sanity_pack_size":                    KillSanityPackSize,
-    "temy_include":                             IncludeTemy,
-    "cut_items":                                CutItems,
-    "ice_traps":                                IceTraps,
-    "prog_armor":                               ProgressiveArmor,
-    "prog_weapons":                             ProgressiveWeapons,
-    "no_equips":                                NoEquips,
-    "only_flakes":                              OnlyFlakes,
-    "entrance_rando":                           EntranceRando,
-}
+@dataclass
+class UndertaleOptions(PerGameCommonOptions):
+    route_required:                           RouteRequired
+    starting_area:                            StartingArea
+    key_hunt:                                 KeyHunt
+    key_pieces:                               KeyPieces
+    rando_item_button:                        RandoBattleOptions
+    rando_jump:                               RandomizeJump
+    rando_love:                               RandomizeLove
+    rando_stats:                              RandomizeStats
+    spare_sanity:                             SpareSanity
+    spare_sanity_max:                         SpareSanityMaxSpares
+    spare_sanity_pack_size:                   SpareSanityPackSize
+    kill_sanity:                              KillSanity
+    kill_sanity_pack_size:                    KillSanityPackSize
+    temy_include:                             IncludeTemy
+    cut_items:                                CutItems
+    ice_traps:                                IceTraps
+    prog_armor:                               ProgressiveArmor
+    prog_weapons:                             ProgressiveWeapons
+    no_equips:                                NoEquips
+    only_flakes:                              OnlyFlakes
+    entrance_rando:                           EntranceRando

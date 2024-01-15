@@ -1,6 +1,5 @@
 from __future__ import annotations
 import os
-import sys
 import asyncio
 import typing
 import bsdiff4
