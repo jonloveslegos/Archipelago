@@ -225,6 +225,7 @@ item_table = {
     "5000 Tokens": ItemData(797310, ItemClassification.filler, "tokens=5000"),
     "Pearl": ItemData(797311, ItemClassification.useful, "gotpearl"),
     "Dusting Fields Access": ItemData(797312, ItemClassification.progression, "w3"),
+    "Warp Access": ItemData(797313, ItemClassification.progression, "warp"),
 }
 
 start_anim_table = [
@@ -370,7 +371,6 @@ strong_byte_table = [
 ]
 
 to_add_to_pool = {
-
     "Progressive Endoskeleton": 3,
     "Freddy": 1,
     "Bonnie": 1,
@@ -474,6 +474,7 @@ to_add_to_pool = {
     "Key": 1,
     "Pearl": 1,
     "Dusting Fields Access": 1,
+    "2500 Tokens": 3,
 }
 
 lookup_id_to_name: Dict[int, str] = {data.code: item_name for item_name, data in item_table.items() if data.code}

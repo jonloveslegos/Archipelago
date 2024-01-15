@@ -1,11 +1,20 @@
 import typing
-from Options import Option, Range, Toggle, Choice
+from Options import Option, Range, Toggle, Choice, PerGameCommonOptions
+from dataclasses import dataclass
 
 
 class FNaFWVanillaHalloween(Toggle):
     """Makes the Halloween Town minigames give the vanilla stuff"""
     display_name = "Vanilla Halloween Town"
     default = 1
+
+
+class FNaFWFazcoinChests(Range):
+    """How many Fazcoin chests per area will be randomized"""
+    display_name = "Randomized Fazcoin Chests"
+    default = 1
+    range_start = 1
+    range_end = 3
 
 
 class FNaFWInitialCharacters(Toggle):
@@ -74,16 +83,31 @@ class FNaFWGoal(Choice):
     default = 0
 
 
-FNaFW_options: typing.Dict[str, type(Option)] = {
-    "ending_goal":                                  FNaFWGoal,
-    "initial_characters":                           FNaFWInitialCharacters,
-    "exclude_halloween":                            FNaFWVanillaHalloween,
-    "vanilla_lasers":                               FNaFWVanillaLasers,
-    "vanilla_pearl":                                FNaFWVanillaPearl,
-    "hard_logic":                                   FNaFWHardLogic,
-    "cheap_endo":                                   FNaFWCheapEndo,
-    "require_find_char":                            FNaFWRequireFindChar,
-    "progressive_anims":                            FNaFWProgressiveAnims,
-    "progressive_bytes":                            FNaFWProgressiveBytes,
-    "progressive_chips":                            FNaFWProgressiveChips,
-}
+class FNaFWAreaWarping(Choice):
+    """How do the warp buttons function?
+    visit_area: You have to trigger the warp the same way as vanilla.
+    always: You only need the item for that area to warp there.
+    warp_item: Similar to always, but you need an additional item for warping."""
+    display_name = "Warp Access"
+    option_visit_area = 0
+    option_always = 1
+    option_warp_item = 2
+    default = 0
+
+
+@dataclass
+class FNaFWOptions(PerGameCommonOptions):
+    ending_goal:                                  FNaFWGoal
+    initial_characters:                           FNaFWInitialCharacters
+    exclude_halloween:                            FNaFWVanillaHalloween
+    vanilla_lasers:                               FNaFWVanillaLasers
+    vanilla_pearl:                                FNaFWVanillaPearl
+    hard_logic:                                   FNaFWHardLogic
+    cheap_endo:                                   FNaFWCheapEndo
+    require_find_char:                            FNaFWRequireFindChar
+    progressive_anims:                            FNaFWProgressiveAnims
+    progressive_bytes:                            FNaFWProgressiveBytes
+    progressive_chips:                            FNaFWProgressiveChips
+    area_warping:                                 FNaFWAreaWarping
+    fazcoin_chests:                               FNaFWFazcoinChests
+

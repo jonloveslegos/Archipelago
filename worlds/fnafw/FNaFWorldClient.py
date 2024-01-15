@@ -101,6 +101,7 @@ class FNaFWContext(CommonContext):
     progressive_bytes_order = []
     cheap_endo = True
     ending_goal = ""
+    area_warping = ""
     if platform.system() == "Linux":
         save_game_folder = os.path.expanduser(
             "~/.steam/steam/steamapps/compatdata/427920/pfx/drive_c/users/steamuser/AppData/Roaming/MMFApplications/")
@@ -115,6 +116,7 @@ class FNaFWContext(CommonContext):
         self.deathlink_status = False
         self.cheap_endo = True
         self.ending_goal = ""
+        self.area_warping = ""
         # self.save_game_folder: files go in this path to pass data between us and the actual game
         if platform.system() == "Linux":
             self.save_game_folder = os.path.expanduser("~/.steam/steam/steamapps/compatdata/427920/pfx/drive_c/users"
@@ -162,6 +164,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
         ctx.progressive_chips_order = arguments["slot_data"]["Progressive Chips Order"]
         ctx.progressive_bytes_order = arguments["slot_data"]["Progressive Bytes Order"]
         ctx.ending_goal = arguments["slot_data"]["ending_goal"]
+        ctx.area_warping = arguments["slot_data"]["area_warping"]
 
         ctx.cheap_endo = arguments["slot_data"]["cheap_endo"]
         path = os.path.join(ctx.save_game_folder, "fnafw5")
@@ -180,6 +183,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                 with open(path, "w") as f:
                     f.write("[fnafw]\n")
                     f.write("endinggoal="+ctx.ending_goal+"\n")
+                    f.write("areawarping="+ctx.area_warping+"\n")
                     if ctx.cheap_endo:
                         f.write("cheapendo=1\n")
                     else:
@@ -228,6 +232,9 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                 temp_progressive = {"anims": ctx.progressive_anims_order.copy(),
                                     "bytes": ctx.progressive_bytes_order.copy(),
                                     "chips": ctx.progressive_chips_order.copy()}
+                with open(os.path.join(ctx.save_game_folder, "fnafwAPTokens5"), 'w') as f:
+                    f.write("tokens=0\n")
+                    f.close()
                 for item in arguments['items']:
                     if fnafw.FNaFWWorld.item_id_to_name[NetworkItem(*item).item] == "Progressive Animatronic":
                         if len(temp_progressive["anims"]) > 0:
@@ -254,8 +261,6 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                                     f.write(str(item_got) + "=1\n")
                                 if not lines.__contains__("armor="):
                                     f.write("armor=0\n")
-                                if not lines.__contains__("tokens="):
-                                    f.write("tokens=0\n")
                                 f.close()
                             with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), "r") as file:
                                 replacement = ""
@@ -270,12 +275,6 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                                             changes = line.replace("armor=1", "armor=2")
                                         elif line.__contains__("armor=2"):
                                             changes = line.replace("armor=2", "armor=10")
-                                        else:
-                                            changes = line
-                                    elif item_got.__contains__("tokens"):
-                                        if line.__contains__("tokens="):
-                                            changes = "tokens=" + str(
-                                                int(line.split("=")[1]) + int(item_got.split("=")[1]))
                                         else:
                                             changes = line
                                     else:
@@ -301,6 +300,46 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                             break
                         except PermissionError:
                             continue
+                    while True:
+                        try:
+                            with open(os.path.join(ctx.save_game_folder, "fnafwAPTokens5"), 'r+') as f:
+                                lines = f.read()
+                                if not lines.__contains__("tokens="):
+                                    f.write("tokens=0\n")
+                                f.close()
+                            with open(os.path.join(ctx.save_game_folder, "fnafwAPTokens5"), "r") as file:
+                                replacement = ""
+                                for line in file:
+                                    line = line.strip()
+                                    if item_got.__contains__("tokens"):
+                                        if line.__contains__("tokens="):
+                                            changes = "tokens=" + str(
+                                                int(line.split("=")[1]) + int(item_got.split("=")[1]))
+                                        else:
+                                            changes = line
+                                    else:
+                                        changes = line
+                                    replacement = replacement + changes + "\n"
+                                file.close()
+                            break
+                        except PermissionError:
+                            continue
+                    lines_to_simplify = replacement.splitlines()
+                    temp_lines = []
+                    if lines_to_simplify.count("[fnafw]") <= 0:
+                        temp_lines.append("[fnafw]\n")
+                    for ln in lines_to_simplify:
+                        if temp_lines.count(ln + "\n") <= 0:
+                            temp_lines.append(ln + "\n")
+                    lines_to_simplify = temp_lines
+                    while True:
+                        try:
+                            with open(os.path.join(ctx.save_game_folder, "fnafwAPTokens5"), "w") as f:
+                                f.writelines(lines_to_simplify)
+                                f.close()
+                            break
+                        except PermissionError:
+                            continue
                     ctx.items_received.append(NetworkItem(*item))
         ctx.watcher_event.set()
 
@@ -319,12 +358,12 @@ async def game_watcher(ctx: FNaFWContext):
             ctx.got_deathlink = False
             while True:
                 try:
-                    with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), 'r+') as f:
+                    with open(os.path.join(ctx.save_game_folder, "fnafwAPDEATHREC5"), 'r+') as f:
                         lines = f.read()
                         if not lines.__contains__("deathlink="):
                             f.write("deathlink=0\n")
                         f.close()
-                    with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), "r") as file:
+                    with open(os.path.join(ctx.save_game_folder, "fnafwAPDEATHREC5"), "r") as file:
                         replacement = ""
                         for line in file:
                             line = line.strip()
@@ -380,8 +419,9 @@ async def game_watcher(ctx: FNaFWContext):
         if os.path.exists(path):
             while True:
                 try:
-                    with open(path, 'r+') as f:
+                    with open(path, 'r') as f:
                         lines = f.readlines()
+                    with open(path, 'a') as f:
                         for name, data in fnafw.location_table.items():
                             if data.setId + "=1\n" in filesread and data.setId != "" and not str(
                                     data.id) + "=sent\n" in lines:
@@ -411,7 +451,7 @@ async def game_watcher(ctx: FNaFWContext):
             while True:
                 try:
                     with open(os.path.join(ctx.save_game_folder, "fnafwDEATH5"), "w") as f:
-                        f.writelines(["[fnafw]", "deathlink=0"])
+                        f.writelines(["[fnafw]\n", "deathlink=0\n"])
                         f.close()
                     break
                 except PermissionError:

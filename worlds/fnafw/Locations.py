@@ -205,6 +205,17 @@ location_table = {
     "Dusting Fields: Warp Unlock": LocData(797301, "World", "w3"),
 }
 
+for i in range(3):
+    location_table.__setitem__("Fazbear Hills: Fazcoin Chest " + str(i + 1), LocData(797302+i, "World", "chest0_"+str(i+1)))
+    location_table.__setitem__("Choppy's Woods: Fazcoin Chest " + str(i + 1), LocData(797306+i, "World", "chest2_"+str(i+1)))
+    location_table.__setitem__("Dusting Fields: Fazcoin Chest " + str(i + 1), LocData(797310+i, "World", "chest5_"+str(i+1)))
+    location_table.__setitem__("Lilygear Lake: Fazcoin Chest " + str(i + 1), LocData(797314+i, "World", "chest8_"+str(i+1)))
+    location_table.__setitem__("Mysterious Mine: Fazcoin Chest " + str(i + 1), LocData(797318+i, "World", "chest11_"+str(i+1)))
+    location_table.__setitem__("Blacktomb Yard: Fazcoin Chest " + str(i + 1), LocData(797322+i, "World", "chest14_"+str(i+1)))
+    location_table.__setitem__("Deep-Metal Mine: Fazcoin Chest " + str(i + 1), LocData(797326+i, "World", "chest17_"+str(i+1)))
+    location_table.__setitem__("Pinwheel Circus: Fazcoin Chest " + str(i + 1), LocData(797330+i, "World", "chest20_"+str(i+1)))
+    location_table.__setitem__("Pinwheel Funhouse: Fazcoin Chest " + str(i + 1), LocData(797334+i, "World", "chest26_"+str(i+1)))
+
 exclusion_table = {
 }
 

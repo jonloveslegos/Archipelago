@@ -7,7 +7,7 @@ from .Regions import FNaFW_regions, link_FNaFW_structures
 from .Rules import set_rules, set_completion_rules
 
 from BaseClasses import Region, Entrance, Item, Tutorial
-from .Options import FNaFW_options
+from .Options import FNaFWOptions
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components, Type
 from multiprocessing import Process
@@ -45,7 +45,8 @@ class FNaFWWorld(World):
     web = FNaFWWeb()
     item_name_groups = item_groups
     location_name_groups = location_groups
-    option_definitions = FNaFW_options
+    options_dataclass = FNaFWOptions
+    options: FNaFWOptions
 
     anims_0 = []
     anims_1 = []
@@ -83,28 +84,28 @@ class FNaFWWorld(World):
             'player_id': self.player,
             'client_version': client_version,
             'race': self.multiworld.is_race,
-            'exclude_halloween': bool(self.multiworld.exclude_halloween[self.player].value),
-            'exclude_initial_characters': bool(self.multiworld.initial_characters[self.player].value),
-            'hard_logic': bool(self.multiworld.hard_logic[self.player].value),
-            'require_find_char': bool(self.multiworld.require_find_char[self.player].value),
-            'progressive_anims': bool(self.multiworld.progressive_anims[self.player].value),
-            'progressive_bytes': bool(self.multiworld.progressive_bytes[self.player].value),
-            'progressive_chips': bool(self.multiworld.progressive_chips[self.player].value),
-            'vanilla_lasers': bool(self.multiworld.vanilla_lasers[self.player].value),
-            'cheap_endo': bool(self.multiworld.cheap_endo[self.player].value),
-            'vanilla_pearl': bool(self.multiworld.vanilla_pearl[self.player].value),
-            'ending_goal': self.multiworld.ending_goal[self.player].current_key,
+            'exclude_halloween': bool(self.options.exclude_halloween.value),
+            'exclude_initial_characters': bool(self.options.initial_characters.value),
+            'hard_logic': bool(self.options.hard_logic.value),
+            'require_find_char': bool(self.options.require_find_char.value),
+            'progressive_anims': bool(self.options.progressive_anims.value),
+            'progressive_bytes': bool(self.options.progressive_bytes.value),
+            'progressive_chips': bool(self.options.progressive_chips.value),
+            'vanilla_lasers': bool(self.options.vanilla_lasers.value),
+            'cheap_endo': bool(self.options.cheap_endo.value),
+            'vanilla_pearl': bool(self.options.vanilla_pearl.value),
+            'fazcoin_chests': self.options.fazcoin_chests.value,
+            'ending_goal': self.options.ending_goal.current_key,
+            'area_warping': self.options.area_warping.current_key,
         }
 
     def get_filler_item_name(self) -> str:
-        choice_and_weight = {"25 Tokens": 15,
-                             "50 Tokens": 20,
-                             "100 Tokens": 25,
-                             "250 Tokens": 15,
-                             "500 Tokens": 10,
-                             "1000 Tokens": 10,
-                             "2500 Tokens": 5}
-        chosen_item_name = self.random.choices(choice_and_weight)
+        choice_and_weight = {"50 Tokens": 5,
+                             "100 Tokens": 40,
+                             "250 Tokens": 30,
+                             "500 Tokens": 20,
+                             "1000 Tokens": 5}
+        chosen_item_name = self.multiworld.random.choices(list(choice_and_weight.keys()), weights=list(choice_and_weight.values()))[0]
         return chosen_item_name
 
     def create_items(self):
@@ -116,7 +117,7 @@ class FNaFWWorld(World):
         for name, count in to_add_to_pool.items():
             itempool += [name] * count
 
-        if not self.multiworld.initial_characters[self.player]:
+        if not self.options.initial_characters:
             for item in start_anim_table:
                 self.multiworld.get_location(item, self.player).place_locked_item(
                     self.create_item(itempool.pop(itempool.index(item))))
@@ -129,7 +130,7 @@ class FNaFWWorld(World):
                     self.create_item(itempool.pop(itempool.index(chosen_anim))))
                 chooseable_anim_table.remove(chosen_anim)
 
-        if self.multiworld.progressive_anims[self.player]:
+        if self.options.progressive_anims:
             self.anims_0 = [item for item in itempool if item in start_anim_table]
             self.anims_1 = [item for item in itempool if item in fazbear_hills_anim_table]
             self.anims_2 = [item for item in itempool if item in choppys_woods_anim_table]
@@ -141,7 +142,7 @@ class FNaFWWorld(World):
             self.anims_8 = [item for item in itempool if item in pinwheel_circus_anim_table]
             self.anims_9 = [item for item in itempool if item in top_layer_anim_table]
             self.anims_10 = [item for item in itempool if item in pinwheel_funhouse_anim_table]
-            if not self.multiworld.ending_goal[self.player].current_key == "universe_end":
+            if not self.options.ending_goal.current_key == "universe_end":
                 self.anims_10 += ["Fredbear"]
             self.anims_11 = [item for item in itempool if item in halloween_anim_table]
             self.random.shuffle(self.anims_0)
@@ -159,20 +160,23 @@ class FNaFWWorld(World):
             self.all_anims = self.anims_0 + self.anims_1 + self.anims_2 + self.anims_3 + self.anims_4 + self.anims_5 + self.anims_6 + self.anims_7 + self.anims_8 + self.anims_9 + self.anims_10 + self.anims_11
             itempool = ["Progressive Animatronic" if item in self.all_anims else item for item in itempool]
 
-        if self.multiworld.exclude_halloween[self.player]:
+        if self.options.exclude_halloween:
             for item in halloween_anim_table:
-                if self.multiworld.progressive_anims[self.player]:
+                if self.options.progressive_anims:
                     self.multiworld.get_location(item, self.player).place_locked_item(
                         self.create_item(itempool.pop(itempool.index("Progressive Animatronic"))))
                 else:
                     self.multiworld.get_location(item, self.player).place_locked_item(
                         self.create_item(itempool.pop(itempool.index(item))))
 
-        if self.multiworld.vanilla_pearl[self.player]:
+        if self.options.vanilla_pearl:
             self.multiworld.get_location("Fazbear Hills: Pearl", self.player).place_locked_item(
                 self.create_item(itempool.pop(itempool.index("Pearl"))))
 
-        if self.multiworld.vanilla_lasers[self.player]:
+        if self.options.area_warping.current_key == "warp_item":
+            itempool += ["Warp Access"]
+
+        if self.options.vanilla_lasers:
             self.multiworld.get_location("Dusting Fields: Laser Switch", self.player).place_locked_item(
                 self.create_item(itempool.pop(itempool.index("Laser Switch 1"))))
             self.multiworld.get_location("Fazbear Hills: Laser Switch", self.player).place_locked_item(
@@ -182,10 +186,10 @@ class FNaFWWorld(World):
             self.multiworld.get_location("Deep-Metal Mine: Laser Switch", self.player).place_locked_item(
                 self.create_item(itempool.pop(itempool.index("Laser Switch 4"))))
 
-        if self.multiworld.progressive_chips[self.player]:
+        if self.options.progressive_chips:
             self.chips_1 = [item for item in itempool if item in green_chip_table]
             self.chips_2 = [item for item in itempool if item in orange_chip_table]
-            if not self.multiworld.require_find_char[self.player]:
+            if not self.options.require_find_char:
                 self.chips_2 += ["Find Characters"]
             self.chips_3 = [item for item in itempool if item in red_chip_table]
             self.random.shuffle(self.chips_1)
@@ -194,7 +198,7 @@ class FNaFWWorld(World):
             self.all_chips = self.chips_1 + self.chips_2 + self.chips_3
             itempool = ["Progressive Chip" if item in self.all_chips else item for item in itempool]
 
-        if self.multiworld.progressive_bytes[self.player]:
+        if self.options.progressive_bytes:
             self.bytes_1 = [item for item in itempool if item in weak_byte_table]
             self.bytes_2 = [item for item in itempool if item in byte_table]
             self.bytes_3 = [item for item in itempool if item in strong_byte_table]
@@ -208,6 +212,10 @@ class FNaFWWorld(World):
 
         self.random.shuffle(itempool)
         itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
+
+        while len(itempool) < len(self.multiworld.get_unfilled_locations(self.player)):
+            itempool += [self.create_filler()]
+
         self.multiworld.itempool += itempool
 
     def write_spoiler(self, spoiler_handle: typing.TextIO) -> None:
@@ -231,7 +239,17 @@ class FNaFWWorld(World):
             ret = Region(region_name, self.player, self.multiworld)
             ret.locations = [FNaFWLocations(self.player, loc_name, loc_data.id, ret)
                              for loc_name, loc_data in location_table.items()
-                             if loc_data.region == region_name]
+                             if loc_data.region == region_name
+                             and (loc_data.id < 797302 or loc_data.id > 797337)]
+            ret.locations += [FNaFWLocations(self.player, "Fazbear Hills: Fazcoin Chest "+str(i+1), 797302+i, ret) for i in range(self.options.fazcoin_chests.value)]
+            ret.locations += [FNaFWLocations(self.player, "Choppy's Woods: Fazcoin Chest "+str(i+1), 797306+i, ret) for i in range(self.options.fazcoin_chests.value)]
+            ret.locations += [FNaFWLocations(self.player, "Dusting Fields: Fazcoin Chest "+str(i+1), 797310+i, ret) for i in range(self.options.fazcoin_chests.value)]
+            ret.locations += [FNaFWLocations(self.player, "Lilygear Lake: Fazcoin Chest "+str(i+1), 797314+i, ret) for i in range(self.options.fazcoin_chests.value)]
+            ret.locations += [FNaFWLocations(self.player, "Mysterious Mine: Fazcoin Chest "+str(i+1), 797318+i, ret) for i in range(self.options.fazcoin_chests.value)]
+            ret.locations += [FNaFWLocations(self.player, "Blacktomb Yard: Fazcoin Chest "+str(i+1), 797322+i, ret) for i in range(self.options.fazcoin_chests.value)]
+            ret.locations += [FNaFWLocations(self.player, "Deep-Metal Mine: Fazcoin Chest "+str(i+1), 797326+i, ret) for i in range(self.options.fazcoin_chests.value)]
+            ret.locations += [FNaFWLocations(self.player, "Pinwheel Circus: Fazcoin Chest "+str(i+1), 797330+i, ret) for i in range(self.options.fazcoin_chests.value)]
+            ret.locations += [FNaFWLocations(self.player, "Pinwheel Funhouse: Fazcoin Chest "+str(i+1), 797334+i, ret) for i in range(self.options.fazcoin_chests.value)]
             for exit in exits:
                 ret.exits.append(Entrance(self.player, exit, ret))
             return ret
@@ -241,7 +259,7 @@ class FNaFWWorld(World):
 
     def fill_slot_data(self):
         slot_data = self._get_FNaFW_data()
-        for option_name in FNaFW_options:
+        for option_name in self.options.as_dict():
             option = getattr(self.multiworld, option_name)[self.player]
             if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
                 slot_data[option_name] = int(option.value)
