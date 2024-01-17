@@ -82,9 +82,9 @@ portal_mapping: List[Portal] = [
     Portal(region="room_fire_apron", destination="room_fire_walkandbranch", origin_letter="C"),
 
     Portal(region="room_fire10", destination="room_fire_walkandbranch", origin_letter="T"),
-    Portal(region="room_fire10", destination="room_fire_rpuzzle", origin_letter="B"),
+    Portal(region="Fire 10 One Way", destination="room_fire_rpuzzle", origin_letter="B"),
 
-    Portal(region="room_fire_rpuzzle", destination="room_fire10", origin_letter="A"),
+    Portal(region="room_fire_rpuzzle", destination="Fire 10 One Way", origin_letter="A"),
     Portal(region="room_fire_rpuzzle", destination="room_fire_mewmew2", origin_letter="B"),
 
     Portal(region="room_fire_mewmew2", destination="room_fire_rpuzzle", origin_letter="A"),
@@ -873,6 +873,7 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "room_fire_sorry": RegionInfo("room_fire_sorry", dead_end=True),
     "room_fire_apron": RegionInfo("room_fire_apron", dead_end=True),
     "room_fire10": RegionInfo("room_fire10"),
+    "Fire 10 One Way": RegionInfo("room_fire10"),
     "room_fire_rpuzzle": RegionInfo("room_fire_rpuzzle"),
     "room_fire_mewmew2": RegionInfo("room_fire_mewmew2"),
     "room_fire_boysnightout": RegionInfo("room_fire_boysnightout"),
@@ -1107,6 +1108,8 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_water_bridgepuzz1", "water bridge puzzle after"],
     ("room_water_blookyard",):
          ["room_water_blookyard", "hapsta door"],
+    ("room_fire10",):
+         ["room_fire10", "Fire 10 One Way"],
 }
 
 names = []

@@ -184,8 +184,7 @@ def create_er_regions(world: "UndertaleWorld") -> Tuple[Dict[Portal, Portal], Di
 
 
 def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[str, Region]):
-    if world.options.route_required.current_key == "pacifist" or world.options.route_required.current_key == "all_routes":
-        world.multiworld.register_indirect_condition(regions["room_sanscorridor"], world.multiworld.get_entrance("room_fire_labelevator", world.player))
+    world.multiworld.register_indirect_condition(regions["room_sanscorridor"], world.multiworld.get_entrance("Lab Elevator Entrance", world.player))
 
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_2"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_1"], world.multiworld.get_entrance("Fire Door 1 Block", world.player))

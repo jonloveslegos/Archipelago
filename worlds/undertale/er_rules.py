@@ -282,7 +282,8 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
 
     regions["room_fire_lab1"].connect(
         connecting_region=regions["room_fire_labelevator"],
-        rule=lambda state: (state.has("Alphys Date", player) and _undertale_has_keys(state, world, player) and state.has("DT Extractor", player)) or not _undertale_is_route(world, 2))
+        rule=lambda state: (state.has("Alphys Date", player) and _undertale_has_keys(state, world, player) and state.has("DT Extractor", player)) or not _undertale_is_route(world, 2),
+        name="Lab Elevator Entrance")
 
     regions["room_sanscorridor"].connect(
         connecting_region=regions["room_castle_finalshoehorn"],
@@ -290,6 +291,9 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
 
     regions["room_castle_finalshoehorn"].connect(
         connecting_region=regions["room_sanscorridor"])
+
+    regions["room_fire10"].connect(
+        connecting_region=regions["Fire 10 One Way"])
 
     regions["room_castle_finalshoehorn"].connect(
         connecting_region=regions["room_castle_coffins1"])

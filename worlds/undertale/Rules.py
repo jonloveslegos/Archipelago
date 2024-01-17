@@ -48,7 +48,7 @@ def _undertale_exp_available(state: CollectionState, world: "UndertaleWorld", pl
         exp += 220
     if state.can_reach("room_fire_spider", "Region", player):
         exp += 300
-    if state.can_reach("Hotland/Core Grind Rooms", "Region", player):
+    if state.can_reach("Hotland Grind Rooms", "Region", player):
         exp += (min(40, state.count("Hotland Population Pack", player) * pack_size) * 70)
         if state.can_reach("room_fire_core_metttest", "Region", player) and \
                 state.count("Hotland Population Pack", player) * pack_size >= 40:
