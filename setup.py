@@ -6,6 +6,7 @@ import shutil
 import sys
 import sysconfig
 import typing
+import warnings
 import zipfile
 import urllib.request
 import io
@@ -20,7 +21,7 @@ from pathlib import Path
 
 # This is a bit jank. We need cx-Freeze to be able to run anything from this script, so install it
 try:
-    requirement = 'cx-Freeze==6.14.9'
+    requirement = 'cx-Freeze>=6.15.10'
     import pkg_resources
     try:
         pkg_resources.require(requirement)
@@ -53,29 +54,39 @@ if __name__ == "__main__":
     # TODO: move stuff to not require this
     import ModuleUpdate
     ModuleUpdate.update(yes="--yes" in sys.argv or "-y" in sys.argv)
-    ModuleUpdate.update_ran = False  # restore for later
 
 from worlds.LauncherComponents import components, icon_paths
 from Utils import version_tuple, is_windows, is_linux
+from Cython.Build import cythonize
 
 
 # On  Python < 3.10 LogicMixin is not currently supported.
-apworlds: set = {
-    "Subnautica",
-    "Factorio",
-    "Rogue Legacy",
-    "Sonic Adventure 2 Battle",
-    "Donkey Kong Country 3",
-    "Super Mario World",
-    "Stardew Valley",
-    "Timespinner",
-    "Minecraft",
-    "The Messenger",
-    "Links Awakening DX",
-    "Super Metroid",
-    "SMZ3",
+non_apworlds: set = {
+    "A Link to the Past",
+    "Adventure",
+    "ArchipIDLE",
+    "Archipelago",
+    "ChecksFinder",
+    "Clique",
+    "DLCQuest",
+    "Final Fantasy",
+    "Lufia II Ancient Cave",
+    "Meritous",
+    "Ocarina of Time",
+    "Overcooked! 2",
+    "Raft",
+    "Slay the Spire",
+    "Sudoku",
+    "Super Mario 64",
+    "VVVVVV",
+    "Wargroove",
+    "Zillion",
 }
 
+# LogicMixin is broken before 3.10 import revamp
+if sys.version_info < (3,10):
+    non_apworlds.add("Hollow Knight")
+    non_apworlds.add("Starcraft 2 Wings of Liberty")
 
 def download_SNI():
     print("Updating SNI")
@@ -170,14 +181,23 @@ def resolve_icon(icon_name: str):
 
 exes = [
     cx_Freeze.Executable(
-        script=f'{c.script_name}.py',
+        script=f"{c.script_name}.py",
         target_name=c.frozen_name + (".exe" if is_windows else ""),
         icon=resolve_icon(c.icon),
         base="Win32GUI" if is_windows and not c.cli else None
     ) for c in components if c.script_name and c.frozen_name
 ]
 
-extra_data = ["LICENSE", "data", "EnemizerCLI", "host.yaml", "SNI"]
+if is_windows:
+    # create a duplicate Launcher for Windows, which has a working stdout/stderr, for debugging and --help
+    c = next(component for component in components if component.script_name == "Launcher")
+    exes.append(cx_Freeze.Executable(
+        script=f"{c.script_name}.py",
+        target_name=f"{c.frozen_name}(DEBUG).exe",
+        icon=resolve_icon(c.icon),
+    ))
+
+extra_data = ["LICENSE", "data", "EnemizerCLI", "SNI"]
 extra_libs = ["libssl.so", "libcrypto.so"] if is_linux else []
 
 
@@ -279,16 +299,36 @@ class BuildExeCommand(cx_Freeze.command.build_exe.BuildEXE):
         sni_thread = threading.Thread(target=download_SNI, name="SNI Downloader")
         sni_thread.start()
 
-        # pre build steps
+        # pre-build steps
         print(f"Outputting to: {self.buildfolder}")
         os.makedirs(self.buildfolder, exist_ok=True)
         import ModuleUpdate
-        ModuleUpdate.requirements_files.add(os.path.join("WebHostLib", "requirements.txt"))
         ModuleUpdate.update(yes=self.yes)
+
+        # auto-build cython modules
+        build_ext = self.distribution.get_command_obj("build_ext")
+        build_ext.inplace = False
+        self.run_command("build_ext")
+        # find remains of previous in-place builds, try to delete and warn otherwise
+        for path in build_ext.get_outputs():
+            parts = os.path.split(path)[-1].split(".")
+            pattern = parts[0] + ".*." + parts[-1]
+            for match in Path().glob(pattern):
+                try:
+                    match.unlink()
+                    print(f"Removed {match}")
+                except Exception as ex:
+                    warnings.warn(f"Could not delete old build output: {match}\n"
+                                  f"{ex}\nPlease close all AP instances and delete manually.")
 
         # regular cx build
         self.buildtime = datetime.datetime.utcnow()
         super().run()
+
+        # manually copy built modules to lib folder. cx_Freeze does not know they exist.
+        for src in build_ext.get_outputs():
+            print(f"copying {src} -> {self.libfolder}")
+            shutil.copy(src, self.libfolder, follow_symlinks=False)
 
         # need to finish download before copying
         sni_thread.join()
@@ -309,6 +349,18 @@ class BuildExeCommand(cx_Freeze.command.build_exe.BuildEXE):
             for folder in sdl2.dep_bins + glew.dep_bins:
                 shutil.copytree(folder, self.libfolder, dirs_exist_ok=True)
                 print(f"copying {folder} -> {self.libfolder}")
+            # windows needs Visual Studio C++ Redistributable
+            # Installer works for x64 and arm64
+            print("Downloading VC Redist")
+            import certifi
+            import ssl
+            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
+            with urllib.request.urlopen(r"https://aka.ms/vs/17/release/vc_redist.x64.exe",
+                                        context=context) as download:
+                vc_redist = download.read()
+            print(f"Download complete, {len(vc_redist) / 1024 / 1024:.2f} MBytes downloaded.", )
+            with open("VC_redist.x64.exe", "wb") as vc_file:
+                vc_file.write(vc_redist)
 
         for data in self.extra_data:
             self.installfile(Path(data))
@@ -322,11 +374,16 @@ class BuildExeCommand(cx_Freeze.command.build_exe.BuildEXE):
         os.makedirs(self.buildfolder / "Players" / "Templates", exist_ok=True)
         from Options import generate_yaml_templates
         from worlds.AutoWorld import AutoWorldRegister
-        assert not apworlds - set(AutoWorldRegister.world_types), "Unknown world designated for .apworld"
+        assert not non_apworlds - set(AutoWorldRegister.world_types), \
+            f"Unknown world {non_apworlds - set(AutoWorldRegister.world_types)} designated for .apworld"
         folders_to_remove: typing.List[str] = []
+        disabled_worlds_folder = "worlds_disabled"
+        for entry in os.listdir(disabled_worlds_folder):
+            if os.path.isdir(os.path.join(disabled_worlds_folder, entry)):
+                folders_to_remove.append(entry)
         generate_yaml_templates(self.buildfolder / "Players" / "Templates", False)
         for worldname, worldtype in AutoWorldRegister.world_types.items():
-            if worldname in apworlds:
+            if worldname not in non_apworlds:
                 file_name = os.path.split(os.path.dirname(worldtype.__file__))[1]
                 world_directory = self.libfolder / "worlds" / file_name
                 # this method creates an apworld that cannot be moved to a different OS or minor python version,
@@ -381,14 +438,6 @@ class BuildExeCommand(cx_Freeze.command.build_exe.BuildEXE):
             for extra_exe in extra_exes:
                 if extra_exe.is_file():
                     extra_exe.chmod(0o755)
-            # rewrite windows-specific things in host.yaml
-            host_yaml = self.buildfolder / 'host.yaml'
-            with host_yaml.open('r+b') as f:
-                data = f.read()
-                data = data.replace(b'factorio\\\\bin\\\\x64\\\\factorio', b'factorio/bin/x64/factorio')
-                f.seek(0, os.SEEK_SET)
-                f.write(data)
-                f.truncate()
 
 
 class AppImageCommand(setuptools.Command):
@@ -571,15 +620,15 @@ cx_Freeze.setup(
     version=f"{version_tuple.major}.{version_tuple.minor}.{version_tuple.build}",
     description="Archipelago",
     executables=exes,
-    ext_modules=[],  # required to disable auto-discovery with setuptools>=61
+    ext_modules=cythonize("_speedups.pyx"),
     options={
         "build_exe": {
-            "packages": ["websockets", "worlds", "kivy"],
+            "packages": ["worlds", "kivy", "cymem", "websockets"],
             "includes": [],
             "excludes": ["numpy", "Cython", "PySide2", "PIL",
                          "pandas"],
             "zip_include_packages": ["*"],
-            "zip_exclude_packages": ["worlds", "sc2"],
+            "zip_exclude_packages": ["worlds", "sc2", "orjson"],  # TODO: remove orjson here once we drop py3.8 support
             "include_files": [],  # broken in cx 6.14.0, we use more special sauce now
             "include_msvcr": False,
             "replace_paths": ["*."],
