@@ -212,6 +212,18 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
         connecting_region=regions["Metta Entrance"],
         rule=lambda state: state.has("Mettaton Plush", player))
 
+    regions["room_water8"].connect(
+        connecting_region=regions["room_water9"])
+
+    regions["room_water9"].connect(
+        connecting_region=regions["room_water8"])
+
+    regions["Metta Entrance"].connect(
+        connecting_region=regions["room_fire_core_metttest"])
+
+    regions["room_fire_core_metttest"].connect(
+        connecting_region=regions["Metta Entrance"])
+
     regions["room_fire_core_final"].connect(
         connecting_region=regions["room_fire_core_metttest"])
 

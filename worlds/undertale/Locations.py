@@ -96,7 +96,7 @@ advancement_table = {
     "Snowdin Town Inn": AdvData(79082, "room_tundra_inn"),
     "Snowdin Town Grillby's": AdvData(79083, "room_tundra_grillby"),
     "Snowdin Town Librarby": AdvData(79084, "room_tundra_library"),
-    "Waterfall Piano Puzzle": AdvData(79085, "room_water_dogroom"),
+    "Waterfall Piano Puzzle": AdvData(79085, "room_water_piano"),
     "Waterfall Napstablook's House": AdvData(79086, "room_water_blookhouse"),
     "Hotland Upper Lab Room": AdvData(79087, "room_fire_lab2"),
     "Hotland Resort Restaurant": AdvData(79088, "room_fire_restaurant"),

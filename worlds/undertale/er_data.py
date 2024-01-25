@@ -239,10 +239,6 @@ portal_mapping: List[Portal] = [
     Portal(region="room_fire_core_premett", destination="room_fire_core_bridge", origin_letter="A"),
     Portal(region="room_fire_core_premett", destination="room_fire_core1", origin_letter="U"),
 
-    Portal(region="Metta Entrance", destination="room_fire_core_metttest", origin_letter="B"),
-
-    Portal(region="room_fire_core_metttest", destination="Metta Entrance", origin_letter="A"),
-
     Portal(region="room_castle_elevatorout", destination="New Home Entrance", origin_letter="S"),
     Portal(region="room_castle_elevatorout", destination="room_castle_precastle", origin_letter="B"),
 
@@ -317,9 +313,7 @@ portal_mapping: List[Portal] = [
     Portal(region="Room Water 7 One Way", destination="room_water8", origin_letter="B"),
 
     Portal(region="room_water8", destination="Room Water 7 One Way", origin_letter="A"),
-    Portal(region="room_water8", destination="room_water9", origin_letter="B"),
 
-    Portal(region="room_water9", destination="room_water8", origin_letter="A"),
     Portal(region="room_water9", destination="room_water_savepoint1", origin_letter="B"),
 
     Portal(region="room_water_savepoint1", destination="room_water9", origin_letter="A"),
@@ -1086,12 +1080,14 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
          ["room_ruins13","Ruins Grind Rooms"],
     ("room_fogroom",):
          ["room_fogroom","Snowdin Exit"],
+    ("room_water8", "room_water9"):
+         ["room_water8", "room_water9"],
     ("room_ruinsexit",):
          ["room_ruinsexit","Ruins Exit"],
     ("room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"):
          ["room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"],
-    ("room_fire_core_metttest", "room_fire_core_final"):
-        ["room_fire_core_metttest", "room_fire_core_final","Hotland Exit"],
+    ("Metta Entrance", "room_fire_core_metttest", "room_fire_core_final"):
+        ["Metta Entrance", "room_fire_core_metttest", "room_fire_core_final","Hotland Exit"],
     ("room_asghouse1", "room_basement1_final", "room_basement2_final", "room_basement3_final",
          "room_basement4_final", "room_lastruins_corridor", "room_sanscorridor", "room_castle_finalshoehorn",
          "room_castle_coffins1", "room_castle_coffins2", "room_castle_throneroom"):
