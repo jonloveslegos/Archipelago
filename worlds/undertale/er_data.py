@@ -666,10 +666,12 @@ portal_mapping: List[Portal] = [
 
 ]
 
-
 for item in portal_mapping:
     if len(item.name) <= 0:
-        portal_mapping[portal_mapping.index(item)] = Portal(region=item.region, name=item.region+" "+item.origin_letter, destination=item.destination, origin_letter=item.origin_letter)
+        portal_mapping[portal_mapping.index(item)] = Portal(region=item.region,
+                                                            name=item.region + " " + item.origin_letter,
+                                                            destination=item.destination,
+                                                            origin_letter=item.origin_letter)
 
 
 class RegionInfo(NamedTuple):
@@ -959,8 +961,7 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "Room Water 7 One Way": RegionInfo("room_water7", dead_end=True),
     "???": RegionInfo("???", dead_end=True, hint=0),
     "room_fire_labelevator": RegionInfo("room_fire_labelevator"),
-                }
-
+}
 
 # so we can just loop over this instead of doing some complicated thing to deal with hallways in the hints
 hallways: Dict[str, str] = {
@@ -983,129 +984,131 @@ class StaticCxn(NamedTuple):
 # this is mostly so we don't have to do something overly complex to get this information
 dependent_regions: Dict[Tuple[str, ...], List[str]] = {
     ("Ruins Pit Circle B",):
-         ["room_ruins15E", "Ruins Pit Circle B"],
+        ["room_ruins15E", "Ruins Pit Circle B"],
     ("room_water7",):
-         ["room_water7", "Room Water 7 One Way"],
+        ["room_water7", "Room Water 7 One Way"],
     ("Metta Entrance", "room_fire_core_premett"):
-         ["Metta Entrance", "room_fire_core_premett"],
+        ["Metta Entrance", "room_fire_core_premett"],
     ("Bed Door One-way",):
-         ["room_fire_hoteldoors", "Bed Door One-way"],
+        ["room_fire_hoteldoors", "Bed Door One-way"],
     ("room_fire_turn",):
-         ["room_fire_turn", "Fire Turn Part 2"],
+        ["room_fire_turn", "Fire Turn Part 2"],
     ("room_fire7", "Fire Door 1"):
-         ["room_fire7", "Fire Door 1"],
+        ["room_fire7", "Fire Door 1"],
     ("room_fire_walkandbranch2", "Fire Door 2"):
-         ["room_fire_walkandbranch2", "Fire Door 2"],
+        ["room_fire_walkandbranch2", "Fire Door 2"],
     ("Ruins Pit Circle C",):
-         ["room_ruins15E", "Ruins Pit Circle C"],
+        ["room_ruins15E", "Ruins Pit Circle C"],
     ("room_tundra_xoxosmall",):
-         ["room_tundra_xoxosmall", "small xoxo after puzzle"],
+        ["room_tundra_xoxosmall", "small xoxo after puzzle"],
     ("Ruins Pit Circle D",):
-         ["room_ruins15E", "Ruins Pit Circle D"],
+        ["room_ruins15E", "Ruins Pit Circle D"],
     ("room_water_waterfall4",):
-         ["room_water_waterfall4", "Monster Kid Raised Ledge"],
+        ["room_water_waterfall4", "Monster Kid Raised Ledge"],
     ("Papyrus Rocks", "room_tundra_sanshouse"):
-         ["Papyrus Rocks", "room_tundra_sanshouse"],
+        ["Papyrus Rocks", "room_tundra_sanshouse"],
     ("Undyne Rocks", "room_water_friendlyhub"):
-         ["Undyne Rocks", "room_water_friendlyhub"],
+        ["Undyne Rocks", "room_water_friendlyhub"],
     ("room_water_undynebridge", "room_water_undynebridgeend", "Trash Zone Fall"):
-         ["room_water_undynebridge", "room_water_undynebridgeend", "room_water_trashzone1", "Trash Zone Fall"],
+        ["room_water_undynebridge", "room_water_undynebridgeend", "room_water_trashzone1", "Trash Zone Fall"],
     ("room_water20", "room_water21", "room_water_undynefinal", "room_fire2", "Waterfall Exit"):
-         ["room_water20", "room_water21", "room_water_undynefinal", "room_fire2", "Waterfall Exit"],
+        ["room_water20", "room_water21", "room_water_undynefinal", "room_fire2", "Waterfall Exit"],
     ("room_area1",):
-         ["room_area1", "Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"],
+        ["room_area1", "Ruins Entrance", "Snowdin Entrance", "Waterfall Entrance"],
     ("room_fire_core_bottomleft",):
-         ["room_fire_core_bottomleft","Hotland Grind Rooms"],
+        ["room_fire_core_bottomleft", "Hotland Grind Rooms"],
     ("room_fire_core_topleft",):
-         ["room_fire_core_topleft","Hotland Grind Rooms"],
+        ["room_fire_core_topleft", "Hotland Grind Rooms"],
     ("room_fire_core_topright",):
-         ["room_fire_core_topright","Hotland Grind Rooms"],
+        ["room_fire_core_topright", "Hotland Grind Rooms"],
     ("room_fire_core_bottomright",):
-         ["room_fire_core_bottomright","Hotland Grind Rooms"],
+        ["room_fire_core_bottomright", "Hotland Grind Rooms"],
     ("room_fire_core_center",):
-         ["room_fire_core_center","Hotland Grind Rooms"],
+        ["room_fire_core_center", "Hotland Grind Rooms"],
     ("room_fire_core_bridge",):
-         ["room_fire_core_bridge","Hotland Grind Rooms"],
+        ["room_fire_core_bridge", "Hotland Grind Rooms"],
     ("room_fire5",):
-         ["room_fire5","Hotland Grind Rooms"],
+        ["room_fire5", "Hotland Grind Rooms"],
     ("room_fire6",):
-         ["room_fire6","Hotland Grind Rooms"],
+        ["room_fire6", "Hotland Grind Rooms"],
     ("room_fire_walkandbranch",):
-         ["room_fire_walkandbranch","Hotland Grind Rooms"],
+        ["room_fire_walkandbranch", "Hotland Grind Rooms"],
     ("room_fire_preshootguy4",):
-         ["room_fire_preshootguy4","Hotland Grind Rooms"],
+        ["room_fire_preshootguy4", "Hotland Grind Rooms"],
     ("room_water5",):
-         ["room_water5","Waterfall Grind Rooms", "water bridge puzzle 2 after"],
+        ["room_water5", "Waterfall Grind Rooms", "water bridge puzzle 2 after"],
     ("room_water6",):
-         ["room_water6","Waterfall Grind Rooms"],
+        ["room_water6", "Waterfall Grind Rooms"],
     ("room_water12",):
-         ["room_water12","Waterfall Grind Rooms"],
+        ["room_water12", "Waterfall Grind Rooms"],
     ("room_water15",):
-         ["room_water15","Waterfall Grind Rooms"],
+        ["room_water15", "Waterfall Grind Rooms"],
     ("room_water16",):
-         ["room_water16","Waterfall Grind Rooms"],
+        ["room_water16", "Waterfall Grind Rooms"],
     ("room_water17",):
-         ["room_water17","Waterfall Grind Rooms"],
+        ["room_water17", "Waterfall Grind Rooms"],
     ("room_tundra3",):
-         ["room_tundra3","Snowdin Grind Rooms"],
+        ["room_tundra3", "Snowdin Grind Rooms"],
     ("room_tundra4",):
-         ["room_tundra4","Snowdin Grind Rooms"],
+        ["room_tundra4", "Snowdin Grind Rooms"],
     ("room_tundra6",):
-         ["room_tundra6","Snowdin Grind Rooms"],
+        ["room_tundra6", "Snowdin Grind Rooms"],
     ("room_tundra_snowpuzz",):
-         ["room_tundra_snowpuzz","Snowdin Grind Rooms", "Snow Puzz After Puzzle"],
+        ["room_tundra_snowpuzz", "Snowdin Grind Rooms", "Snow Puzz After Puzzle"],
     ("room_tundra_dangerbridge",):
-         ["room_tundra_dangerbridge","Snowdin Grind Rooms"],
+        ["room_tundra_dangerbridge", "Snowdin Grind Rooms"],
     ("room_ruins7",):
-         ["room_ruins7","Ruins Grind Rooms"],
+        ["room_ruins7", "Ruins Grind Rooms"],
     ("room_ruins9",):
-         ["room_ruins9","Ruins Grind Rooms", "Ruins 9 Past Puzzles"],
+        ["room_ruins9", "Ruins Grind Rooms", "Ruins 9 Past Puzzles"],
     ("room_ruins8",):
-         ["room_ruins8","Ruins Grind Rooms"],
+        ["room_ruins8", "Ruins Grind Rooms"],
     ("room_ruins15A",):
-         ["room_ruins15A","Ruins Grind Rooms", "Ruins 15A Past Puzzles"],
+        ["room_ruins15A", "Ruins Grind Rooms", "Ruins 15A Past Puzzles"],
     ("room_ruins10",):
-         ["room_ruins10","Ruins Grind Rooms"],
+        ["room_ruins10", "Ruins Grind Rooms"],
     ("room_ruins11",):
-         ["room_ruins11","Ruins Grind Rooms", "Ruins 11 Past Puzzles"],
+        ["room_ruins11", "Ruins Grind Rooms", "Ruins 11 Past Puzzles"],
     ("room_ruins15B",):
-         ["room_ruins15B","Ruins Grind Rooms", "Ruins 15B Past Puzzles"],
+        ["room_ruins15B", "Ruins Grind Rooms", "Ruins 15B Past Puzzles"],
     ("room_ruins15C",):
-         ["room_ruins15C","Ruins Grind Rooms", "Ruins 15C Past Puzzles"],
+        ["room_ruins15C", "Ruins Grind Rooms", "Ruins 15C Past Puzzles"],
     ("room_ruins15D",):
-         ["room_ruins15D","Ruins Grind Rooms", "Ruins 15D Past Puzzles"],
+        ["room_ruins15D", "Ruins Grind Rooms", "Ruins 15D Past Puzzles"],
     ("room_ruins14",):
-         ["room_ruins14","Ruins Grind Rooms", "Ruins 14 Past Puzzles"],
+        ["room_ruins14", "Ruins Grind Rooms", "Ruins 14 Past Puzzles"],
     ("room_ruins13",):
-         ["room_ruins13","Ruins Grind Rooms"],
+        ["room_ruins13", "Ruins Grind Rooms"],
     ("room_fogroom",):
-         ["room_fogroom","Snowdin Exit"],
+        ["room_fogroom", "Snowdin Exit"],
     ("room_water8", "room_water9"):
-         ["room_water8", "room_water9"],
+        ["room_water8", "room_water9"],
     ("room_ruinsexit",):
-         ["room_ruinsexit","Ruins Exit"],
-    ("room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"):
-         ["room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1", "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"],
+        ["room_ruinsexit", "Ruins Exit"],
+    ("room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1",
+     "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"):
+        ["room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1",
+         "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"],
     ("Metta Entrance", "room_fire_core_metttest", "room_fire_core_final"):
-        ["Metta Entrance", "room_fire_core_metttest", "room_fire_core_final","Hotland Exit"],
+        ["Metta Entrance", "room_fire_core_metttest", "room_fire_core_final", "Hotland Exit"],
     ("room_asghouse1", "room_basement1_final", "room_basement2_final", "room_basement3_final",
-         "room_basement4_final", "room_lastruins_corridor", "room_sanscorridor", "room_castle_finalshoehorn",
-         "room_castle_coffins1", "room_castle_coffins2", "room_castle_throneroom"):
+     "room_basement4_final", "room_lastruins_corridor", "room_sanscorridor", "room_castle_finalshoehorn",
+     "room_castle_coffins1", "room_castle_coffins2", "room_castle_throneroom"):
         ["room_asghouse1", "room_basement1_final", "room_basement2_final", "room_basement3_final",
          "room_basement4_final", "room_lastruins_corridor", "room_sanscorridor", "room_castle_finalshoehorn",
          "room_castle_coffins1", "room_castle_coffins2", "room_castle_throneroom"],
     ("room_fire_lab1",):
-         ["room_fire_lab1", "room_fire_labelevator"],
+        ["room_fire_lab1", "room_fire_labelevator"],
     ("room_ruins3",):
-         ["room_ruins3", "Ruins 3 Past Puzzles"],
+        ["room_ruins3", "Ruins 3 Past Puzzles"],
     ("room_tundra_xoxopuzz",):
-         ["room_tundra_xoxopuzz", "xoxo puzz after puzzle"],
+        ["room_tundra_xoxopuzz", "xoxo puzz after puzzle"],
     ("room_water_bridgepuzz1",):
-         ["room_water_bridgepuzz1", "water bridge puzzle after"],
+        ["room_water_bridgepuzz1", "water bridge puzzle after"],
     ("room_water_blookyard",):
-         ["room_water_blookyard", "hapsta door"],
+        ["room_water_blookyard", "hapsta door"],
     ("room_fire10",):
-         ["room_fire10", "Fire 10 One Way"],
+        ["room_fire10", "Fire 10 One Way"],
 }
 
 names = []

@@ -72,11 +72,13 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
                 if not os.path.exists(tempInstall):
                     tempInstall = "C:\\Program Files\\Steam\\steamapps\\common\\Undertale"
             if platform.system() == "Linux":
-                if not os.path.exists(tempInstall) or not os.path.isfile(os.path.join(tempInstall, "assets", "game.unx")):
+                if not os.path.exists(tempInstall) or \
+                        not os.path.isfile(os.path.join(tempInstall, "assets", "game.unx")):
                     self.output("ERROR: Cannot find Undertale. Please rerun the command with the correct folder."
                                 " command. \"/auto_patch (Undertale directory)\".")
                 else:
-                    shutil.copytree(os.path.join(tempInstall), os.path.expanduser("~/Archipelago/Undertale"), dirs_exist_ok=True)
+                    shutil.copytree(os.path.join(tempInstall), os.path.expanduser("~/Archipelago/Undertale"),
+                                    dirs_exist_ok=True)
                     self.ctx.patch_game()
                     self.output("Patching successful!")
             else:
@@ -84,7 +86,8 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
                     self.output("ERROR: Cannot find Undertale. Please rerun the command with the correct folder."
                                 " command. \"/auto_patch (Undertale directory)\".")
                 else:
-                    shutil.copytree(os.path.join(tempInstall), os.path.join(os.getcwd(), "Undertale"), dirs_exist_ok=True)
+                    shutil.copytree(os.path.join(tempInstall), os.path.join(os.getcwd(), "Undertale"),
+                                    dirs_exist_ok=True)
                     for file_name in os.listdir(os.path.join(os.getcwd(), "Undertale")):
                         if file_name == "steam_api.dll":
                             os.remove(os.path.join(os.getcwd(), "Undertale", file_name))
@@ -178,10 +181,11 @@ class UndertaleContext(CommonContext):
         for root, dirs, files in os.walk(path):
             for file in files:
                 try:
-                    if "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or "roomrando.enabled" == file:
+                    if "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
+                            "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
                     elif file.endswith(("disconnected", ".item", ".victory", ".route", ".playerspot", ".mad",
-                                                ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando")):
+                                        ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando")):
                         os.remove(os.path.join(root, file))
                 except Exception as error:
                     print(str(error))
@@ -296,14 +300,14 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                 f.write(s1+"\n"+s2+"\n")
             f.close()
     elif cmd == "LocationInfo":
-        for l in args["locations"]:
-            locationid = l.location
+        for loc in args["locations"]:
+            locationid = loc.location
             filename = f"{str(locationid-12000)}.hint"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 toDraw = ""
                 for i in range(20):
-                    if i < len(str(ctx.item_names[l.item])):
-                        toDraw += str(ctx.item_names[l.item])[i]
+                    if i < len(str(ctx.item_names[loc.item])):
+                        toDraw += str(ctx.item_names[loc.item])[i]
                     else:
                         break
                 f.write(toDraw)
@@ -342,13 +346,13 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             placedWeapon = 0
             placedArmor = 0
             for item in args["items"]:
-                id = NetworkItem(*item).location
+                itm_id = NetworkItem(*item).location
                 while NetworkItem(*item).location < 0 and \
-                        counter <= id:
-                    id -= 1
+                        counter <= itm_id:
+                    itm_id -= 1
                 if NetworkItem(*item).location < 0:
                     counter -= 1
-                filename = f"{str(id)}plr{str(NetworkItem(*item).player)}.item"
+                filename = f"{str(itm_id)}plr{str(NetworkItem(*item).player)}.item"
                 with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                     if NetworkItem(*item).item == 77701:
                         if placedWeapon == 0:
@@ -487,22 +491,22 @@ async def game_watcher(ctx: UndertaleContext):
                     try:
                         with open(os.path.join(root, file), "r") as f:
                             lines = f.readlines()
-                        for l in lines:
-                            if ctx.server_locations.__contains__(int(l)+12000):
-                                sending = sending + [int(l.rstrip('\n'))+12000]
+                        for lin in lines:
+                            if ctx.server_locations.__contains__(int(lin)+12000):
+                                sending = sending + [int(lin.rstrip('\n'))+12000]
                     except Exception as error:
                         print(str(error))
                     finally:
                         await ctx.send_msgs([{"cmd": "LocationScouts", "locations": sending,
-                                                          "create_as_hint": int(2)}])
+                                              "create_as_hint": int(2)}])
                         os.remove(root+"/"+file)
                 if "check.spot" in file:
                     sending = []
                     try:
                         with open(os.path.join(root, file), "r") as f:
                             lines = f.readlines()
-                        for l in lines:
-                            sending = sending+[(int(l.rstrip('\n')))+12000]
+                        for lin in lines:
+                            sending = sending+[(int(lin.rstrip('\n')))+12000]
                         message = [{"cmd": "LocationChecks", "locations": sending}]
                         await ctx.send_msgs(message)
                     except Exception as error:
