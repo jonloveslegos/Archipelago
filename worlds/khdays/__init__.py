@@ -97,7 +97,7 @@ class KHDaysWorld(World):
         self.multiworld.regions.append(menu)
         self.multiworld.regions.append(missions)
 
-    def generate_basic(self):
+    def create_items(self):
         item_pool = []
         chosen_char = character_list[self.multiworld.StartingCharacter[self.player]]
         for (name) in item_table:

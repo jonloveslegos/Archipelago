@@ -936,9 +936,6 @@ sentMissionStuff = false
 past_money = 0
 
 function main()
-    if not checkBizhawkVersion() then
-        return
-    end
     server, error = socket.bind('localhost', 52987)
     while true do
         frame = frame + 1
