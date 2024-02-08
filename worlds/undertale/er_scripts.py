@@ -233,26 +233,26 @@ def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[st
     if world.options.route_required.current_key == "pacifist" or \
             world.options.route_required.current_key == "all_routes":
         paps_region = regions["room_tundra_paproom"]
-        paps_location = UndertaleERLocation(world.player, "Papyrus Date", None, paps_region)
-        paps_location.place_locked_item(UndertaleERItem("Papyrus Date", ItemClassification.progression, None,
+        paps_location = UndertaleERLocation(world.player, "Papyrus Date (Event)", None, paps_region)
+        paps_location.place_locked_item(UndertaleERItem("Papyrus Date (Event)", ItemClassification.progression, None,
                                                         world.player))
         paps_region.locations.append(paps_location)
 
         undy_region = regions["room_water_undyneyard"]
-        undy_location = UndertaleERLocation(world.player, "Undyne Date", None, undy_region)
-        undy_location.place_locked_item(UndertaleERItem("Undyne Date", ItemClassification.progression, None,
+        undy_location = UndertaleERLocation(world.player, "Undyne Date (Event)", None, undy_region)
+        undy_location.place_locked_item(UndertaleERItem("Undyne Date (Event)", ItemClassification.progression, None,
                                                         world.player))
         undy_region.locations.append(undy_location)
 
         alph_region = regions["room_fire_prelab"]
-        alph_location = UndertaleERLocation(world.player, "Alphys Date", None, alph_region)
-        alph_location.place_locked_item(UndertaleERItem("Alphys Date", ItemClassification.progression, None,
+        alph_location = UndertaleERLocation(world.player, "Alphys Date (Event)", None, alph_region)
+        alph_location.place_locked_item(UndertaleERItem("Alphys Date (Event)", ItemClassification.progression, None,
                                                         world.player))
         alph_region.locations.append(alph_location)
 
         lab_region = regions["room_fire_labelevator"]
-        lab_location = UndertaleERLocation(world.player, "True Lab Entrance", None, lab_region)
-        lab_location.place_locked_item(UndertaleERItem("True Lab Entrance", ItemClassification.progression, None,
+        lab_location = UndertaleERLocation(world.player, "True Lab Entrance (Event)", None, lab_region)
+        lab_location.place_locked_item(UndertaleERItem("True Lab Entrance (Event)", ItemClassification.progression, None,
                                                        world.player))
         lab_region.locations.append(lab_location)
 
@@ -269,19 +269,19 @@ def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[st
     papf_region.locations.append(papf_location)
 
     throne_region = regions["room_castle_throneroom"]
-    throne_location = UndertaleERLocation(world.player, "Throne Room", None, throne_region)
-    throne_location.place_locked_item(UndertaleERItem("Throne Room", ItemClassification.progression, None,
+    throne_location = UndertaleERLocation(world.player, "Throne Room (Event)", None, throne_region)
+    throne_location.place_locked_item(UndertaleERItem("Throne Room (Event)", ItemClassification.progression, None,
                                                       world.player))
     throne_region.locations.append(throne_location)
 
     if world.options.route_required.current_key == "neutral":
-        world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player)
+        world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room (Event)", world.player)
     elif world.options.route_required.current_key == "pacifist" or \
             world.options.route_required.current_key == "all_routes":
         world.multiworld.completion_condition[world.player] = lambda state: \
-            state.has("Throne Room", world.player) and state.has("True Lab Entrance", world.player)
+            state.has("Throne Room (Event)", world.player) and state.has("True Lab Entrance (Event)", world.player)
     elif world.options.route_required.current_key == "genocide":
-        world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room", world.player)
+        world.multiworld.completion_condition[world.player] = lambda state: state.has("Throne Room (Event)", world.player)
 
 
 # pairing off portals, starting with dead ends
@@ -352,9 +352,6 @@ def pair_portals(world: "UndertaleWorld") -> Dict[Portal, Portal]:
                     two_plus.remove(portal)
                     check_success = 2
                     break
-
-        if check_success == 1:
-            print(non_dead_end_regions.difference(connected_regions).__str__())
 
         # once we have both portals, connect them and add the new region(s) to connected_regions
         if check_success == 2:

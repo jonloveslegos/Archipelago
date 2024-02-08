@@ -987,8 +987,6 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
         ["room_ruins15E", "Ruins Pit Circle B"],
     ("room_water7",):
         ["room_water7", "Room Water 7 One Way"],
-    ("Metta Entrance", "room_fire_core_premett"):
-        ["Metta Entrance", "room_fire_core_premett"],
     ("Bed Door One-way",):
         ["room_fire_hoteldoors", "Bed Door One-way"],
     ("room_fire_turn",):
@@ -1089,8 +1087,8 @@ dependent_regions: Dict[Tuple[str, ...], List[str]] = {
      "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"):
         ["room_fire_elevator_r1", "room_fire_elevator_r2", "room_fire_elevator_r3", "room_fire_elevator_l1",
          "room_fire_elevator_l2", "room_fire_elevator_l3", "room_fire_elevator"],
-    ("Metta Entrance", "room_fire_core_metttest", "room_fire_core_final"):
-        ["Metta Entrance", "room_fire_core_metttest", "room_fire_core_final", "Hotland Exit"],
+    ("Metta Entrance", "room_fire_core_metttest", "room_fire_core_premett", "room_fire_core_final"):
+        ["Metta Entrance", "room_fire_core_metttest", "room_fire_core_premett", "room_fire_core_final", "Hotland Exit"],
     ("room_asghouse1", "room_basement1_final", "room_basement2_final", "room_basement3_final",
      "room_basement4_final", "room_lastruins_corridor", "room_sanscorridor", "room_castle_finalshoehorn",
      "room_castle_coffins1", "room_castle_coffins2", "room_castle_throneroom"):

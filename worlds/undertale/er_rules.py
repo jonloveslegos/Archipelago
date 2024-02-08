@@ -290,16 +290,11 @@ def set_er_region_rules(world: "UndertaleWorld", regions: Dict[str, Region]) -> 
     regions["room_sanscorridor"].connect(
         connecting_region=regions["room_lastruins_corridor"])
 
-    regions["room_fire_labelevator"].connect(
-        connecting_region=regions["room_castle_elevatorout"],
-        rule=lambda state: (state.has("Alphys Date", player) and _undertale_has_keys(state, world, player) and
-                            state.has("DT Extractor", player)))
-
     regions["room_fire_lab1"].connect(
         connecting_region=regions["room_fire_labelevator"],
-        rule=lambda state: (state.has("Alphys Date", player) and _undertale_has_keys(state, world,
+        rule=lambda state: (state.has("Alphys Date (Event)", player) and _undertale_has_keys(state, world,
                                                                                      player) and state.has(
-            "DT Extractor", player)) or not _undertale_is_route(world, 2),
+            "DT Extractor", player)) or _undertale_is_route(world, 2),
         name="Lab Elevator Entrance")
 
     regions["room_sanscorridor"].connect(
@@ -463,16 +458,16 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
     set_rule(multiworld.get_location("Diary 6", player),
              lambda state: state.has("Mystery Key", player, 1))
     if _undertale_is_route(world, 1):
-        set_rule(multiworld.get_location("Undyne Date", player),
-                 lambda state: state.has("Papyrus Date", player) and state.has("Undyne Fight (Event)", player))
-        set_rule(multiworld.get_location("Alphys Date", player),
+        set_rule(multiworld.get_location("Undyne Date (Event)", player),
+                 lambda state: state.has("Papyrus Date (Event)", player) and state.has("Undyne Fight (Event)", player))
+        set_rule(multiworld.get_location("Alphys Date (Event)", player),
                  lambda state: state.can_reach("room_water_trashzone1", "Region", player) and state.can_reach(
                      "room_fire_core_final", "Region", player) and state.has("Undyne Letter EX", player) and state.has(
-                     "Undyne Date", player))
+                     "Undyne Date (Event)", player))
         set_rule(multiworld.get_location("Undyne Cook-off", player),
-                 lambda state: state.has("Papyrus Date", player) and state.has("Undyne Fight (Event)", player))
+                 lambda state: state.has("Papyrus Date (Event)", player) and state.has("Undyne Fight (Event)", player))
         set_rule(multiworld.get_location("True Lab Key", player),
-                 lambda state: state.has("Alphys Date", player))
+                 lambda state: state.has("Alphys Date (Event)", player))
         set_rule(multiworld.get_location("Donut Sale", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
@@ -504,7 +499,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
         set_rule(multiworld.get_location("Hush Trade", player),
                  lambda state: state.has("Hot Dog...?", player, 1))
         set_rule(multiworld.get_location("Letter Quest", player),
-                 lambda state: state.can_reach("room_fire_core_final", "Region", player) and state.has("Undyne Date",
+                 lambda state: state.can_reach("room_fire_core_final", "Region", player) and state.has("Undyne Date (Event)",
                                                                                                        player))
     if (not _undertale_is_route(world, 2)) or _undertale_is_route(world, 3):
         set_rule(multiworld.get_location("Nicecream Punch Card", player),
