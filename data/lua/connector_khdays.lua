@@ -1,6 +1,6 @@
 console.clear()
 print("NOTICE: Items obtained from a chest will be in your inventory until you change rooms. THAT IS UNFIXABLE!")
-print("NOTICE: Items obtained from mission clears will only send out after you return to the hub. This may change in the future.")
+print("NOTICE: Locations will only send out after you return to the hub.")
 print("NOTICE: Mission rewards 1-3 are for normal clear, 4-5 are for full clear.")
 
 local socket = require("socket")
@@ -10,9 +10,11 @@ require("common")
 charId = 0x00
 charId2 = 0x0E
 
-mission_address = {}
-
 start_mission_address = 0x194AE4
+
+save_counter = 0x195F44
+
+mission_address = {}
 
 mission_address["1"] = 8
 mission_address["2"] = 11
@@ -24,6 +26,15 @@ local i = 0
 while i < 93 do
     mission_address[tostring(i+1)] = 9 + (3 * i)
     i = i + 1
+end
+
+function tableHasIndex(table, ind)
+    for i, s in pairs(table) do
+        if i == ind then
+            return true
+        end
+    end
+    return false
 end
 
 function hex2bin(str)
@@ -139,6 +150,31 @@ function read_mission_values()
     return hex_string
 end
 
+function read_chest_values()
+    local hex_string = ""
+    local mem = mainmemory.read_bytes_as_array(chest_earliest_address, 999)
+    local myarr = {}
+    local i = 1
+    local e = 1
+    local temptemp = ""
+    while i < #mem do
+        local e = 0
+        local a = 0
+        local temptemp = ""
+        while e <= 3 do
+            myarr[i+a] = mem[i+e]
+            e = e + 1
+            a = a + 1
+        end
+        i = i + 4
+    end
+    for _, v in ipairs(myarr) do
+        hex_string = hex_string .. string.format("%02X ", v)
+    end
+    hex_string = hex_string:sub(1, -2) -- Hang head in shame, remove last " "
+    return hex_string
+end
+
 char_ids = {}
 
 char_ids[""] = 0x00
@@ -164,6 +200,8 @@ char_ids["Goofy"] = 0x12
 char_ids["Dual-Wield_Roxas"] = 0x13
 
 itemIds = {}
+
+synthItems = {}
 
 itemIds["Fire Recipe"] = 0x194EC3
 itemIds["Fira Recipe"] = 0x194EC4
@@ -403,7 +441,84 @@ itemIds["Dying of the Light"] = 0x194FC6
 
 itemIds["Shining Shard"] = 0x194ED5
 itemIds["Blazing Shard"] = 0x194DD5
+itemIds["Frost Shard"] = 0x194DD9
+itemIds["Moonstone"] = 0x194F08
 itemIds["Iron"] = 0x194EFF
+itemIds["Diamond"] = 0x194F07
+itemIds["Aerial Tech"] = 0x194EDF
+itemIds["Combo Tech"] = 0x194EDC
+itemIds["Lightning Shard"] = 0x194DDD
+itemIds["Gear Component A"] = 0x194ED8
+itemIds["Gust Shard"] = 0x194ED2
+itemIds["Bronze"] = 0x194F00
+itemIds["Shining Gem"] = 0x194ED6
+itemIds["Blazing Gem"] = 0x194DD7
+itemIds["Frost Gem"] = 0x194DDB
+itemIds["Gear Component B"] = 0x194ED9
+itemIds["Dark Ingot"] = 0x194F01
+itemIds["Lightning Gem"] = 0x194DDF
+itemIds["Silver"] = 0x194F02
+itemIds["Gust Gem"] = 0x194ED3
+itemIds["Gust Crystal"] = 0x194ED4
+itemIds["Gear Component C"] = 0x194EDA
+itemIds["Premium Orb"] = 0x194F09
+itemIds["Shining Crystal"] = 0x194ED7
+itemIds["Blazing Crystal"] = 0x194DD8
+itemIds["Gear Component D"] = 0x194EDB
+itemIds["Frost Crystal"] = 0x194DDC
+itemIds["Lightning Crystal"] = 0x194DE0
+itemIds["Gold"] = 0x194F03
+itemIds["Adamantite"] = 0x194F06
+itemIds["Luck Tech"] = 0x194EF4
+
+synthItems["Shining Shard"] = 1
+synthItems["Blazing Shard"] = 1
+synthItems["Frost Shard"] = 1
+synthItems["Moonstone"] = 1
+synthItems["Iron"] = 1
+synthItems["Diamond"] = 1
+synthItems["Aerial Tech"] = 1
+synthItems["Combo Tech"] = 1
+synthItems["Lightning Shard"] = 1
+synthItems["Gear Component A"] = 1
+synthItems["Gust Shard"] = 1
+synthItems["Bronze"] = 1
+synthItems["Shining Gem"] = 1
+synthItems["Blazing Gem"] = 1
+synthItems["Frost Gem"] = 1
+synthItems["Gear Component B"] = 1
+synthItems["Dark Ingot"] = 1
+synthItems["Lightning Gem"] = 1
+synthItems["Silver"] = 1
+synthItems["Gust Gem"] = 1
+synthItems["Gust Crystal"] = 1
+synthItems["Gear Component C"] = 1
+synthItems["Premium Orb"] = 1
+synthItems["Shining Crystal"] = 1
+synthItems["Blazing Crystal"] = 1
+synthItems["Gear Component D"] = 1
+synthItems["Frost Crystal"] = 1
+synthItems["Lightning Crystal"] = 1
+synthItems["Gold"] = 1
+synthItems["Adamantite"] = 1
+synthItems["Luck Tech"] = 1
+synthItems["Fire Recipe"] = 1
+synthItems["Fira Recipe"] = 1
+synthItems["Firaga Recipe"] = 1
+synthItems["Blizzard Recipe"] = 1
+synthItems["Blizzara Recipe"] = 1
+synthItems["Blizzaga Recipe"] = 1
+synthItems["Thunder Recipe"] = 1
+synthItems["Thundara Recipe"] = 1
+synthItems["Thundaga Recipe"] = 1
+synthItems["Aero Recipe"] = 1
+synthItems["Aerora Recipe"] = 1
+synthItems["Aeroga Recipe"] = 1
+synthItems["Cure Recipe"] = 1
+synthItems["Cura Recipe"] = 1
+synthItems["Curaga Recipe"] = 1
+synthItems["Elixir Recipe"] = 1
+synthItems["Megalixir Recipe"] = 1
 
 synth = {}
 for k, v in pairs(itemIds) do
@@ -508,6 +623,18 @@ equipSlotIds[7] = 0x04C6B0
 equipSlotIds[8] = 0x04C6B4
 equipSlotIds[9] = 0x04C6B8
 
+chest_earliest_address = 0x1945C8
+
+chestIds = {}
+
+local i = 0
+while i < 999 do
+    if string.format("%X", math.floor(chest_earliest_address+((i-1)/8))) ~= string.format("%X", 0x1945CB) and i+1 ~= 18 then
+        chestIds[tostring(i+1)] = i
+    end
+    i = i + 1
+end
+
 chestObtains = {}
 ipsc = 1
 while ipsc <= 93 do
@@ -529,7 +656,7 @@ end
 chestCount[1] = 1
 chestCount[2] = 0
 chestCount[3] = 1
-chestCount[4] = 4
+chestCount[4] = 3
 chestCount[5] = 1
 chestCount[6] = 0
 chestCount[7] = 3
@@ -549,7 +676,7 @@ chestCount[20] = 2
 chestCount[21] = 8
 chestCount[22] = 5
 chestCount[23] = 7
-chestCount[24] = 8
+chestCount[24] = 1
 chestCount[25] = 2
 chestCount[26] = 6
 chestCount[27] = 6
@@ -576,10 +703,109 @@ chestCount[47] = 3
 chestCount[48] = 8
 chestCount[49] = 8
 chestCount[50] = 4
+chestCount[51] = 8
+chestCount[52] = 8
+chestCount[53] = 0
+chestCount[54] = 2
+chestCount[55] = 5
+chestCount[56] = 4
+chestCount[57] = 7
+chestCount[58] = 0
+chestCount[59] = 3
+chestCount[60] = 2
+chestCount[61] = 3
+chestCount[62] = 8
+chestCount[63] = 7
+chestCount[64] = 2
+chestCount[65] = 8
+chestCount[66] = 8
+chestCount[67] = 7
+chestCount[68] = 8
+chestCount[69] = 3
+chestCount[70] = 1
+chestCount[71] = 0
+chestCount[72] = 1
+chestCount[73] = 2
+chestCount[74] = 3
+chestCount[75] = 3
+chestCount[76] = 2
+chestCount[77] = 0
+chestCount[78] = 0
+chestCount[79] = 4
+chestCount[80] = 0
+chestCount[81] = 6
+chestCount[82] = 8
+chestCount[83] = 8
+chestCount[84] = 1
+chestCount[85] = 4
+chestCount[86] = 1
+chestCount[87] = 5
+chestCount[88] = 1
+chestCount[89] = 8
+chestCount[90] = 5
+chestCount[91] = 2
+chestCount[92] = 0
+chestCount[93] = 0
+
+flags_to_set = {}
+flags_to_set[0x1948DC] = "00000010"
+flags_to_set[0x194D4E] = "00001110"
+flags_to_set[0x194D4D] = "11111110"
+flags_to_set[0x194D4C] = "01101111"
+flags_to_set[0x194D53] = "11111111"
+flags_to_set[0x194D57] = "10000100"
+flags_to_set[0x194D52] = "11000000"
+flags_to_set[0x194D51] = "00000001"
+
+unity_badges_address = {}
+unity_badges_bit = {}
+ordeal_emblems_address = {}
+ordeal_emblems_bit = {}
+blazons_address = {}
+blazons_bit = {}
+
+earliest_usable_badges = 0x1946F4
+
+function create_badge_stuff()
+    local i = 0
+    -- every byte holds 2 missions worth, every 4 bytes 8 missions
+    -- first mission to be stored here is 14, should not be sent as a check its an automatically available one, first unity is 16, first ordeal is 20
+    while i < 11 do -- ceil((93 - 14) / 2 / 4)
+        local j = 32 --going down since earlier missions start from high values
+        while j > 0 do
+            j = j - 1
+            local shifted = 1 << j
+            local mission = 14 + (i * 8) + math.floor((31 - j) / 4)
+            if mission <= 93 then
+                local type = "Unity Badge"
+                local off = 0
+                if j%4 == 1 then
+                    mission = mission - 1 --flows over into the next region
+                    type = "Ordeal Emblem"
+                    ordeal_emblems_address[mission] = earliest_usable_badges + i * 4
+                    ordeal_emblems_bit[mission] = shifted
+                    off = 1
+                elseif j%4 == 2 then
+                    mission = mission - 1 --flows over into the next region
+                    type = "Ordeal Blazon"
+                    blazons_address[mission] = earliest_usable_badges + i * 4
+                    blazons_bit[mission] = shifted
+                    off = 2
+                else
+                    unity_badges_address[mission] = earliest_usable_badges + i * 4
+                    unity_badges_bit[mission] = shifted
+                end
+                --print("\"Mission "..tostring(mission).." "..type.."\": "..tostring(590000+off+(tonumber(mission)*10))..",")
+            end
+        end
+        i = i + 1
+    end
+end
+
+create_badge_stuff()
 
 sentIds = {}
 
-obtainedCount = {}
 hasCount = {}
 sentMissionCount = {}
 ipsc = 1
@@ -590,11 +816,11 @@ end
 moogleBuyCount = {}
 moogleBuyCount = {}
 for k, v in pairs(itemIds) do
-    obtainedCount[k] = itemMax[k]
-    hasCount[k] = 0
+    hasCount[k] = mainmemory.read_u8(v)
     moogleBuyCount[k] = 0
 end
 already_obtained = {}
+already_chests = {}
 function handle_items(itemName)
     local potion_count = mainmemory.read_u8(itemIds[itemName])
     local got_checks = {}
@@ -690,18 +916,27 @@ function processBlock(block)
         local itemsBlock = block["items"]
         isInGame = StateOKForMainLoop()
         if itemsBlock ~= nil and isInGame then
+            if mainmemory.read_u32_le(save_counter) == 0xFFFFFFFF then
+                mainmemory.write_u32_le(save_counter, 0x00000000)
+            end
             tempCount = {}
             for k, v in pairs(itemIds) do
                 tempCount[k] = 0
             end
+            ii = 0
             for i, item in pairs(itemsBlock) do
-                tempCount[item] = tempCount[item] + 1
+                ii = ii + 1
+                if ii > mainmemory.read_u32_le(save_counter) then
+                    tempCount[item] = tempCount[item] + 1
+                    mainmemory.write_u32_le(save_counter, mainmemory.read_u32_le(save_counter)+1)
+                end
             end
             for k, v in pairs(tempCount) do
-                while v > obtainedCount[k] do
+                iiii = 0
+                while v > iiii do
                     receive_item(k)
-                    obtainedCount[k] = obtainedCount[k] + 1
                     hasCount[k] = mainmemory.read_u8(itemIds[k])
+                    iiii = iiii + 1
                 end
             end
         end
@@ -712,9 +947,6 @@ function processBlock(block)
             end
             for i, item in pairs(itemsBlock) do
                 tempCount[item] = tempCount[item] + 1
-            end
-            for k, v in pairs(tempCount) do
-                obtainedCount[k] = v
             end
         end
         local locBlock = block["checked_locs"]
@@ -812,7 +1044,7 @@ function receive()
                 end
                 while it <= 5 do
                     merged[tostring(e)] = it+570000+(tonumber(_)*100)
-                    print("\"Mission "..tostring(_)..": Reward "..tostring(it).."\": "..tostring(merged[tostring(e)])..",")
+                    --print("\"Mission "..tostring(_)..": Reward "..tostring(it).."\": "..tostring(merged[tostring(e)])..",")
                     e = e + 1
                     it = it + 1
                 end
@@ -841,7 +1073,7 @@ function receive()
                     end
                     while it <= 3 do
                         merged[tostring(e)] = it+570000+(tonumber(_)*100)
-                        print("\"Mission "..tostring(_)..": Reward "..tostring(it).."\": "..tostring(merged[tostring(e)])..",")
+                        --print("\"Mission "..tostring(_)..": Reward "..tostring(it).."\": "..tostring(merged[tostring(e)])..",")
                         e = e + 1
                         it = it + 1
                     end
@@ -864,7 +1096,6 @@ function receive()
     if StateOKForMainLoop() then
         if not hasEnteredGame then
             for k, v in pairs(itemIds) do
-                obtainedCount[k] = mainmemory.read_u8(v)
                 hasCount[k] = mainmemory.read_u8(v)
             end
         end
@@ -916,16 +1147,15 @@ function reset_variables()
 
     sentIds = {}
     
-    obtainedCount = {}
     hasCount = {}
     moogleBuyCount = {}
     for k, v in pairs(itemIds) do
-        obtainedCount[k] = 0
-        hasCount[k] = 0
+        hasCount[k] = mainmemory.read_u8(v)
         moogleBuyCount[k] = 0
     end
     
     already_obtained = {}
+    already_chests = {}
 end
 
 currentMission = 1
@@ -944,14 +1174,22 @@ function main()
         end
         if (curstate == STATE_OK) or (curstate == STATE_INITIAL_CONNECTION_MADE) or (curstate == STATE_TENTATIVELY_CONNECTED) then
             if mainmemory.read_u8(0x1A7F60) == 0x0C then
+                local has_more_of_something = false
                 for itemName, __ in pairs(itemIds) do
                     if mainmemory.read_u8(itemIds[itemName]) > hasCount[itemName] then
                         past_money = mainmemory.read_u16_le(0x1945C0)
+                        has_more_of_something = true
                     end
                 end
                 for itemName, __ in pairs(itemIds) do
-                    if mainmemory.read_u8(itemIds[itemName]) < hasCount[itemName] then
-                        mainmemory.write_u16_le(0x1945C0, past_money)
+                    if not tableHasIndex(synthItems, itemName) and has_more_of_something then
+                        if mainmemory.read_u8(itemIds[itemName]) < hasCount[itemName] then
+                            mainmemory.write_u16_le(0x1945C0, past_money)
+                        end
+                    else
+                        if mainmemory.read_u8(itemIds[itemName]) < hasCount[itemName] then
+                            hasCount[itemName] = mainmemory.read_u8(itemIds[itemName])
+                        end
                     end
                 end
                 past_money = mainmemory.read_u16_le(0x1945C0)
@@ -959,12 +1197,126 @@ function main()
             else
                 if inShop then
                     for itemName, __ in pairs(itemIds) do
-                        mainmemory.write_u8(itemIds[itemName], hasCount[itemName])
+                        if not tableHasIndex(synthItems, itemName) then
+                            mainmemory.write_u8(itemIds[itemName], hasCount[itemName])
+                        end
                     end
                 end
                 inShop = false
             end
+            if StateOKForMainLoop() then
+                already_chests = {}
+                for h, b in pairs(flags_to_set) do
+                    ii = 1
+                    while ii <= 8 do
+                        if b:sub(ii, ii) == "1" and hex2bin(string.format("%02X", mainmemory.read_u8(h))):sub(ii, ii) == "0" then
+                            mainmemory.write_u8(h, tonumber(bin2hex(replace_str_ind(hex2bin(string.format("%02X", mainmemory.read_u8(h))), ii, "1")):sub(0, 2), 16))
+                        end
+                        ii = ii + 1
+                    end
+                end
+                local hex_string = read_chest_values()
+                local tempbin = hex2bin(hex_string)
+                tempbin = tempbin:gsub(" ","")
+                for _, i in pairs(chestIds) do
+                    if tempbin:sub(i, i) == "1" then
+                        if sentIds[tostring(500000+(tonumber(_)))] == nil then
+                            --print(tostring(_).." = 0x"..tostring(string.format("%X", math.floor(chest_earliest_address+((i-1)/8)))))
+                            local merged = {}
+                            local e = 0
+                            for k, v in pairs(already_obtained) do
+                                if countEntries(merged)[v] == nil then
+                                    merged[tostring(e)] = v
+                                    e = e + 1
+                                else
+                                    if countEntries(merged)[v] <= 0 then
+                                        merged[tostring(e)] = v
+                                        e = e + 1
+                                    end
+                                end
+                            end
+                            merged[tostring(e)] = 500000+(tonumber(_))
+                            print("\""..tostring(_).."\": "..tostring(500000+(tonumber(_)))..",")
+                            already_obtained = merged
+                            sentIds[tostring(500000+(tonumber(_)))] = "done"
+                        end
+                    end
+                end
+                for _, i in pairs(unity_badges_address) do
+                    tempbin = mainmemory.read_u32_le(i)
+                    if tempbin & unity_badges_bit[_] ~= 0 then
+                        if sentIds[tostring(590000+(tonumber(_)*10))] == nil then
+                            local merged = {}
+                            local e = 0
+                            for k, v in pairs(already_obtained) do
+                                if countEntries(merged)[v] == nil then
+                                    merged[tostring(e)] = v
+                                    e = e + 1
+                                else
+                                    if countEntries(merged)[v] <= 0 then
+                                        merged[tostring(e)] = v
+                                        e = e + 1
+                                    end
+                                end
+                            end
+                            merged[tostring(e)] = 590000+(tonumber(_)*10)
+                            print("\"Mission "..tostring(_).." Unity Badge\": "..tostring(590000+(tonumber(_)*10))..",")
+                            already_obtained = merged
+                            sentIds[tostring(590000+(tonumber(_)*10))] = "done"
+                        end
+                    end
+                end
+                for _, i in pairs(ordeal_emblems_address) do
+                    tempbin = mainmemory.read_u32_le(i)
+                    if tempbin & ordeal_emblems_bit[_] ~= 0 then
+                        if sentIds[tostring(590001+(tonumber(_)*10))] == nil then
+                            local merged = {}
+                            local e = 0
+                            for k, v in pairs(already_obtained) do
+                                if countEntries(merged)[v] == nil then
+                                    merged[tostring(e)] = v
+                                    e = e + 1
+                                else
+                                    if countEntries(merged)[v] <= 0 then
+                                        merged[tostring(e)] = v
+                                        e = e + 1
+                                    end
+                                end
+                            end
+                            merged[tostring(e)] = 590001+(tonumber(_)*10)
+                            print("\"Mission "..tostring(_).." Ordeal Emblem\": "..tostring(590001+(tonumber(_)*10))..",")
+                            already_obtained = merged
+                            sentIds[tostring(590001+(tonumber(_)*10))] = "done"
+                        end
+                    end
+                end
+                for _, i in pairs(blazons_address) do
+                    tempbin = mainmemory.read_u32_le(i)
+                    if tempbin & blazons_bit[_] ~= 0 then
+                        if sentIds[tostring(590002+(tonumber(_)*10))] == nil then
+                            local merged = {}
+                            local e = 0
+                            for k, v in pairs(already_obtained) do
+                                if countEntries(merged)[v] == nil then
+                                    merged[tostring(e)] = v
+                                    e = e + 1
+                                else
+                                    if countEntries(merged)[v] <= 0 then
+                                        merged[tostring(e)] = v
+                                        e = e + 1
+                                    end
+                                end
+                            end
+                            merged[tostring(e)] = 590002+(tonumber(_)*10)
+                            print("\"Mission "..tostring(_).." Ordeal Emblem\": "..tostring(590002+(tonumber(_)*10))..",")
+                            already_obtained = merged
+                            sentIds[tostring(590002+(tonumber(_)*10))] = "done"
+                        end
+                    end
+                end
+            end
             if mainmemory.read_u8(0x04BD84) == 0x02 then
+                local retTable = {}
                 for a,b in pairs(slotIds) do
                     if mainmemory.read_u16_le(b) ~= 0x0000 then
                         local index={}
@@ -972,47 +1324,24 @@ function main()
                             index[tostring(v)]=k
                         end
                         local itemName = index[tostring(0x194DC9+mainmemory.read_u16_le(b)-1)]
-                        if itemName ~= nil then
-                            temp = mainmemory.read_u16_le(0x04C21C)*100
-                            if chestObtains[tostring(tostring(mainmemory.read_u16_le(b+2)+500000+temp))] == false then
-                                if chestCount[mainmemory.read_u16_le(0x04C21C)] >= mainmemory.read_u16_le(b+2) then
-                                    if sentIds[tostring(mainmemory.read_u16_le(b+2))] == nil then
-                                        local merged = {}
-                                        local e = 0
-                                        for k, v in pairs(already_obtained) do
-                                            if countEntries(merged)[v] == nil then
-                                                merged[tostring(e)] = v
-                                                e = e + 1
-                                            else
-                                                if countEntries(merged)[v] <= 0 then
-                                                    merged[tostring(e)] = v
-                                                    e = e + 1
-                                                end
-                                            end
-                                        end
-                                        sentIds[tostring(mainmemory.read_u16_le(b+2))] = "done"
-                                        merged[tostring(e)] = mainmemory.read_u16_le(b+2)+500000+temp
-                                        chestObtains[tostring(mainmemory.read_u16_le(b+2)+500000+temp)] = true
-                                        print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": "..itemName.." "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(merged[tostring(e)])..",")
-                                        already_obtained = merged
-                                    end
+                        if not tableHasIndex(already_chests, mainmemory.read_u16_le(b+2)+1) then
+                            already_chests[mainmemory.read_u16_le(b+2)+1] = 1
+                            if itemName ~= nil then
+                                if chestCount[mainmemory.read_u16_le(0x04C21C)]-mainmemory.read_u8(0x1A818B) >= mainmemory.read_u16_le(b+2)+1 then
                                     mainmemory.write_u16_le(b, 0x0000)
+                                    print("(Obtained item from chest, please report if you got this item from a drop. Removing item from inventory.)")
                                 else
-                                    hasCount[itemName] = hasCount[itemName] + 1
-                                    print("Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": Obtained item higher than chest count, please report if you got this item from a chest. Moving item to hub inventory for now.")
                                     mainmemory.write_u16_le(b, 0x0000)
+                                    print("(Obtained item from drop, please report if you got this item from a chest. Adding to hub inventory.)")
+                                    hasCount[itemName] = hasCount[itemName] + 1
                                 end
+                            else
+                                print("(UNKNOWN ITEM ID 0x"..string.format("%X", 0x000DC9+mainmemory.read_u16_le(b)-1).." Removing item from inventory.)")
+                                mainmemory.write_u16_le(b, 0x0000)
                             end
-                        else
-                            temp = mainmemory.read_u16_le(0x04C21C)*100
-                            print("\"Mission "..tostring(mainmemory.read_u16_le(0x04C21C))..": (UNKNOWN ITEM ID ".."0x"..string.format("%X", 0x000DC9+mainmemory.read_u16_le(b)-1)..") "..tostring(mainmemory.read_u16_le(b+2)+1).."\": "..tostring(mainmemory.read_u16_le(b+2)+500000+temp)..", (Removing item from inventory.)")
-                            mainmemory.write_u16_le(b, 0x0000)
                         end
                     end
                 end
-            end
-            if StateOKForMainLoop() then
-                sentIds = {}
             end
             if (frame % 20 == 0) and mainmemory.read_u8(0x1A7F60) == 0x0C then
                 receive()

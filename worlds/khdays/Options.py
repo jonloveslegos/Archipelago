@@ -1,5 +1,6 @@
 import typing
-from Options import Option, Range, Choice
+from dataclasses import dataclass
+from Options import Option, Range, Choice, PerGameCommonOptions
 
 
 class StartingCharacter(Choice):
@@ -34,7 +35,7 @@ class DayRequirement(Range):
     default = 358
 
 
-khdays_options: typing.Dict[str, type(Option)] = {
-    "DayRequirement": DayRequirement,
-    "StartingCharacter": StartingCharacter,
-}
+@dataclass
+class KHDaysOptions(PerGameCommonOptions):
+    DayRequirement: DayRequirement
+    StartingCharacter: StartingCharacter

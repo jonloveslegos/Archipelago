@@ -244,20 +244,13 @@ async def nds_sync_task(ctx: KHDaysContext):
                 continue
 
 
-if __name__ == '__main__':
+def main():
     # Text Mode to use !hint and such with games that have no text entry
-    Utils.init_logging("KHDaysClient")
+    Utils.init_logging("KHDaysClient", exception_logger="Client")
 
 
-    async def main(args):
-        if args.diff_file:
-            import Patch
-            logging.info("Patch file was supplied. Creating nds rom..")
-            meta, romfile = Patch.create_rom_file(args.diff_file)
-            if "server" in meta:
-                args.connect = meta["server"]
-            logging.info(f"Wrote rom file to {romfile}")
-        ctx = KHDaysContext(args.connect, args.password)
+    async def _main():
+        ctx = KHDaysContext(None, None)
         ctx.server_task = asyncio.create_task(server_loop(ctx), name="ServerLoop")
         if gui_enabled:
             ctx.run_gui()
@@ -275,11 +268,13 @@ if __name__ == '__main__':
 
     import colorama
 
-    parser = get_base_parser()
-    parser.add_argument('diff_file', default="", type=str, nargs="?",
-                        help='Path to a Archipelago Binary Patch file')
-    args = parser.parse_args()
     colorama.init()
 
-    asyncio.run(main(args))
+    asyncio.run(_main())
     colorama.deinit()
+
+
+if __name__ == "__main__":
+    parser = get_base_parser(description="KHDays Client, for text interfacing.")
+    args = parser.parse_args()
+    main()

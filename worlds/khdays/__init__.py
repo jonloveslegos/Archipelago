@@ -10,13 +10,22 @@ import Utils
 from BaseClasses import Item, Location, Region, Entrance, MultiWorld, ItemClassification, Tutorial
 from .Items import item_table, KHDaysItem, character_list
 from .Locations import location_table, KHDaysLocation
-from .Options import khdays_options
+from .Options import KHDaysOptions
 from .Rules import set_rules, set_completion_rules
 from worlds.AutoWorld import World, WebWorld
 from worlds.generic.Rules import add_rule
 from worlds.LauncherComponents import Component, components
+from multiprocessing import Process
 
-components.append(Component("KHDays Client", "KingdomHeartsDaysClient"))
+
+def run_client():
+    from .KingdomHeartsDaysClient import main  # lazy import
+    p = Process(target=main)
+    p.start()
+
+
+# components.append(Component("KHDays Client", "KingdomHeartsDaysClient"))
+components.append(Component("KHDays Client", func=run_client))
 
 
 class KHDaysWeb(WebWorld):
@@ -38,7 +47,8 @@ class KHDaysWorld(World):
     Kingdom Hearts Days is a game for the Nintendo DS! Complete tasks for the Organization, to get rewards!
     Your objective is to beat the final day and win the game!
     """
-    option_definitions = khdays_options
+    options_dataclass = KHDaysOptions
+    options: KHDaysOptions
     game = "Kingdom Hearts Days"
     topology_present = False
     data_version = 0
@@ -99,7 +109,7 @@ class KHDaysWorld(World):
 
     def create_items(self):
         item_pool = []
-        chosen_char = character_list[self.multiworld.StartingCharacter[self.player]]
+        chosen_char = character_list[self.options.StartingCharacter]
         for (name) in item_table:
             if item_table[name].classification != ItemClassification.filler and name != chosen_char:
                 for i in range(item_table[name].khdaysamount):
@@ -126,6 +136,6 @@ class KHDaysWorld(World):
 
     def fill_slot_data(self) -> Dict[str, Any]:
         return {
-            "day_requirement": self.multiworld.DayRequirement[self.player].value,
-            'starting_character': self.multiworld.StartingCharacter[self.player].current_key,
+            "day_requirement": self.options.DayRequirement.value,
+            'starting_character': self.options.StartingCharacter.current_key,
         }

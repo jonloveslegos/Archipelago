@@ -12,8 +12,6 @@ if TYPE_CHECKING:
 
 from ..AutoWorld import LogicMixin
 
-from .Options import khdays_options
-
 
 class KHDaysLogic(LogicMixin):
 
@@ -314,7 +312,7 @@ def set_rules(world: MultiWorld, player: int):
         set_rule(world.get_location("Mission "+str(i+1)+": Reward 3", player), lambda state, i=i: state.days_has_day_access(state, state.days_mission_to_day(i+1), player))
         set_rule(world.get_location("Mission "+str(i+1)+": Reward 4", player), lambda state, i=i: state.days_has_day_access(state, max(11, state.days_mission_to_day(i+1)), player))
         set_rule(world.get_location("Mission "+str(i+1)+": Reward 5", player), lambda state, i=i: state.days_has_day_access(state, max(11, state.days_mission_to_day(i+1)), player))
-    set_rule(world.get_location("Mission 1: Potion 1", player), lambda state: True)
+    set_rule(world.get_location("Mission 1: Chest 1", player), lambda state: True)
     for i in range(20):
         set_rule(world.get_location("Moogle: Potion "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 1)
         set_rule(world.get_location("Moogle: Ether "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 1)
@@ -360,4 +358,4 @@ def set_rules(world: MultiWorld, player: int):
 
 
 def set_completion_rules(world: MultiWorld, player: int):
-    world.completion_condition[player] = lambda state, world=world: state.days_has_day_access(state, world.DayRequirement[player].value, player)
+    world.completion_condition[player] = lambda state, world=world: state.days_has_day_access(state, world.worlds[player].options.DayRequirement.value, player)
