@@ -32,6 +32,102 @@ location_ids = location_table
 items_by_id = {id: item for item, id in item_ids.items()}
 locations_by_id = {id: location for location, id in location_ids.items()}
 
+days_to_bits = {
+    7: "000000111FFFFFFF",
+    8: "000001000FFFFFFF",
+    9: "000001001FFFFFFF",
+    10: "000001010FFFFFFF",
+    11: "000001011FFFFFFF",
+    12: "000001100FFFFFFF",
+    13: "000001101FFFFFFF",
+    14: "000001110FFFFFFF",
+    15: "000001111FFFFFFF",
+    16: "000010000FFFFFFF",
+    17: "000010001FFFFFFF",
+    22: "000010110FFFFFFF",
+    23: "000010111FFFFFFF",
+    24: "000011000FFFFFFF",
+    25: "000011001FFFFFFF",
+    26: "000011010FFFFFFF",
+    51: "000110100FFFFFFF",
+    52: "000110101FFFFFFF",
+    53: "000110110FFFFFFF",
+    54: "000110111FFFFFFF",
+    71: "001000111FFFFFFF",
+    72: "001001000FFFFFFF",
+    73: "001001001FFFFFFF",
+    74: "001001010FFFFFFF",
+    75: "001001011FFFFFFF",
+    76: "001001100FFFFFFF",
+    77: "001001101FFFFFFF",
+    78: "001001110FFFFFFF",
+    79: "001001111FFFFFFF",
+    94: "001011110FFFFFFF",
+    95: "001011111FFFFFFF",
+    96: "001100000FFFFFFF",
+    97: "001100001FFFFFFF",
+    98: "001100010FFFFFFF",
+    99: "001100011FFFFFFF",
+    100: "001100100FFFFFFF",
+    117: "001110101FFFFFFF",
+    118: "001110110FFFFFFF",
+    119: "001110111FFFFFFF",
+    120: "001111000FFFFFFF",
+    121: "001111001FFFFFFF",
+    122: "001111010FFFFFFF",
+    149: "010010101FFFFFFF",
+    150: "010010110FFFFFFF",
+    151: "010010111FFFFFFF",
+    152: "010011000FFFFFFF",
+    153: "010011001FFFFFFF",
+    154: "010011010FFFFFFF",
+    155: "010011011FFFFFFF",
+    156: "010011100FFFFFFF",
+    171: "010101011FFFFFFF",
+    172: "010101100FFFFFFF",
+    173: "010101101FFFFFFF",
+    174: "010101110FFFFFFF",
+    175: "010101111FFFFFFF",
+    176: "010110000FFFFFFF",
+    193: "011000001FFFFFFF",
+    194: "011000010FFFFFFF",
+    195: "011000011FFFFFFF",
+    196: "011000100FFFFFFF",
+    197: "011000101FFFFFFF",
+    224: "011100000FFFFFFF",
+    225: "011100001FFFFFFF",
+    226: "011100010FFFFFFF",
+    227: "011100011FFFFFFF",
+    255: "011111111FFFFFFF",
+    256: "100000000FFFFFFF",
+    257: "100000001FFFFFFF",
+    258: "100000010FFFFFFF",
+    277: "100010101FFFFFFF",
+    278: "100010110FFFFFFF",
+    279: "100010111FFFFFFF",
+    280: "100011000FFFFFFF",
+    296: "100101000FFFFFFF",
+    297: "100101001FFFFFFF",
+    298: "100101010FFFFFFF",
+    299: "100101011FFFFFFF",
+    300: "100101100FFFFFFF",
+    301: "100101101FFFFFFF",
+    302: "100101110FFFFFFF",
+    303: "100101111FFFFFFF",
+    304: "100110000FFFFFFF",
+    321: "101000001FFFFFFF",
+    322: "101000010FFFFFFF",
+    323: "101000011FFFFFFF",
+    324: "101000100FFFFFFF",
+    325: "101000101FFFFFFF",
+    326: "101000110FFFFFFF",
+    352: "101100000FFFFFFF",
+    353: "101100001FFFFFFF",
+    354: "101100010FFFFFFF",
+    355: "101100011FFFFFFF",
+    357: "101100101FFFFFFF",
+}
+
 
 class KHDaysCommandProcessor(ClientCommandProcessor):
 
@@ -44,6 +140,11 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
         """Displays a list of characters that you have available."""
         if isinstance(self.ctx, KHDaysContext):
             logger.info(self.ctx.valid_characters)
+
+    def _cmd_unlocked_days(self):
+        """Displays a list of days that you have available."""
+        if isinstance(self.ctx, KHDaysContext):
+            logger.info(self.ctx.valid_days)
 
     def _cmd_set_character_one(self, char_name: str = ""):
         """Sets the first character in the next mission"""
@@ -63,13 +164,24 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
             else:
                 logger.info("Invalid character, did you misspell it?")
 
+    def _cmd_set_day_number(self, day_number: str = ""):
+        """Sets the day after the next mission"""
+        if isinstance(self.ctx, KHDaysContext):
+            if day_number in self.ctx.valid_days:
+                self.ctx.chosen_day_number = days_to_bits[int(day_number)]
+                logger.info("Next day will now be day "+day_number)
+            else:
+                logger.info("Invalid day, do you have it unlocked?")
+
 
 class KHDaysContext(CommonContext):
     command_processor = KHDaysCommandProcessor
     items_handling = 0b111  # full remote
     char_1 = "Roxas"
     char_2 = "Xion"
-    valid_characters = {"Roxas"}
+    chosen_day_number = "000000111FFFFFFF"
+    valid_days = ["7", "8"]
+    valid_characters = ["Roxas"]
     connected = "false"
     locations_array = []
 
@@ -85,6 +197,9 @@ class KHDaysContext(CommonContext):
         self.awaiting_rom = False
         self.day_requirement = 358
         self.check_locs_count = {}
+        self.chosen_day_number = "000000111FFFFFFF"
+        self.valid_days = ["7", "8"]
+        self.valid_characters = ["Roxas"]
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -97,6 +212,9 @@ class KHDaysContext(CommonContext):
             slot_data = args["slot_data"]
             self.day_requirement = slot_data["day_requirement"]
             self.connected = "true"
+            self.chosen_day_number = days_to_bits[7]
+            self.valid_characters = ["Roxas"]
+            self.chosen_day_number = "000000111FFFFFFF"
             async_start(self.send_msgs([
                 {"cmd": "Get",
                 "keys": ["received_items"]}
@@ -136,9 +254,13 @@ def get_payload(ctx: KHDaysContext):
     ctx.check_locs_count = {}
     for item in item_table:
         ctx.check_locs_count[item] = 0
+    total_rank = 0
+    for item in ctx.items_received:
+        if items_by_id[item.item] == "Progressive Rank":
+            total_rank += 1
     for item in ctx.checked_locations:
-        if locations_by_id[item].startswith("Moogle: "):
-            temp_view = locations_by_id[item].removeprefix("Moogle: ").split(" ")
+        if locations_by_id[item].startswith("Synthesis: "):
+            temp_view = locations_by_id[item].removeprefix("Synthesis: ").split(" ")
             ctx.check_locs_count["".join([i+" " for i in temp_view[:-1]]).removesuffix(" ")] += 1
         if locations_by_id[item].startswith("Hub: "):
             temp_view = locations_by_id[item].removeprefix("Hub: ").split(" ")
@@ -147,6 +269,8 @@ def get_payload(ctx: KHDaysContext):
         {
             "items": [items_by_id[item.item] for item in ctx.items_received if item.item >= 25000],
             "checked_locs": ctx.check_locs_count,
+            "rank": total_rank,
+            "day_numb": ctx.chosen_day_number,
             "locs_sent": {key: value for key, value in ctx.locations_checked},
             "messages": {f'{key[0]}:{key[1]}': value for key, value in ctx.messages.items()
                          if key[0] > current_time - 10},
@@ -168,6 +292,9 @@ async def nds_sync_task(ctx: KHDaysContext):
                     ctx.char_1 = random.choice(tuple(ctx.valid_characters))
                 if ctx.char_2 not in ctx.valid_characters:
                     ctx.char_2 = random.choice(tuple(ctx.valid_characters))
+            if len(ctx.valid_days) > 0:
+                if ctx.chosen_day_number not in days_to_bits:
+                    ctx.chosen_day_number = days_to_bits[7]
             if ctx.char_2 == ctx.char_1:
                 if ctx.char_1 == "Xion":
                     ctx.char_2 = "Roxas"
@@ -184,7 +311,10 @@ async def nds_sync_task(ctx: KHDaysContext):
                     # 2. An array representing the memory values of the locations area (if in game)
                     data = await asyncio.wait_for(reader.readline(), timeout=5)
                     data_decoded = json.loads(data.decode())
-                    ctx.valid_characters = {items_by_id[item.item] for item in ctx.items_received if item.item < 25000}
+                    ctx.valid_characters = [items_by_id[item.item] for item in ctx.items_received if item.item < 25000 and item.item > 24000]
+                    ctx.valid_days = ["7", "8"]
+                    for item in {items_by_id[item.item] for item in ctx.items_received if item.item <= 24000}:
+                        ctx.valid_days.append(item.removeprefix("Day Unlock: "))
                     if ctx.game is not None and 'checked_locs' in data_decoded:
                         for i in data_decoded["checked_locs"]:
                             if data_decoded["checked_locs"][i] not in ctx.locations_array:
