@@ -504,6 +504,7 @@ location_table = {
     "Synthesis: Fencer's Ring 1": 556100,
     "Hub: LV Doubler 5 1": 516300,
     "Hub: Panacea 1": 510900,
+    "Hub: Combo Tech 1": 537500,
     "Moogle: Panel Slot 1": 510000,
     "Moogle: Panel Slot 2": 510001,
     "Moogle: Panel Slot 3": 510002,
@@ -613,7 +614,7 @@ for i in range(5):
     location_table["Moogle: Mega-Ether "+str(i+1)] = 510015+(i*1000)
     location_table["Moogle: Panacea "+str(i+1)] = 510016+(i*1000)
 
-for i in range(10):
+for i in range(5):
     location_table["Synthesis: Fire "+str(i+1)] = 519200+i
     location_table["Synthesis: Limit Recharge "+str(i+1)] = 511000+i
 

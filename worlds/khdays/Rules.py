@@ -7,6 +7,7 @@ from ..generic.Rules import add_rule, set_rule
 
 from .Locations import location_table
 from .Items import days
+from .Options import KHDaysOptions
 
 if TYPE_CHECKING:
     from . import KHDaysWorld
@@ -302,19 +303,55 @@ class KHDaysLogic(LogicMixin):
         # return 0
 
 
-def set_rules(world: MultiWorld, player: int):
+def set_rules(world: MultiWorld, options: KHDaysOptions, player: int):
     for i in world.get_locations(player):
         if i.name.startswith("Mission "):
             set_rule(i, lambda state, i=i: state.days_has_day_access(state, max(15, state.days_mission_to_day(int(i.name.removeprefix("Mission ").split(":")[0]))), player))
         else:
             set_rule(i, lambda state: state.days_has_day_access(state, 15, player))
+
+    set_rule(world.get_location("Mission 1: Chest 1", player), lambda state: True)
+    add_rule(world.get_location("Mission 15: Chest 3", player),
+                 lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (
+                             state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 2)))
+    add_rule(world.get_location("Mission 16: Chest 3", player),
+                 lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (
+                             state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 2)))
+    add_rule(world.get_location("Mission 19: Chest 1", player),
+                 lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (
+                             state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 2)))
     for i in range(93):
         set_rule(world.get_location("Mission "+str(i+1)+": Reward 1", player), lambda state, i=i: state.days_has_day_access(state, state.days_mission_to_day(i+1), player))
         set_rule(world.get_location("Mission "+str(i+1)+": Reward 2", player), lambda state, i=i: state.days_has_day_access(state, state.days_mission_to_day(i+1), player))
-        # set_rule(world.get_location("Mission "+str(i+1)+": Reward 3", player), lambda state, i=i: state.days_has_day_access(state, state.days_mission_to_day(i+1), player))
-        # set_rule(world.get_location("Mission "+str(i+1)+": Reward 4", player), lambda state, i=i: state.days_has_day_access(state, max(15, state.days_mission_to_day(i+1)), player))
+
+    for i in range(93):
         set_rule(world.get_location("Mission "+str(i+1)+": Full Clear", player), lambda state, i=i: state.days_has_day_access(state, max(15, state.days_mission_to_day(i+1)), player))
-    set_rule(world.get_location("Mission 1: Chest 1", player), lambda state: True)
+    add_rule(world.get_location("Mission 16: Full Clear", player), lambda state: True)  # look into the logic
+    add_rule(world.get_location("Mission 9: Full Clear", player), lambda state: state.has("Level Up", player, 2))
+    set_rule(world.get_location("Mission 1: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(1), player))
+    set_rule(world.get_location("Mission 2: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(2), player))
+    set_rule(world.get_location("Mission 4: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(4), player))
+    set_rule(world.get_location("Mission 6: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(6), player))
+    add_rule(world.get_location("Mission 20: Full Clear", player), lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 4)))
+
+    if options.RandomizeHubGifts:
+        set_rule(world.get_location("Hub: LV Doubler 5 1", player), lambda state: state.days_has_day_access(state, 52, player))
+        set_rule(world.get_location("Hub: Panacea 1", player), lambda state: state.days_has_day_access(state, 76, player))
+        set_rule(world.get_location("Hub: Combo Tech 1", player), lambda state: state.days_has_day_access(state, 155, player))
+
+    if options.RandomizeLevelRewards:
+        for i in range(36):
+            set_rule(world.get_location("Hub: Level Up "+str(i+1), player), lambda state: state.days_levels_obtainable(state, player) >= i+1)
+
+    if options.RandomizeSynthesis:
+        set_rule(world.get_location("Synthesis: Magic Ring 1", player), lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Moonstone", player) and state.days_can_get_materials(state, "Iron", player))
+        set_rule(world.get_location("Synthesis: Fencer's Ring 1", player), lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Moonstone", player) and state.days_can_get_materials(state, "Iron", player) and state.days_can_get_materials(state, "Shining Shard", player))
+        set_rule(world.get_location("Synthesis: Fire Charm 1", player), lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Moonstone", player) and state.days_can_get_materials(state, "Iron", player) and state.days_can_get_materials(state, "Blazing Shard", player) and state.days_can_get_materials(state, "Aerial Tech", player))
+        for i in range(5):
+            set_rule(world.get_location("Synthesis: Fire "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 1 and state.has("Fire Recipe", player, i+1) and state.days_can_get_materials(state, "Blazing Shard", player))
+            set_rule(world.get_location("Synthesis: Limit Recharge " + str(i + 1), player),
+                     lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Blazing Shard", player) and state.days_can_get_materials(state, "Shining Shard", player) and state.days_can_get_materials(state, "Moonstone", player))
+
     for i in range(5):
         set_rule(world.get_location("Moogle: Mega-Potion "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 5)
         set_rule(world.get_location("Moogle: Mega-Ether "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 5)
@@ -327,8 +364,6 @@ def set_rules(world: MultiWorld, player: int):
         set_rule(world.get_location("Moogle: Hi-Ether "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 3)
         set_rule(world.get_location("Moogle: Moonstone "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 1)
         set_rule(world.get_location("Moogle: Diamond "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 4)
-    for i in range(36):
-        set_rule(world.get_location("Hub: Level Up "+str(i+1), player), lambda state: state.days_levels_obtainable(state, player) >= i+1)
     set_rule(world.get_location("Moogle: Panel Slot 1", player), lambda state: state.days_shop_status(state, player) >= 1)
     set_rule(world.get_location("Moogle: Panel Slot 2", player), lambda state: state.days_shop_status(state, player) >= 2)
     set_rule(world.get_location("Moogle: Panel Slot 3", player), lambda state: state.days_shop_status(state, player) >= 3)
@@ -426,34 +461,8 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Moogle: Silver 1", player), lambda state: state.days_shop_status(state, player) >= 4)
     set_rule(world.get_location("Moogle: Gold 1", player), lambda state: state.days_shop_status(state, player) >= 5)
 
-    set_rule(world.get_location("Synthesis: Magic Ring 1", player), lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Moonstone", player) and state.days_can_get_materials(state, "Iron", player))
-    set_rule(world.get_location("Synthesis: Fencer's Ring 1", player), lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Moonstone", player) and state.days_can_get_materials(state, "Iron", player) and state.days_can_get_materials(state, "Shining Shard", player))
-    set_rule(world.get_location("Synthesis: Fire Charm 1", player), lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Moonstone", player) and state.days_can_get_materials(state, "Iron", player) and state.days_can_get_materials(state, "Blazing Shard", player) and state.days_can_get_materials(state, "Aerial Tech", player))
-    for i in range(10):
-        set_rule(world.get_location("Synthesis: Fire "+str(i+1), player), lambda state: state.days_shop_status(state, player) >= 1 and state.has("Fire Recipe", player, i+1) and state.days_can_get_materials(state, "Blazing Shard", player))
-    for i in range(10):
-        set_rule(world.get_location("Synthesis: Limit Recharge " + str(i + 1), player),
-                 lambda state: state.days_shop_status(state, player) >= 1 and state.days_can_get_materials(state, "Blazing Shard", player) and state.days_can_get_materials(state, "Shining Shard", player) and state.days_can_get_materials(state, "Moonstone", player))
-
-    # set_rule(world.get_location("Mission 1: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(1), player))
-    set_rule(world.get_location("Mission 1: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(1), player))
-    # set_rule(world.get_location("Mission 2: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(2), player))
-    set_rule(world.get_location("Mission 2: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(2), player))
-    # set_rule(world.get_location("Mission 4: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(4), player))
-    set_rule(world.get_location("Mission 4: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(4), player))
-    # set_rule(world.get_location("Mission 6: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(6), player))
-    set_rule(world.get_location("Mission 6: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(6), player))
-    set_rule(world.get_location("Hub: LV Doubler 5 1", player), lambda state: state.days_has_day_access(state, 52, player))
-    set_rule(world.get_location("Hub: Panacea 1", player), lambda state: state.days_has_day_access(state, 76, player))
-    # add_rule(world.get_location("Mission 9: Reward 4", player), lambda state: state.has("Level Up", player, 2))
-    add_rule(world.get_location("Mission 9: Full Clear", player), lambda state: state.has("Level Up", player, 2))
-    add_rule(world.get_location("Mission 15: Chest 3", player), lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 2)))
-    add_rule(world.get_location("Mission 16: Chest 3", player), lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 2)))
-    # add_rule(world.get_location("Mission 20: Reward 4", player), lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 4)))
-    add_rule(world.get_location("Mission 20: Full Clear", player), lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 4)))
-    add_rule(world.get_location("Mission 19: Chest 1", player), lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 2)))
-    # add_rule(world.get_location("Mission 16: Reward 4", player), lambda state: True)  # look into the logic
-    add_rule(world.get_location("Mission 16: Full Clear", player), lambda state: True)  # look into the logic
+    if options.RandomizeEmblems:
+        pass
 
 
 def set_completion_rules(world: MultiWorld, player: int):

@@ -164,7 +164,7 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
             else:
                 logger.info("Invalid character, did you misspell it?")
 
-    def _cmd_set_day_number(self, day_number: str = ""):
+    def _cmd_set_day(self, day_number: str = ""):
         """Sets the day after the next mission"""
         if isinstance(self.ctx, KHDaysContext):
             if day_number in self.ctx.valid_days:
@@ -180,10 +180,11 @@ class KHDaysContext(CommonContext):
     char_1 = "Roxas"
     char_2 = "Xion"
     chosen_day_number = "000000111FFFFFFF"
-    valid_days = ["7", "8"]
+    valid_days = ["8"]
     valid_characters = ["Roxas"]
     connected = "false"
     locations_array = []
+    options = {}
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -198,8 +199,9 @@ class KHDaysContext(CommonContext):
         self.day_requirement = 358
         self.check_locs_count = {}
         self.chosen_day_number = "000000111FFFFFFF"
-        self.valid_days = ["7", "8"]
+        self.valid_days = ["8"]
         self.valid_characters = ["Roxas"]
+        self.options = {}
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -212,9 +214,14 @@ class KHDaysContext(CommonContext):
             slot_data = args["slot_data"]
             self.day_requirement = slot_data["day_requirement"]
             self.connected = "true"
-            self.chosen_day_number = days_to_bits[7]
+            self.chosen_day_number = days_to_bits[8]
             self.valid_characters = ["Roxas"]
             self.chosen_day_number = "000000111FFFFFFF"
+            self.options["moogle"] = True
+            self.options["chests"] = True
+            self.options["synthesis"] = slot_data["randomize_synthesis"]
+            self.options["levels"] = slot_data["randomize_level_rewards"]
+            self.options["gifts"] = slot_data["randomize_hub_gifts"]
             async_start(self.send_msgs([
                 {"cmd": "Get",
                 "keys": ["received_items"]}
@@ -276,7 +283,8 @@ def get_payload(ctx: KHDaysContext):
                          if key[0] > current_time - 10},
             "char_1": ctx.char_1,
             "char_2": ctx.char_2,
-            "connection": ctx.connected
+            "connection": ctx.connected,
+            "options": ctx.options,
         }
     )
 
@@ -294,7 +302,7 @@ async def nds_sync_task(ctx: KHDaysContext):
                     ctx.char_2 = random.choice(tuple(ctx.valid_characters))
             if len(ctx.valid_days) > 0:
                 if ctx.chosen_day_number not in days_to_bits.values():
-                    ctx.chosen_day_number = days_to_bits[7]
+                    ctx.chosen_day_number = days_to_bits[8]
             if ctx.char_2 == ctx.char_1:
                 if ctx.char_1 == "Xion":
                     ctx.char_2 = "Roxas"
@@ -312,7 +320,7 @@ async def nds_sync_task(ctx: KHDaysContext):
                     data = await asyncio.wait_for(reader.readline(), timeout=5)
                     data_decoded = json.loads(data.decode())
                     ctx.valid_characters = [items_by_id[item.item] for item in ctx.items_received if item.item < 25000 and item.item > 24000]
-                    ctx.valid_days = ["7", "8"]
+                    ctx.valid_days = ["8"]
                     for item in {items_by_id[item.item] for item in ctx.items_received if item.item <= 24000}:
                         ctx.valid_days.append(item.removeprefix("Day Unlock: "))
                     if ctx.game is not None and 'checked_locs' in data_decoded:

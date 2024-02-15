@@ -75,7 +75,19 @@ class KHDaysWorld(World):
         missions = Region("Missions", self.player, self.multiworld)
 
         missions.locations = [KHDaysLocation(self.player, loc_name, loc_data, missions)
-                           for loc_name, loc_data in location_table.items()]
+                              for loc_name, loc_data in location_table.items()
+                              if ((not loc_name.__contains__("Unity Badge")
+                                   and not loc_name.__contains__("Ordeal Emblem")
+                                   and not loc_name.__contains__("Ordeal Blazon"))
+                              or self.options.RandomizeEmblems)
+                              and ((not loc_name.__contains__("Synthesis: "))
+                              or self.options.RandomizeSynthesis)
+                              and ((not loc_name.__contains__("Hub: Level Up "))
+                              or self.options.RandomizeLevelRewards)
+                              and ((not loc_name.__contains__("Hub: "))
+                              or loc_name.__contains__("Level Up")
+                              or self.options.RandomizeHubGifts)
+                              ]
         for item in missions.locations:
             if "Block-Retreat" in item.name:
                 item.progress_type = Location.progress_type.EXCLUDED
@@ -121,12 +133,29 @@ class KHDaysWorld(World):
                 self.multiworld.get_location(name, self.player).place_locked_item(event_item)
 
         self.multiworld.push_precollected(self.create_item(chosen_char))
-        for i in range(len(location_table) - len(item_pool)):
+        exclusion_pool = set()
+        exclusion_pool.update([loc_name
+                              for loc_name, loc_data in location_table.items()
+                               if not
+                               (((not loc_name.__contains__("Unity Badge")
+                                   and not loc_name.__contains__("Ordeal Emblem")
+                                   and not loc_name.__contains__("Ordeal Blazon"))
+                                or self.options.RandomizeEmblems)
+                                and ((not loc_name.__contains__("Synthesis: "))
+                                or self.options.RandomizeSynthesis)
+                                and ((not loc_name.__contains__("Hub: Level Up "))
+                                or self.options.RandomizeLevelRewards)
+                                and ((not loc_name.__contains__("Hub: "))
+                                or loc_name.__contains__("Level Up")
+                                or self.options.RandomizeHubGifts))
+                               ])
+        print(len(item_pool))
+        for i in range(len(self.location_names) - len(item_pool) - len(exclusion_pool)):
             item_pool += [self.create_item(self.get_filler_item_name())]
         self.multiworld.itempool += item_pool
 
     def set_rules(self):
-        set_rules(self.multiworld, self.player)
+        set_rules(self.multiworld, self.options, self.player)
         set_completion_rules(self.multiworld, self.player)
 
     def get_filler_item_name(self) -> str:
@@ -138,4 +167,8 @@ class KHDaysWorld(World):
         return {
             "day_requirement": self.options.DayRequirement.value,
             'starting_character': self.options.StartingCharacter.current_key,
+            'randomize_emblems': bool(self.options.RandomizeEmblems.value),
+            'randomize_synthesis': bool(self.options.RandomizeSynthesis.value),
+            'randomize_level_rewards': bool(self.options.RandomizeLevelRewards.value),
+            'randomize_hub_gifts': bool(self.options.RandomizeHubGifts.value)
         }

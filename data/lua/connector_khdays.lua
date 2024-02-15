@@ -204,6 +204,8 @@ char_ids["Dual-Wield_Roxas"] = 0x13
 
 itemIds = {}
 
+options = {}
+
 synthItems = {}
 
 itemIds["Fire Recipe"] = 0x194EC3
@@ -942,18 +944,36 @@ function handle_items(itemName)
         local i = 0
         local toSend = potion_count-hasCount[itemName]
         while i < toSend do
-            if shop_got_something == false then
-                if mainmemory.read_u8(0x1A7F60) == 0x0C then
-                    print("\"Synthesis: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).."\": "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName])..",")
+            if mainmemory.read_u8(0x1A7F60) == 0x0C then
+                print("\"Synthesis: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).."\": "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName])..",")
+                if options["synthesis"] then
+                    got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
+                    moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
+                    mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
+                else
+                    hasCount[itemName] = hasCount[itemName] + 1
+                end
+            else
+                if itemName == "Level Up" then
+                    print("\"Hub: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).."\": "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName])..",")
+                    if options["levels"] then
+                        got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
+                        moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
+                        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
+                    else
+                        hasCount[itemName] = hasCount[itemName] + 1
+                    end
                 else
                     print("\"Hub: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).."\": "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName])..",")
+                    if options["gifts"] then
+                        got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
+                        moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
+                        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
+                    else
+                        hasCount[itemName] = hasCount[itemName] + 1
+                    end
                 end
-                got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
-                moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
-            else
-                shop_got_something = false
             end
-            mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
             i = i + 1
         end
     end
@@ -963,14 +983,14 @@ function handle_items(itemName)
                 local i = 0
                 local toSend = potion_count
                 while i < toSend do
-                    if shop_got_something == false then
-                        print("\"Synthesis: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).."\": "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName])..",")
+                    print("\"Synthesis: "..itemName.." "..tostring(moogleBuyCount[itemName]+1).."\": "..tostring(((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName])..",")
+                    if options["synthesis"] then
                         got_checks[tostring(i)] = ((itemIds[itemName]-0x194DC9)*100)+510000+moogleBuyCount[itemName]
                         moogleBuyCount[itemName] = moogleBuyCount[itemName] + 1
+                        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
                     else
-                        shop_got_something = false
+                        hasCount[itemName] = hasCount[itemName] + 1
                     end
-                    mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
                     i = i + 1
                 end
             end
@@ -1087,7 +1107,7 @@ function processBlock(block)
                 moogleBuyCount[y] = u
             end
         end
-        local sentBlock = block["locs_sent"]
+        options = block["options"]
         local char1 = block["char_1"]
         if char1 ~= nil then
             charId = char_ids[char1]
@@ -1355,14 +1375,18 @@ function main()
                                     end
                                 end
                             end
-                            merged[tostring(e)] = ((es)*1000)+510000+_
                             print("\"Moogle: "..moogleShopSlotsItemsNames[_].." "..tostring(es+1).."\": "..tostring(((es)*1000)+510000+_)..",")
-                            already_obtained = merged
-                            sentIds[tostring(((es)*1000)+510000+_)] = "done"
-                            for itemName, __ in pairs(itemIds) do
-                                if itemName == moogleShopSlotsItemsNames[_] then
-                                    mainmemory.write_u16_le(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
+                            if options["moogle"] then
+                                merged[tostring(e)] = ((es)*1000)+510000+_
+                                already_obtained = merged
+                                sentIds[tostring(((es)*1000)+510000+_)] = "done"
+                                for itemName, __ in pairs(itemIds) do
+                                    if itemName == moogleShopSlotsItemsNames[_] then
+                                        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
+                                    end
                                 end
+                            else
+                                hasCount[itemName] = hasCount[itemName] + 1
                             end
                         end
                         es = es + 1
@@ -1388,30 +1412,34 @@ function main()
                 inShop = false
             end
             if StateOKForMainLoop() then
-                local hex_string = read_chest_values()
-                local tempbin = hex2bin(hex_string)
-                tempbin = (tempbin:gsub(" ",""))
-                for _, i in pairs(chestIds) do
-                    if tempbin:sub(i, i) == "1" then
-                        if sentIds[tostring(500000+(tonumber(_)))] == nil then
-                            --print(tostring(_).." = 0x"..tostring(string.format("%X", math.floor(chest_earliest_address+((i-1)/8)))))
-                            local merged = {}
-                            local e = 0
-                            for k, v in pairs(already_obtained) do
-                                if countEntries(merged)[v] == nil then
-                                    merged[tostring(e)] = v
-                                    e = e + 1
-                                else
-                                    if countEntries(merged)[v] <= 0 then
+                local hex_string = ""
+                local tempbin = ""
+                if options["chests"] then
+                    hex_string = read_chest_values()
+                    tempbin = hex2bin(hex_string)
+                    tempbin = (tempbin:gsub(" ",""))
+                    for _, i in pairs(chestIds) do
+                        if tempbin:sub(i, i) == "1" then
+                            if sentIds[tostring(500000+(tonumber(_)))] == nil then
+                                --print(tostring(_).." = 0x"..tostring(string.format("%X", math.floor(chest_earliest_address+((i-1)/8)))))
+                                local merged = {}
+                                local e = 0
+                                for k, v in pairs(already_obtained) do
+                                    if countEntries(merged)[v] == nil then
                                         merged[tostring(e)] = v
                                         e = e + 1
+                                    else
+                                        if countEntries(merged)[v] <= 0 then
+                                            merged[tostring(e)] = v
+                                            e = e + 1
+                                        end
                                     end
                                 end
+                                merged[tostring(e)] = 500000+(tonumber(_))
+                                --print("\""..tostring(_).."\": "..tostring(500000+(tonumber(_)))..",")
+                                already_obtained = merged
+                                sentIds[tostring(500000+(tonumber(_)))] = "done"
                             end
-                            merged[tostring(e)] = 500000+(tonumber(_))
-                            --print("\""..tostring(_).."\": "..tostring(500000+(tonumber(_)))..",")
-                            already_obtained = merged
-                            sentIds[tostring(500000+(tonumber(_)))] = "done"
                         end
                     end
                 end
@@ -1513,7 +1541,7 @@ function main()
                         if not tableHasIndex(already_chests, mainmemory.read_u16_le(b+2)+1) then
                             already_chests[mainmemory.read_u16_le(b+2)+1] = 1
                             if itemName ~= nil then
-                                if chestCount[mainmemory.read_u16_le(0x04C21C)]-mainmemory.read_u8(0x1A818B) >= mainmemory.read_u16_le(b+2)+1 then
+                                if chestCount[mainmemory.read_u16_le(0x04C21C)]-mainmemory.read_u8(0x1A818B) >= mainmemory.read_u16_le(b+2)+1 and options["chests"] then
                                     mainmemory.write_u16_le(b, 0x0000)
                                     --print("(Obtained item from chest, please report if you got this item from a drop. Removing item from inventory.)")
                                 else

@@ -1,6 +1,6 @@
 import typing
 from dataclasses import dataclass
-from Options import Option, Range, Choice, PerGameCommonOptions
+from Options import Option, Range, Choice, Toggle, PerGameCommonOptions
 
 
 class StartingCharacter(Choice):
@@ -35,7 +35,31 @@ class DayRequirement(Range):
     default = 358
 
 
+class RandomizeEmblems(Toggle):
+    """Randomize Unity Badges, Ordeal Emblems, and Ordeal Blazons. Does not add corresponding items."""
+    default = 0
+
+
+class RandomizeSynthesis(Toggle):
+    """Randomize synthesized items."""
+    default = 0
+
+
+class RandomizeLevelRewards(Toggle):
+    """Randomize level-up rewards."""
+    default = 1
+
+
+class RandomizeHubGifts(Toggle):
+    """Randomize gifted items in the hub."""
+    default = 0
+
+
 @dataclass
 class KHDaysOptions(PerGameCommonOptions):
     DayRequirement: DayRequirement
     StartingCharacter: StartingCharacter
+    RandomizeEmblems: RandomizeEmblems
+    RandomizeSynthesis: RandomizeSynthesis
+    RandomizeLevelRewards: RandomizeLevelRewards
+    RandomizeHubGifts: RandomizeHubGifts
