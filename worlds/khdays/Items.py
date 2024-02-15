@@ -48,21 +48,21 @@ item_table: Dict[str, ItemData] = {
     "LV Quadrupler 3C": ItemData(progression, 1, 0x194E0F),
     "Backpack": ItemData(useful,  3, 0x194E23),
     "Pack Extender": ItemData(useful, 1, 0x194E24),
-    "Fire": ItemData(progression, 24, 0x194E25),
+    "Fire": ItemData(progression, 10, 0x194E25),
     "Fira": ItemData(progression, 10, 0x194E26),
     "Firaga": ItemData(useful, 3, 0x194E27),
-    "Blizzard": ItemData(progression, 22, 0x194E28),
-    "Blizzara": ItemData(progression, 13, 0x194E29),
-    "Blizzaga": ItemData(useful, 5, 0x194E2A),
-    "Thunder": ItemData(progression, 23, 0x194E2B),
-    "Thundara": ItemData(progression, 9, 0x194E2C),
-    "Thundaga": ItemData(useful, 5, 0x194E2D),
-    "Aero": ItemData(progression, 19, 0x194E2E),
-    "Aerora": ItemData(progression, 9, 0x194E2F),
-    "Aeroga": ItemData(useful, 4, 0x194E30),
-    "Cure": ItemData(progression, 22, 0x194E31),
-    "Cura": ItemData(progression, 12, 0x194E32),
-    "Curaga": ItemData(useful, 5, 0x194E33),
+    "Blizzard": ItemData(progression, 10, 0x194E28),
+    "Blizzara": ItemData(progression, 10, 0x194E29),
+    "Blizzaga": ItemData(useful, 3, 0x194E2A),
+    "Thunder": ItemData(progression, 10, 0x194E2B),
+    "Thundara": ItemData(progression, 10, 0x194E2C),
+    "Thundaga": ItemData(useful, 3, 0x194E2D),
+    "Aero": ItemData(progression, 10, 0x194E2E),
+    "Aerora": ItemData(progression, 10, 0x194E2F),
+    "Aeroga": ItemData(useful, 3, 0x194E30),
+    "Cure": ItemData(progression, 10, 0x194E31),
+    "Cura": ItemData(progression, 10, 0x194E32),
+    "Curaga": ItemData(useful, 3, 0x194E33),
     "Magic LV2 4": ItemData(useful, 1, 0x194E34),
     "Magic LV2 4B": ItemData(useful, 1, 0x194E35),
     "Magic LV2 4C": ItemData(useful, 1, 0x194E36),
@@ -298,14 +298,28 @@ for name in character_list:
 
 item_table["Progressive Rank"] = ItemData(progression, 6, 0, 25000-i-1)
 
-days = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25, 26, 51, 52, 53, 54, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-        94, 95, 96, 97, 98, 99, 100, 117, 118,
-        119, 120, 121, 122, 149, 150, 151, 152, 153, 154, 155, 156, 171, 172, 173, 174, 175, 176, 193, 194, 195, 196,
-        197, 224, 225, 226, 227, 255, 256, 257, 258, 277, 278, 279, 280, 296, 297, 298, 299, 300, 301, 302, 303, 304,
-        321, 322, 323, 324, 325, 326, 352, 353, 354, 355, 357, 358]
+true_days = [8, 9, 10, 11, 12, 13, 14, 15, 15, 15, 22, 23, 24, 25, 26, 51, 51, 51, 51, 71, 72, 73, 74, 75, 75, 75, 75,
+             75, 94, 95, 96, 97, 97, 97, 97, 117, 118, 119, 119, 119, 119, 149, 150, 151, 152, 152, 152, 152, 152, 171,
+             172, 173, 173, 173, 173, 193, 194, 194, 194, 194, 224, 225, 225, 225, 255, 256, 256, 256, 277, 277, 277,
+             277, 296, 297, 298, 299, 300, 301, 301, 301, 301, 321, 322, 322, 322, 322, 322, 352, 353, 354, 355, 357,
+             358]
+
+days = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25, 26, 51, 52, 53, 54, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+        94, 95, 96, 97, 98, 99, 100, 117, 118, 119, 120, 121, 122, 149, 150, 151, 152, 153, 154, 155, 156, 171, 172,
+        173, 174, 175, 176, 193, 194, 195, 196, 197, 224, 225, 226, 227, 255, 256, 257, 258, 277, 278, 279, 280, 296,
+        297, 298, 299, 300, 301, 302, 303, 304, 321, 322, 323, 324, 325, 326, 352, 353, 354, 355, 357, 358]
+
+days_to_index = {}
+
+ind = 0
+for day in days:
+    days_to_index[day] = ind
+    ind += 1
 
 i = 0
-for name in days:
-    if name > 8:
+for name in true_days:
+    if name > 8 and "Day Unlock: "+str(name) not in item_table.keys():
         item_table["Day Unlock: "+str(name)] = ItemData(progression, 1, 0, 24000-i)
         i += 1
+
+print(len(days))

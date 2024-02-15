@@ -1266,7 +1266,9 @@ function receive()
     processBlock(json.decode(l))
     if mainmemory.read_u8(0x1A7F60) == 0x54 then
         if not (mainmemory.read_u8(0x1A4978) == 255 and mainmemory.read_u8(0x1A497C) == 255) then
-            retTable["day"] = tostring(mainmemory.read_u8(0x1A497C))
+            if not (mainmemory.read_u8(0x1A4978) == 255 and mainmemory.read_u8(0x1A497C) == 7) then
+                retTable["day"] = tostring(mainmemory.read_u8(0x1A4978))
+            end
         end
     end
     if StateOKForMainLoop() then

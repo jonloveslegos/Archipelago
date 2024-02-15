@@ -15,8 +15,9 @@ from NetUtils import ClientStatus
 from CommonClient import CommonContext, server_loop, gui_enabled, ClientCommandProcessor, logger, \
     get_base_parser
 
-from worlds.khdays.Items import item_table
+from worlds.khdays.Items import item_table, days, true_days
 from worlds.khdays.Locations import location_table
+from worlds.khdays.Rules import days_day_to_true_day
 
 SYSTEM_MESSAGE_ID = 0
 
@@ -126,6 +127,7 @@ days_to_bits = {
     354: "101100010FFFFFFF",
     355: "101100011FFFFFFF",
     357: "101100101FFFFFFF",
+    358: "101100110FFFFFFF",
 }
 
 
@@ -202,6 +204,8 @@ class KHDaysContext(CommonContext):
         self.valid_days = ["8"]
         self.valid_characters = ["Roxas"]
         self.options = {}
+        for i in days:
+            print(days_to_bits[i])
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -322,7 +326,12 @@ async def nds_sync_task(ctx: KHDaysContext):
                     ctx.valid_characters = [items_by_id[item.item] for item in ctx.items_received if item.item < 25000 and item.item > 24000]
                     ctx.valid_days = ["8"]
                     for item in {items_by_id[item.item] for item in ctx.items_received if item.item <= 24000}:
-                        ctx.valid_days.append(item.removeprefix("Day Unlock: "))
+                        day_numb = item.removeprefix("Day Unlock: ")
+                        ctx.valid_days.append(day_numb)
+                        if true_days.count(int(day_numb)) > 1:
+                            for i in days:
+                                if days_day_to_true_day(i) == day_numb and i != day_numb:
+                                    ctx.valid_days.append(i)
                     if ctx.game is not None and 'checked_locs' in data_decoded:
                         for i in data_decoded["checked_locs"]:
                             if data_decoded["checked_locs"][i] not in ctx.locations_array:
