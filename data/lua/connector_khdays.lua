@@ -56,9 +56,10 @@ function hex2bin(str)
         ['C'] = '1100',
         ['D'] = '1101',
         ['E'] = '1110',
-        ['F'] = '1111'
+        ['F'] = '1111',
+        [' '] = ' '
     }
-    return str:gsub('[0-9A-F]', map)
+    return (str:gsub('[0-9A-F]', map))
 end
 
 function bin2hex(str)
@@ -1053,6 +1054,9 @@ function processBlock(block)
             tempCount = {}
             for k, v in pairs(itemIds) do
                 tempCount[k] = 0
+                if k == "Potion" and hasCount[k] == 0 then
+                    tempCount[k] = 1
+                end
             end
             ii = 0
             local save_obtain = mainmemory.read_u32_le(save_counter)
@@ -1093,7 +1097,7 @@ function processBlock(block)
             day_address_current = daynumb
         end
         local rank = block["rank"]
-        if rank ~= nil then
+        if rank ~= nil and isInGame then
                 ii = 1
                 local tochangeto = "0000002220000000"
                 if rank == 1 then
@@ -1160,7 +1164,7 @@ function receive()
     if StateOKForMainLoop() then
         local hex_string = read_mission_values()
         local tempbin = hex2bin(hex_string)
-        tempbin = tempbin:gsub(" ","")
+        tempbin = (tempbin:gsub(" ",""))
         for _, i in pairs(mission_address) do
             if tempbin:sub(i, i) == "1" and tempbin:sub(i+1, i+1) == "1" and sentMissionCount[tonumber(_)] < 2 then
                 local it = 1
@@ -1386,7 +1390,7 @@ function main()
             if StateOKForMainLoop() then
                 local hex_string = read_chest_values()
                 local tempbin = hex2bin(hex_string)
-                tempbin = tempbin:gsub(" ","")
+                tempbin = (tempbin:gsub(" ",""))
                 for _, i in pairs(chestIds) do
                     if tempbin:sub(i, i) == "1" then
                         if sentIds[tostring(500000+(tonumber(_)))] == nil then
@@ -1487,12 +1491,14 @@ function main()
             if mainmemory.read_u8(0x04BD84) == 0x02 or StateOKForMainLoop() then
                 for h, b in pairs(flags_to_set) do
                     ii = 1
+                    local towrite = mainmemory.read_u8(h)
                     while ii <= 8 do
-                        if b:sub(ii, ii) == "1" and hex2bin(string.format("%02X", mainmemory.read_u8(h))):gsub(" ",""):sub(ii, ii) == "0" then
-                            mainmemory.write_u8(h, tonumber(bin2hex(replace_str_ind(hex2bin(string.format("%02X", mainmemory.read_u8(h))):gsub(" ",""), ii, "1")):gsub(" ",""), 16))
+                        if b:sub(ii, ii) == "1" then
+                            towrite = tonumber((bin2hex(replace_str_ind((hex2bin((string.format("%02X", towrite))):gsub(" ","")), ii, "1")):gsub(" ","")), 16)
                         end
                         ii = ii + 1
                     end
+                    mainmemory.write_u8(h, towrite)
                 end
             end
             if mainmemory.read_u8(0x04BD84) == 0x02 then
@@ -1539,13 +1545,13 @@ function main()
             end
             if mainmemory.read_u8(0x04BD84) == 0xFF then
                 if mainmemory.read_u8(0x1A7F60) == 0x00 then
-                    ii = 0
+                    ii = 1
                     local towrite = mainmemory.read_u16_le(0x1945CA)
                     while ii <= 16 do
                         if day_address_current:sub(ii, ii) == "1" then
-                            towrite = tonumber(bin2hex(replace_str_ind(hex2bin(string.format("%04X", towrite)):gsub(" ",""), ii, "1")):gsub(" ",""), 16)
+                            towrite = tonumber((bin2hex(replace_str_ind((hex2bin(string.format("%04X", towrite)):gsub(" ","")), ii, "1")):gsub(" ","")), 16)
                         elseif day_address_current:sub(ii, ii) == "0" then
-                            towrite = tonumber(bin2hex(replace_str_ind(hex2bin(string.format("%04X", towrite)):gsub(" ",""), ii, "0")):gsub(" ",""), 16)
+                            towrite = tonumber((bin2hex(replace_str_ind((hex2bin(string.format("%04X", towrite)):gsub(" ","")), ii, "0")):gsub(" ","")), 16)
                         end
                         ii = ii + 1
                     end

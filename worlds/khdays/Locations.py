@@ -503,6 +503,7 @@ location_table = {
     "Synthesis: Fire Charm 1": 556200,
     "Synthesis: Fencer's Ring 1": 556100,
     "Hub: LV Doubler 5 1": 516300,
+    "Hub: Panacea 1": 510900,
     "Moogle: Panel Slot 1": 510000,
     "Moogle: Panel Slot 2": 510001,
     "Moogle: Panel Slot 3": 510002,

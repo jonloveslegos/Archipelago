@@ -444,6 +444,7 @@ def set_rules(world: MultiWorld, player: int):
     # set_rule(world.get_location("Mission 6: Reward 4", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(6), player))
     set_rule(world.get_location("Mission 6: Full Clear", player), lambda state: state.days_has_day_access(state, state.days_mission_to_day(6), player))
     set_rule(world.get_location("Hub: LV Doubler 5 1", player), lambda state: state.days_has_day_access(state, 52, player))
+    set_rule(world.get_location("Hub: Panacea 1", player), lambda state: state.days_has_day_access(state, 76, player))
     # add_rule(world.get_location("Mission 9: Reward 4", player), lambda state: state.has("Level Up", player, 2))
     add_rule(world.get_location("Mission 9: Full Clear", player), lambda state: state.has("Level Up", player, 2))
     add_rule(world.get_location("Mission 15: Chest 3", player), lambda state: state.has_any({"Glide 3", "Glide 5"}, player) or (state.has("Air Slide 5", player) and state.has("Air Slide LV+", player, 2)))

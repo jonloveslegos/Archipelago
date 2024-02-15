@@ -293,7 +293,7 @@ async def nds_sync_task(ctx: KHDaysContext):
                 if ctx.char_2 not in ctx.valid_characters:
                     ctx.char_2 = random.choice(tuple(ctx.valid_characters))
             if len(ctx.valid_days) > 0:
-                if ctx.chosen_day_number not in days_to_bits:
+                if ctx.chosen_day_number not in days_to_bits.values():
                     ctx.chosen_day_number = days_to_bits[7]
             if ctx.char_2 == ctx.char_1:
                 if ctx.char_1 == "Xion":
