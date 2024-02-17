@@ -171,6 +171,7 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
         if isinstance(self.ctx, KHDaysContext):
             if day_number in self.ctx.valid_days:
                 self.ctx.chosen_day_number = days_to_bits[int(day_number)]
+                self.ctx.chosen_day = int(day_number)
                 logger.info("Next day will now be day "+day_number)
             else:
                 logger.info("Invalid day, do you have it unlocked?")
@@ -181,7 +182,8 @@ class KHDaysContext(CommonContext):
     items_handling = 0b111  # full remote
     char_1 = "Roxas"
     char_2 = "Xion"
-    chosen_day_number = "000000111FFFFFFF"
+    chosen_day_number = days_to_bits[8]
+    chosen_day = 8
     valid_days = ["8"]
     valid_characters = ["Roxas"]
     connected = "false"
@@ -200,7 +202,8 @@ class KHDaysContext(CommonContext):
         self.awaiting_rom = False
         self.day_requirement = 358
         self.check_locs_count = {}
-        self.chosen_day_number = "000000111FFFFFFF"
+        self.chosen_day_number = days_to_bits[8]
+        self.chosen_day = 8
         self.valid_days = ["8"]
         self.valid_characters = ["Roxas"]
         self.options = {}
@@ -219,8 +222,8 @@ class KHDaysContext(CommonContext):
             self.day_requirement = slot_data["day_requirement"]
             self.connected = "true"
             self.chosen_day_number = days_to_bits[8]
+            self.chosen_day = 8
             self.valid_characters = ["Roxas"]
-            self.chosen_day_number = "000000111FFFFFFF"
             self.options["moogle"] = True
             self.options["chests"] = True
             self.options["synthesis"] = slot_data["randomize_synthesis"]
@@ -289,6 +292,8 @@ def get_payload(ctx: KHDaysContext):
             "char_2": ctx.char_2,
             "connection": ctx.connected,
             "options": ctx.options,
+            "day_chosen": ctx.chosen_day,
+            "days_unlocked": ctx.valid_days,
         }
     )
 

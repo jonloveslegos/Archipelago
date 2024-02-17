@@ -12,11 +12,22 @@ charId2 = 0x0E
 
 start_mission_address = 0x194AE4
 
+cur_mission_address = 0x04C21C
+
 save_counter = 0x195F44
 
 mission_address = {}
 
 day_address_current = "000000111FFFFFFF"
+day_current_chosen = 7
+
+day_unlocked = {}
+
+local i = 1
+while i < 359 do
+    day_unlocked[tostring(i+1)] = 0
+    i = i + 1
+end
 
 mission_address["1"] = 8
 mission_address["2"] = 11
@@ -24,7 +35,26 @@ mission_address["3"] = 14
 mission_address["4"] = 17
 mission_address["5"] = 20
 
-local i = 0
+mission_selected_address1 = 0x1CB45C
+mission_selected_address2 = 0x1CB45E
+
+mission_min_def = {}
+mission_min_atk = {}
+
+mission_atk = 0x04C660
+mission_def = 0x04C664
+
+i = 0
+while i < 93 do
+    mission_min_def[tostring(i+1)] = 7
+    mission_min_atk[tostring(i+1)] = 9
+    i = i + 1
+end
+
+mission_min_def["1"] = 7
+mission_min_atk["1"] = 9
+
+i = 0
 while i < 93 do
     mission_address[tostring(i+1)] = 9 + (3 * i)
     i = i + 1
@@ -1107,6 +1137,15 @@ function processBlock(block)
                 moogleBuyCount[y] = u
             end
         end
+        local unlock_day = block["days_unlocked"]
+        if unlock_day ~= nil then
+            for k, v in pairs(day_unlocked) do
+                day_unlocked[k] = 0
+            end
+            for y, u in pairs(locBlock) do
+                day_unlocked[u] = 1
+            end
+        end
         options = block["options"]
         local char1 = block["char_1"]
         if char1 ~= nil then
@@ -1115,6 +1154,10 @@ function processBlock(block)
         local daynumb = block["day_numb"]
         if daynumb ~= nil then
             day_address_current = daynumb
+        end
+        local daytruenumb = block["day_chosen"]
+        if daytruenumb ~= nil then
+            day_current_chosen = daytruenumb
         end
         local rank = block["rank"]
         if rank ~= nil and isInGame then
@@ -1575,17 +1618,19 @@ function main()
             end
             if mainmemory.read_u8(0x04BD84) == 0xFF then
                 if mainmemory.read_u8(0x1A7F60) == 0x00 then
-                    ii = 1
-                    local towrite = mainmemory.read_u16_le(0x1945CA)
-                    while ii <= 16 do
-                        if day_address_current:sub(ii, ii) == "1" then
-                            towrite = tonumber((bin2hex(replace_str_ind((hex2bin(string.format("%04X", towrite)):gsub(" ","")), ii, "1")):gsub(" ","")), 16)
-                        elseif day_address_current:sub(ii, ii) == "0" then
-                            towrite = tonumber((bin2hex(replace_str_ind((hex2bin(string.format("%04X", towrite)):gsub(" ","")), ii, "0")):gsub(" ","")), 16)
+                    if mainmemory.read_u16_le(0x1945CA) < 358 then
+                        ii = 1
+                        local towrite = mainmemory.read_u16_le(0x1945CA)
+                        while ii <= 16 do
+                            if day_address_current:sub(ii, ii) == "1" then
+                                towrite = tonumber((bin2hex(replace_str_ind((hex2bin(string.format("%04X", towrite)):gsub(" ","")), ii, "1")):gsub(" ","")), 16)
+                            elseif day_address_current:sub(ii, ii) == "0" then
+                                towrite = tonumber((bin2hex(replace_str_ind((hex2bin(string.format("%04X", towrite)):gsub(" ","")), ii, "0")):gsub(" ","")), 16)
+                            end
+                            ii = ii + 1
                         end
-                        ii = ii + 1
+                        mainmemory.write_u16_le(0x1945CA, towrite)
                     end
-                    mainmemory.write_u16_le(0x1945CA, towrite)
                 end
             end
             if mainmemory.read_u8(0x04BD84) == 0x02 then
@@ -1597,6 +1642,22 @@ function main()
                 mainmemory.write_u8(0x04C75F, charId2)
             else
                 mainmemory.write_u8(0x04C75F, 0x00)
+            end
+            if mainmemory.read_u8(0x04BD84) == 0x02 then
+                if mainmemory.read_u16_le(mission_atk) < mission_min_atk[tostring(mainmemory.read_u8(cur_mission_address))] then
+                    mainmemory.write_u16_le(mission_atk, mission_min_atk[tostring(mainmemory.read_u8(cur_mission_address))])
+                end
+                if mainmemory.read_u16_le(mission_def) < mission_min_def[tostring(mainmemory.read_u8(cur_mission_address))] then
+                    mainmemory.write_u16_le(mission_def, mission_min_def[tostring(mainmemory.read_u8(cur_mission_address))])
+                end
+            end
+            if mainmemory.read_u8(0x04BD84) == 0x80 and mainmemory.read_u8(0x1A7F60) == 0x08 then
+                if mainmemory.read_u8(mission_selected_address1) > 0 then
+                    if day_unlocked[tostring(mainmemory.read_u8(mission_selected_address1))] == 0 then
+                        mainmemory.write_u8(mission_selected_address1, day_current_chosen)
+                        mainmemory.write_u8(mission_selected_address2, day_current_chosen)
+                    end
+                end
             end
         elseif (curstate == STATE_UNINITIALIZED) then
             if  (frame % 60 == 0) then

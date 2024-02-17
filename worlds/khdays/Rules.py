@@ -17,10 +17,14 @@ from ..AutoWorld import LogicMixin
 
 
 def days_mission_to_day(mission_number: int):
+    if mission_number >= 93:
+        return days[92-1]
     return days[mission_number-1]
 
 
 def days_day_to_mission(day_number_2: int):
+    if day_number_2 >= 358:
+        return days_to_index[357]+1
     return days_to_index[day_number_2]+1
 
 
@@ -190,6 +194,68 @@ class KHDaysLogic(LogicMixin):
             obtainable += 1
         return obtainable
 
+    def days_levels_reachable(self, state: CollectionState, player: int):
+        has = state.count("Level Up", player)
+        reached = 1
+        if state.has("LV Quadrupler 3C", player):
+            for i in range(2):
+                if has > 0:
+                    has -= 1
+                    reached += 4
+        if state.has("LV Quadrupler 3B", player):
+            for i in range(2):
+                if has > 0:
+                    has -= 1
+                    reached += 4
+        if state.has("LV Quadrupler 3", player):
+            for i in range(2):
+                if has > 0:
+                    has -= 1
+                    reached += 4
+        if state.has("LV Tripler 4C", player):
+            for i in range(3):
+                if has > 0:
+                    has -= 1
+                    reached += 3
+        if state.has("LV Tripler 4B", player):
+            for i in range(3):
+                if has > 0:
+                    has -= 1
+                    reached += 3
+        if state.has("LV Tripler 4", player):
+            for i in range(3):
+                if has > 0:
+                    has -= 1
+                    reached += 3
+        if state.has("LV Doubler 6D", player):
+            for i in range(5):
+                if has > 0:
+                    has -= 1
+                    reached += 2
+        if state.has("LV Doubler 6C", player):
+            for i in range(5):
+                if has > 0:
+                    has -= 1
+                    reached += 2
+        if state.has("LV Doubler 6B", player):
+            for i in range(5):
+                if has > 0:
+                    has -= 1
+                    reached += 2
+        if state.has("LV Doubler 6", player):
+            for i in range(5):
+                if has > 0:
+                    has -= 1
+                    reached += 2
+        if state.has("LV Doubler 5", player):
+            for i in range(4):
+                if has > 0:
+                    has -= 1
+                    reached += 2
+        reached += has
+        has = 0
+        return reached
+
     def days_crowns_obtainable(self, state: CollectionState, player: int):
         obtainable = 0
         if self.days_has_day_access(state, days_mission_to_day(93), player):
@@ -212,6 +278,10 @@ class KHDaysLogic(LogicMixin):
 
     def day_logic(self, state: CollectionState, true_day: int, player: int):
         can_do = True
+        if days_day_to_mission(true_day) >= 11:
+            can_do = can_do and self.days_levels_reachable(state, player) >= math.floor((days_day_to_mission(true_day)-11) / 92 * 51)
+        if days_day_to_mission(true_day) >= 28:
+            can_do = can_do and state.has("Panel Slot", player, math.floor((days_day_to_mission(true_day)-28) / 92 * 30))
         if true_day == 193:
             can_do = can_do and state.has_any({"Glide 3", "Glide 5"}, player)
         if true_day == 11:
@@ -244,7 +314,7 @@ class KHDaysLogic(LogicMixin):
 def set_rules(world: MultiWorld, options: KHDaysOptions, player: int):
     for i in world.get_locations(player):
         if i.name.startswith("Mission "):
-            set_rule(i, lambda state, i=i: state.days_has_day_access(state, max(15, days_mission_to_day(int(i.name.removeprefix("Mission ").split(":")[0]))), player))
+            set_rule(i, lambda state, i=i: state.days_has_day_access(state, days_mission_to_day(int(i.name.removeprefix("Mission ").split(":")[0])), player) and state.days_has_day_access(state, max(15, days_mission_to_day(int(i.name.removeprefix("Mission ").split(":")[0]))), player))
         else:
             set_rule(i, lambda state, i=i: state.days_has_day_access(state, 15, player))
 

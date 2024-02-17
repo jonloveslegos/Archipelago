@@ -149,7 +149,6 @@ class KHDaysWorld(World):
                                 or loc_name.__contains__("Level Up")
                                 or self.options.RandomizeHubGifts))
                                ])
-        print(len(item_pool))
         for i in range(len(self.location_names) - len(item_pool) - len(exclusion_pool)):
             item_pool += [self.create_item(self.get_filler_item_name())]
         self.multiworld.itempool += item_pool
