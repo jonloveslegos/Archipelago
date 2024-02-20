@@ -235,6 +235,9 @@ char_ids["Dual-Wield_Roxas"] = 0x13
 itemIds = {}
 
 options = {}
+options["synthesis"] = true
+options["levels"] = true
+options["gifts"] = true
 
 synthItems = {}
 
@@ -1421,17 +1424,13 @@ function main()
                                 end
                             end
                             print("\"Moogle: "..moogleShopSlotsItemsNames[_].." "..tostring(es+1).."\": "..tostring(((es)*1000)+510000+_)..",")
-                            if options["moogle"] then
-                                merged[tostring(e)] = ((es)*1000)+510000+_
-                                already_obtained = merged
-                                sentIds[tostring(((es)*1000)+510000+_)] = "done"
-                                for itemName, __ in pairs(itemIds) do
-                                    if itemName == moogleShopSlotsItemsNames[_] then
-                                        mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
-                                    end
+                            merged[tostring(e)] = ((es)*1000)+510000+_
+                            already_obtained = merged
+                            sentIds[tostring(((es)*1000)+510000+_)] = "done"
+                            for itemName, __ in pairs(itemIds) do
+                                if itemName == moogleShopSlotsItemsNames[_] then
+                                    mainmemory.write_u8(itemIds[itemName], mainmemory.read_u8(itemIds[itemName])-1)
                                 end
-                            else
-                                hasCount[itemName] = hasCount[itemName] + 1
                             end
                         end
                         es = es + 1
@@ -1459,32 +1458,30 @@ function main()
             if StateOKForMainLoop() then
                 local hex_string = ""
                 local tempbin = ""
-                if options["chests"] then
-                    hex_string = read_chest_values()
-                    tempbin = hex2bin(hex_string)
-                    tempbin = (tempbin:gsub(" ",""))
-                    for _, i in pairs(chestIds) do
-                        if tempbin:sub(i, i) == "1" then
-                            if sentIds[tostring(500000+(tonumber(_)))] == nil then
-                                --print(tostring(_).." = 0x"..tostring(string.format("%X", math.floor(chest_earliest_address+((i-1)/8)))))
-                                local merged = {}
-                                local e = 0
-                                for k, v in pairs(already_obtained) do
-                                    if countEntries(merged)[v] == nil then
+                hex_string = read_chest_values()
+                tempbin = hex2bin(hex_string)
+                tempbin = (tempbin:gsub(" ",""))
+                for _, i in pairs(chestIds) do
+                    if tempbin:sub(i, i) == "1" then
+                        if sentIds[tostring(500000+(tonumber(_)))] == nil then
+                            --print(tostring(_).." = 0x"..tostring(string.format("%X", math.floor(chest_earliest_address+((i-1)/8)))))
+                            local merged = {}
+                            local e = 0
+                            for k, v in pairs(already_obtained) do
+                                if countEntries(merged)[v] == nil then
+                                    merged[tostring(e)] = v
+                                    e = e + 1
+                                else
+                                    if countEntries(merged)[v] <= 0 then
                                         merged[tostring(e)] = v
                                         e = e + 1
-                                    else
-                                        if countEntries(merged)[v] <= 0 then
-                                            merged[tostring(e)] = v
-                                            e = e + 1
-                                        end
                                     end
                                 end
-                                merged[tostring(e)] = 500000+(tonumber(_))
-                                --print("\""..tostring(_).."\": "..tostring(500000+(tonumber(_)))..",")
-                                already_obtained = merged
-                                sentIds[tostring(500000+(tonumber(_)))] = "done"
                             end
+                            merged[tostring(e)] = 500000+(tonumber(_))
+                            --print("\""..tostring(_).."\": "..tostring(500000+(tonumber(_)))..",")
+                            already_obtained = merged
+                            sentIds[tostring(500000+(tonumber(_)))] = "done"
                         end
                     end
                 end
@@ -1586,7 +1583,7 @@ function main()
                         if not tableHasIndex(already_chests, mainmemory.read_u16_le(b+2)+1) then
                             already_chests[mainmemory.read_u16_le(b+2)+1] = 1
                             if itemName ~= nil then
-                                if chestCount[mainmemory.read_u16_le(0x04C21C)]-mainmemory.read_u8(0x1A818B) >= mainmemory.read_u16_le(b+2)+1 and options["chests"] then
+                                if chestCount[mainmemory.read_u16_le(0x04C21C)]-mainmemory.read_u8(0x1A818B) >= mainmemory.read_u16_le(b+2)+1 then
                                     mainmemory.write_u16_le(b, 0x0000)
                                     --print("(Obtained item from chest, please report if you got this item from a drop. Removing item from inventory.)")
                                 else
@@ -1618,7 +1615,19 @@ function main()
             end
             if mainmemory.read_u8(0x04BD84) == 0xFF then
                 if mainmemory.read_u8(0x1A7F60) == 0x00 then
-                    if mainmemory.read_u16_le(0x1945CA) < 358 then
+                    ii = 1
+                    local to_read = mainmemory.read_u16_le(0x1945CA)
+                    day_address_358 = "101100110FFFFFFF"
+                    while ii <= 16 do
+                        if day_address_358:sub(ii, ii) == "F" then
+                            to_read = tonumber((bin2hex(replace_str_ind((hex2bin(string.format("%04X", to_read)):gsub(" ","")), ii, "0")):gsub(" ","")), 16)
+                        end
+                        ii = ii + 1
+                    end
+                    day_address_358 = tonumber((bin2hex("1011001100000000"):gsub(" ","")), 16)
+                    print(to_read)
+                    print(day_address_358)
+                    if to_read < day_address_358 then
                         ii = 1
                         local towrite = mainmemory.read_u16_le(0x1945CA)
                         while ii <= 16 do

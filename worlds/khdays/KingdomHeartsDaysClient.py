@@ -207,6 +207,9 @@ class KHDaysContext(CommonContext):
         self.valid_days = ["8"]
         self.valid_characters = ["Roxas"]
         self.options = {}
+        self.options["synthesis"] = True
+        self.options["levels"] = True
+        self.options["gifts"] = True
         for i in days:
             print(days_to_bits[i])
 
@@ -224,8 +227,6 @@ class KHDaysContext(CommonContext):
             self.chosen_day_number = days_to_bits[8]
             self.chosen_day = 8
             self.valid_characters = ["Roxas"]
-            self.options["moogle"] = True
-            self.options["chests"] = True
             self.options["synthesis"] = slot_data["randomize_synthesis"]
             self.options["levels"] = slot_data["randomize_level_rewards"]
             self.options["gifts"] = slot_data["randomize_hub_gifts"]
