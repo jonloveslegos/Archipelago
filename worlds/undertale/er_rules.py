@@ -445,18 +445,6 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                      lambda state, i=i: state.has("Hotland Spare", player,
                                                   math.ceil((i + 1) / world.options.spare_sanity_pack_size.value)) and (
                                             state.can_reach("Hotland Grind Rooms", "Region", player)))
-    set_rule(multiworld.get_location("Diary 1", player),
-             lambda state: state.has("Mystery Key", player, 1))
-    set_rule(multiworld.get_location("Diary 2", player),
-             lambda state: state.has("Mystery Key", player, 1))
-    set_rule(multiworld.get_location("Diary 3", player),
-             lambda state: state.has("Mystery Key", player, 1))
-    set_rule(multiworld.get_location("Diary 4", player),
-             lambda state: state.has("Mystery Key", player, 1))
-    set_rule(multiworld.get_location("Diary 5", player),
-             lambda state: state.has("Mystery Key", player, 1))
-    set_rule(multiworld.get_location("Diary 6", player),
-             lambda state: state.has("Mystery Key", player, 1))
     if _undertale_is_route(world, 1):
         set_rule(multiworld.get_location("Undyne Date (Event)", player),
                  lambda state: state.has("Papyrus Date (Event)", player) and state.has("Undyne Fight (Event)", player))
@@ -466,43 +454,43 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                      "Undyne Date (Event)", player))
         set_rule(multiworld.get_location("Undyne Cook-off", player),
                  lambda state: state.has("Papyrus Date (Event)", player) and state.has("Undyne Fight (Event)", player))
-        set_rule(multiworld.get_location("True Lab Key", player),
+        set_rule(multiworld.get_location("Alphys Date", player),
                  lambda state: state.has("Alphys Date (Event)", player))
-        set_rule(multiworld.get_location("Donut Sale", player),
+        set_rule(multiworld.get_location("Right Spider Bake Sale", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
-        set_rule(multiworld.get_location("Cider Sale", player),
+        set_rule(multiworld.get_location("Left Spider Bake Sale", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
-        set_rule(multiworld.get_location("Dog Sale 1", player),
+        set_rule(multiworld.get_location("Sans Hot Dog Sale 1", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
-        set_rule(multiworld.get_location("Cat Sale", player),
+        set_rule(multiworld.get_location("Sans Hot Cat Sale", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
-        set_rule(multiworld.get_location("Dog Sale 2", player),
+        set_rule(multiworld.get_location("Sans Hot Dog Sale 2", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
-        set_rule(multiworld.get_location("Dog Sale 3", player),
+        set_rule(multiworld.get_location("Sans Hot Dog Sale 3", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
-        set_rule(multiworld.get_location("Dog Sale 4", player),
+        set_rule(multiworld.get_location("Sans Hot Dog Sale 4", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
-        set_rule(multiworld.get_location("Hush Trade", player),
+        set_rule(multiworld.get_location("Hotel Door Hush Puppy", player),
                  lambda state: state.has("Hot Dog...?", player, 1))
-        set_rule(multiworld.get_location("Letter Quest", player),
+        set_rule(multiworld.get_location("Undyne Letter", player),
                  lambda state: state.can_reach("room_fire_core_final", "Region", player) and state.has("Undyne Date (Event)",
                                                                                                        player))
     if (not _undertale_is_route(world, 2)) or _undertale_is_route(world, 3):
-        set_rule(multiworld.get_location("Nicecream Punch Card", player),
+        set_rule(multiworld.get_location("Nicecream Punch Card Trade", player),
                  lambda state: state.has("Punch Card", player, 3))
         set_rule(multiworld.get_location("Nicecream Snowdin", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
@@ -512,7 +500,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
-        set_rule(multiworld.get_location("Card Reward", player),
+        set_rule(multiworld.get_location("Punch Card", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                          "Region",
                                                                                                          player))
@@ -596,59 +584,59 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                            (not bool(world.options.kill_sanity.value) or not _undertale_is_route(world, 2) or
                             state.has("Hotland Population Pack", player,
                                       math.ceil(40 / world.options.kill_sanity_pack_size.value))))
-    set_rule(multiworld.get_location("Bunny 1", player),
+    set_rule(multiworld.get_location("Snowdin Shop 1", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Bunny 2", player),
+    set_rule(multiworld.get_location("Snowdin Shop 2", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Bunny 3", player),
+    set_rule(multiworld.get_location("Snowdin Shop 3", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Bunny 4", player),
+    set_rule(multiworld.get_location("Snowdin Shop 4", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Gerson 1", player),
+    set_rule(multiworld.get_location("Gerson Shop 1", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Gerson 2", player),
+    set_rule(multiworld.get_location("Gerson Shop 2", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Gerson 3", player),
+    set_rule(multiworld.get_location("Gerson Shop 3", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Gerson 4", player),
+    set_rule(multiworld.get_location("Gerson Shop 4", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("TemmieShop 1", player),
+    set_rule(multiworld.get_location("Temmie Shop 1", player),
              lambda state: state.can_reach("room_water_piano", "Region", player))
-    set_rule(multiworld.get_location("TemmieShop 2", player),
+    set_rule(multiworld.get_location("Temmie Shop 2", player),
              lambda state: state.can_reach("room_water_piano", "Region", player))
-    set_rule(multiworld.get_location("TemmieShop 3", player),
+    set_rule(multiworld.get_location("Temmie Shop 3", player),
              lambda state: state.can_reach("room_water_piano", "Region", player))
-    set_rule(multiworld.get_location("TemmieShop 4", player),
+    set_rule(multiworld.get_location("Temmie Shop 4", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.has("1000G", player, 2))
-    set_rule(multiworld.get_location("Bratty Catty 1", player),
+    set_rule(multiworld.get_location("Bratty Catty Shop 1", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Bratty Catty 2", player),
+    set_rule(multiworld.get_location("Bratty Catty Shop 2", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Bratty Catty 3", player),
+    set_rule(multiworld.get_location("Bratty Catty Shop 3", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Bratty Catty 4", player),
+    set_rule(multiworld.get_location("Bratty Catty Shop 4", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Burgerpants 1", player),
+    set_rule(multiworld.get_location("Burgerpants Shop 1", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Burgerpants 2", player),
+    set_rule(multiworld.get_location("Burgerpants Shop 2", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Burgerpants 3", player),
+    set_rule(multiworld.get_location("Burgerpants Shop 3", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
-    set_rule(multiworld.get_location("Burgerpants 4", player),
+    set_rule(multiworld.get_location("Burgerpants Shop 4", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))

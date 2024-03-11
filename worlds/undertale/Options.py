@@ -26,6 +26,7 @@ class StartingArea(Choice):
     option_waterfall = 2
     option_hotland = 3
     option_all = 4
+    option_none = 5
     default = 0
 
 
@@ -148,7 +149,7 @@ class SpareSanityPackSize(Range):
 
 
 class EntranceRando(Toggle):
-    """Randomize the connections between scenes. You also always start with the Ruins, Snowdin, Waterfall, Hotland, and Core keys."""
+    """Randomize the connections between scenes. You also will not start with any keys."""
     display_name = "Entrance Rando"
 
 
