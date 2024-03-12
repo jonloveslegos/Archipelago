@@ -206,7 +206,7 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Lilygear Lake: Laser Switch", player), lambda state: _fnaf_world_can_access(state, player, "Lilygear Lake") and state.has("Key", player))
     set_rule(world.get_location("Deep-Metal Mine: Laser Switch", player), lambda state: _fnaf_world_can_access(state, player, "Blacktomb Yard") and state.has("Key", player))
 
-    for i in range(3):
+    for i in range(world.worlds[player].options.fazcoin_chests.value):
         set_rule(world.get_location("Fazbear Hills: Fazcoin Chest " + str(i + 1), player), lambda state: True)
         set_rule(world.get_location("Choppy's Woods: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, "Choppy's Woods"))
         set_rule(world.get_location("Dusting Fields: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, "Dusting Fields"))

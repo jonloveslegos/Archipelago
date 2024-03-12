@@ -176,7 +176,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                         f.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
         path = os.path.join(ctx.save_game_folder, "fnafwAP5")
         while True:
             try:
@@ -191,7 +191,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                     f.close()
                 break
             except PermissionError:
-                continue
+                pass
         path = os.path.join(ctx.save_game_folder, "fnafwAPSCOUT5")
         while True:
             try:
@@ -200,7 +200,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                     f.close()
                 break
             except PermissionError:
-                continue
+                pass
     elif cmd == "LocationInfo":
         for loc in arguments["locations"]:
             while True:
@@ -215,7 +215,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                         file.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
     elif cmd == 'ReceivedItems':
         start_index = arguments["index"]
 
@@ -283,7 +283,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                                 file.close()
                             break
                         except PermissionError:
-                            continue
+                            pass
                     lines_to_simplify = replacement.splitlines()
                     temp_lines = []
                     if lines_to_simplify.count("[fnafw]") <= 0:
@@ -299,7 +299,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                                 f.close()
                             break
                         except PermissionError:
-                            continue
+                            pass
                     while True:
                         try:
                             with open(os.path.join(ctx.save_game_folder, "fnafwAPTokens5"), 'r+') as f:
@@ -323,7 +323,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                                 file.close()
                             break
                         except PermissionError:
-                            continue
+                            pass
                     lines_to_simplify = replacement.splitlines()
                     temp_lines = []
                     if lines_to_simplify.count("[fnafw]") <= 0:
@@ -339,7 +339,7 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                                 f.close()
                             break
                         except PermissionError:
-                            continue
+                            pass
                     ctx.items_received.append(NetworkItem(*item))
         ctx.watcher_event.set()
 
@@ -375,7 +375,7 @@ async def game_watcher(ctx: FNaFWContext):
                         file.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
             lines_to_simplify = replacement.splitlines()
             temp_lines = []
             if lines_to_simplify.count("[fnafw]") <= 0:
@@ -391,7 +391,7 @@ async def game_watcher(ctx: FNaFWContext):
                         f.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
         sending = []
         hinting = []
         victory = False
@@ -404,7 +404,7 @@ async def game_watcher(ctx: FNaFWContext):
                         f.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
         if os.path.exists(os.path.join(ctx.save_game_folder, "fnafwDEATH5")):
             while True:
                 try:
@@ -415,7 +415,7 @@ async def game_watcher(ctx: FNaFWContext):
                         f.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
         if os.path.exists(path):
             while True:
                 try:
@@ -434,7 +434,7 @@ async def game_watcher(ctx: FNaFWContext):
                         f.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
         path = os.path.join(ctx.save_game_folder, "fnafwAP5")
         if os.path.exists(path):
             while True:
@@ -446,7 +446,7 @@ async def game_watcher(ctx: FNaFWContext):
                         f.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
         if os.path.exists(os.path.join(ctx.save_game_folder, "fnafwDEATH5")):
             while True:
                 try:
@@ -455,7 +455,7 @@ async def game_watcher(ctx: FNaFWContext):
                         f.close()
                     break
                 except PermissionError:
-                    continue
+                    pass
         if victory:
             os.remove(path)
         ctx.locations_checked = sending
