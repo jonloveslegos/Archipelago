@@ -176,8 +176,12 @@ def validate_conditions(
         elif type == COND_FN:
             if condition not in {
                 "npc",
-                "calamity",
                 "pickaxe",
+                "difficulty",
+                "station",
+                "rando_pick",
+                "rando_hammer",
+                "rando_crystal",
                 "hammer",
                 "mech_boss",
                 "minions",
@@ -251,8 +255,6 @@ def read_data() -> (
         ],
         # Rule to rule index
         Dict[str, int],
-        # Label to rewards
-        Dict[str, List[str]],
         # Reward to flags
         Dict[str, Set[str]],
         # Item name to ID
@@ -587,9 +589,6 @@ def read_data() -> (
     _, mech_boss_items = goals[goal_indices["mechanical_bosses"]]
     mech_boss_items.update(mech_boss_loc)
 
-    _, final_boss_items = goals[goal_indices["calamity_final_bosses"]]
-    final_boss_items.update(final_boss_loc)
-
     for name, _, _, conditions in rules:
         validate_conditions(name, rule_indices, conditions)
 
@@ -612,78 +611,6 @@ def read_data() -> (
     # Will be randomized via `slot_randoms` / `self.multiworld.random`
     label = None
     labels = {}
-    rewards = {}
-
-    for line in pkgutil.get_data(__name__, "Rewards.dsv").decode().splitlines():
-        reward = None
-        flags = set()
-
-        pos = RWD_NAME
-        for char, id, token in tokens(line):
-            if pos == RWD_NAME:
-                if id == IDENT:
-                    reward = f"Reward: {token}"
-                    pos = RWD_NAME_SEMI
-                elif id == HASH:
-                    pos = RWD_LABEL
-                else:
-                    unexpected(line, char, id, token, pos, RWD_POS_FMT, "Rewards.dsv")
-            elif pos == RWD_NAME_SEMI:
-                if id == SEMI:
-                    pos = RWD_FLAG
-                else:
-                    unexpected(line, char, id, token, pos, RWD_POS_FMT, "Rewards.dsv")
-            elif pos == RWD_FLAG:
-                if id == IDENT:
-                    if token in flags:
-                        raise Exception(
-                            f"set flag `{token}` at {line + 1}:{char + 1} that was already set"
-                        )
-                    flags.add(token)
-                    pos = RWD_FLAG_SEMI
-                else:
-                    unexpected(line, char, id, token, pos, RWD_POS_FMT, "Rewards.dsv")
-            elif pos == RWD_FLAG_SEMI:
-                if id == SEMI:
-                    pos = RWD_END
-                else:
-                    unexpected(line, char, id, token, pos, RWD_POS_FMT, "Rewards.dsv")
-            elif pos == RWD_END:
-                unexpected(line, char, id, token, pos, RWD_POS_FMT, "Rewards.dsv")
-            elif pos == RWD_LABEL:
-                if id == IDENT:
-                    label = token
-                    if label in labels:
-                        raise Exception(
-                            f"started label `{label}` at {line + 1}:{char + 1} that was already used"
-                        )
-                    labels[label] = []
-                    pos = RWD_END
-                else:
-                    unexpected(line, char, id, token, pos, RWD_POS_FMT, "Rewards.dsv")
-
-        if pos != RWD_NAME and pos != RWD_FLAG and pos != RWD_END:
-            unexpected(line, char + 1, END_OF_LINE, None, pos)
-
-        if reward:
-            if reward in rewards:
-                raise Exception(
-                    f"reward `{reward}` on line `{line + 1}` shadows a previous reward"
-                )
-            rewards[reward] = flags
-
-            if not label:
-                raise Exception(
-                    f"reward `{reward}` on line `{line + 1}` is not labeled"
-                )
-            labels[label].append(reward)
-
-            if reward in item_name_to_id:
-                raise Exception(
-                    f"item `{reward}` on line `{line + 1}` shadows a previous item"
-                )
-            item_name_to_id[reward] = next_id
-            next_id += 1
 
     item_name_to_id["Reward: Coins"] = next_id
     item_name_to_id["Victory"] = next_id + 1
@@ -703,7 +630,6 @@ def read_data() -> (
         rules,
         rule_indices,
         labels,
-        rewards,
         item_name_to_id,
         location_name_to_id,
         npcs,
@@ -722,7 +648,6 @@ def read_data() -> (
     rules,
     rule_indices,
     labels,
-    rewards,
     item_name_to_id,
     location_name_to_id,
     npcs,

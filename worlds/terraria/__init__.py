@@ -10,7 +10,6 @@ from .Checks import (
     rules,
     rule_indices,
     labels,
-    rewards,
     item_name_to_id,
     location_name_to_id,
     COND_ITEM,
@@ -59,9 +58,6 @@ class TerrariaWorld(World):
     item_name_to_id = item_name_to_id
     location_name_to_id = location_name_to_id
 
-    # Turn into an option when calamity is supported in the mod
-    calamity = False
-
     ter_items: List[str]
     ter_locations: List[str]
 
@@ -84,12 +80,15 @@ class TerrariaWorld(World):
         locations = []
         for rule, flags, _, _ in rules[:goal]:
             if (
-                (not self.calamity and "Calamity" in flags)
+                (not bool(self.multiworld.randomize_crafting_stations[self.player]) and "Station" in flags)
+                or (not bool(self.multiworld.randomize_pickaxes[self.player]) and "Rando_Pick" in flags)
+                or (not bool(self.multiworld.randomize_hammers[self.player]) and "Rando_Hammer" in flags)
+                or (not bool(self.multiworld.randomize_crystals[self.player]) and "Rando_Crystal" in flags)
                 or (achievements < 1 and "Achievement" in flags)
                 or (achievements < 2 and "Grindy" in flags)
                 or (achievements < 3 and "Fishing" in flags)
                 or (
-                    rule == "Zenith" and self.multiworld.goal[self.player].value != 11
+                    rule == "Zenith" and self.multiworld.goal[self.player].value != 6
                 )  # Bad hardcoding
             ):
                 continue
@@ -108,7 +107,13 @@ class TerrariaWorld(World):
         item_count = 0
         items = []
         for rule, flags, _, _ in rules[:goal]:
-            if not self.calamity and "Calamity" in flags:
+            if not bool(self.multiworld.randomize_crafting_stations[self.player]) and "Station" in flags:
+                continue
+            if not bool(self.multiworld.randomize_pickaxes[self.player]) and "Rando_Pick" in flags:
+                continue
+            if not bool(self.multiworld.randomize_hammers[self.player]) and "Rando_Hammer" in flags:
+                continue
+            if not bool(self.multiworld.randomize_crystals[self.player]) and "Rando_Crystal" in flags:
                 continue
             if "Item" in flags:
                 # Item
@@ -122,26 +127,6 @@ class TerrariaWorld(World):
             ):
                 # Event
                 items.append(rule)
-
-        extra_checks = self.multiworld.fill_extra_checks_with[self.player].value
-        ordered_rewards = [
-            reward
-            for reward in labels["ordered"]
-            if self.calamity or "Calamity" not in rewards[reward]
-        ]
-        while extra_checks == 1 and item_count < location_count and ordered_rewards:
-            items.append(ordered_rewards.pop(0))
-            item_count += 1
-
-        random_rewards = [
-            reward
-            for reward in labels["random"]
-            if self.calamity or "Calamity" not in rewards[reward]
-        ]
-        self.multiworld.random.shuffle(random_rewards)
-        while extra_checks == 1 and item_count < location_count and random_rewards:
-            items.append(random_rewards.pop(0))
-            item_count += 1
 
         while item_count < location_count:
             items.append("Reward: Coins")
@@ -238,8 +223,22 @@ class TerrariaWorld(World):
                             return sign
 
                 return not sign
-            elif condition == "calamity":
-                return sign == self.calamity
+            elif condition == "station":
+                return sign == bool(self.multiworld.randomize_crafting_stations[self.player])
+            elif condition == "rando_pick":
+                return sign == bool(self.multiworld.randomize_pickaxes[self.player])
+            elif condition == "rando_hammer":
+                return sign == bool(self.multiworld.randomize_hammers[self.player])
+            elif condition == "rando_crystal":
+                return sign == bool(self.multiworld.randomize_crystals[self.player])
+            elif condition == "difficulty":
+                if type(arg) is not int:
+                    raise Exception("@difficulty requires an integer argument")
+
+                if self.multiworld.fight_difficulty[self.player].value == arg:
+                    return sign
+
+                return not sign
             elif condition == "pickaxe":
                 if type(arg) is not int:
                     raise Exception("@pickaxe requires an integer argument")
@@ -340,4 +339,9 @@ class TerrariaWorld(World):
             "goal": list(self.goal_locations),
             "achievements": self.multiworld.achievements[self.player].value,
             "deathlink": bool(self.multiworld.death_link[self.player]),
+            "fight_difficulty": self.multiworld.fight_difficulty[self.player].value,
+            "randomize_crafting_stations": bool(self.multiworld.randomize_crafting_stations[self.player]),
+            "randomize_pickaxes": bool(self.multiworld.randomize_pickaxes[self.player]),
+            "randomize_hammers": bool(self.multiworld.randomize_hammers[self.player]),
+            "randomize_crystals": bool(self.multiworld.randomize_crystals[self.player]),
         }

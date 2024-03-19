@@ -7,19 +7,12 @@ class Goal(Choice):
 
     display_name = "Goal"
     option_mechanical_bosses = 0
-    # option_calamitas_clone = 1
-    option_plantera = 2
-    option_golem = 3
-    option_empress_of_light = 4
-    option_lunatic_cultist = 5
-    # option_astrum_deus = 6
-    option_moon_lord = 7
-    # option_providence_the_profaned_goddess = 8
-    # option_devourer_of_gods = 9
-    # option_yharon_dragon_of_rebirth = 10
-    option_zenith = 11
-    # option_calamity_final_bosses = 12
-    # option_adult_eidolon_wyrm = 13
+    option_plantera = 1
+    option_golem = 2
+    option_empress_of_light = 3
+    option_lunatic_cultist = 4
+    option_moon_lord = 5
+    option_zenith = 6
     default = 0
 
 
@@ -37,21 +30,62 @@ class Achievements(Choice):
     default = 1
 
 
-class FillExtraChecksWith(Choice):
+class FightDifficulty(Choice):
     """
-    Applies if you have achievements enabled. "Useful Items" helps to make the early game less grindy.
-    Items are rewarded to all players in your Terraria world.
+    Changes difficulty of fight requirements.
     """
 
-    display_name = "Fill Extra Checks With"
-    option_coins = 0
-    option_useful_items = 1
-    default = 1
+    display_name = "Fight Difficulty"
+    option_easy = 0
+    option_medium = 1
+    option_hard = 2
+    option_insane = 3
+    default = 0
+
+
+class RandomizeCraftingStations(Toggle):
+    """
+    Makes you require items to use each crafting station.
+    """
+
+    display_name = "Randomize Crafting Stations"
+    default = 0
+
+
+class RandomizePickaxes(Toggle):
+    """
+    Makes you require items to use each tier of pickaxe.
+    """
+
+    display_name = "Randomize Pickaxes"
+    default = 0
+
+
+class RandomizeHammers(Toggle):
+    """
+    Makes you require items to use each tier of hammer.
+    """
+
+    display_name = "Randomize Hammers"
+    default = 0
+
+
+class RandomizeCrystals(Toggle):
+    """
+    Makes you require items to use any Life/Mana Crystals and Life Fruit.
+    """
+
+    display_name = "Randomize Crystals"
+    default = 0
 
 
 options: typing.Dict[str, type(Option)] = {  # type: ignore
     "goal": Goal,
     "achievements": Achievements,
-    "fill_extra_checks_with": FillExtraChecksWith,
     "death_link": DeathLink,
+    "fight_difficulty": FightDifficulty,
+    "randomize_crafting_stations": RandomizeCraftingStations,
+    "randomize_pickaxes": RandomizePickaxes,
+    "randomize_hammers": RandomizeHammers,
+    "randomize_crystals": RandomizeCrystals,
 }
