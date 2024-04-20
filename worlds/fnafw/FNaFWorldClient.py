@@ -435,7 +435,7 @@ async def game_watcher(ctx: FNaFWContext):
                     break
                 except PermissionError:
                     pass
-        path = os.path.join(ctx.save_game_folder, "fnafwAP5")
+        path = os.path.join(ctx.save_game_folder, "fnafw5")
         if os.path.exists(path):
             while True:
                 try:
