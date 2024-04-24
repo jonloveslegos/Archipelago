@@ -1,17 +1,13 @@
-import os
-
-import BaseClasses
 from .Items import *
 from .Locations import FNaFWLocations, location_table, exclusion_table, location_groups
 from .Regions import FNaFW_regions, link_FNaFW_structures
 from .Rules import set_rules, set_completion_rules
 
-from BaseClasses import Region, Entrance, Item, Tutorial
+from BaseClasses import Region, Entrance, Item
 from .Options import FNaFWOptions
 from worlds.AutoWorld import World, WebWorld
-from worlds.LauncherComponents import Component, components, Type
+from worlds.LauncherComponents import Component, components
 from multiprocessing import Process
-import math
 import typing
 
 
@@ -231,11 +227,11 @@ class FNaFWWorld(World):
             spoiler_handle.write(f"{self.all_bytes.index(item) + 1}={item}, ")
 
     def set_rules(self):
-        set_rules(self.multiworld, self.player)
-        set_completion_rules(self.multiworld, self.player)
+        set_rules(self.multiworld, self.player, self)
+        set_completion_rules(self.multiworld, self.player, self)
 
     def create_regions(self):
-        def FNaFWRegion(region_name: str, exits=[]):
+        def FNaFWRegion(region_name: str, exits: list):
             ret = Region(region_name, self.player, self.multiworld)
             ret.locations = [FNaFWLocations(self.player, loc_name, loc_data.id, ret)
                              for loc_name, loc_data in location_table.items()

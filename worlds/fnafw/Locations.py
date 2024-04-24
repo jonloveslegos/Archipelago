@@ -1,6 +1,5 @@
 from BaseClasses import Location
 from typing import NamedTuple, Optional, Dict, Set
-from .Items import item_table
 
 
 class LocData(NamedTuple):

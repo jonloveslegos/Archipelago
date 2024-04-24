@@ -1,5 +1,4 @@
-import typing
-from Options import Option, Range, Toggle, Choice, PerGameCommonOptions
+from Options import Range, Toggle, Choice, PerGameCommonOptions
 from dataclasses import dataclass
 
 
