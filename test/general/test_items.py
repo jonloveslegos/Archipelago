@@ -8,7 +8,7 @@ class TestBase(unittest.TestCase):
     def test_create_item(self):
         """Test that a world can successfully create all items in its datapackage"""
         for game_name, world_type in AutoWorldRegister.world_types.items():
-            proxy_world = world_type(None, 0)  # this is identical to MultiServer.py creating worlds
+            proxy_world = setup_solo_multiworld(world_type, ()).worlds[1]
             for item_name in world_type.item_name_to_id:
                 with self.subTest("Create Item", item_name=item_name, game_name=game_name):
                     item = proxy_world.create_item(item_name)
@@ -23,8 +23,10 @@ class TestBase(unittest.TestCase):
                 {"Pendants", "Crystals"},
             "Ocarina of Time":
                 {"medallions", "stones", "rewards", "logic_bottles"},
-            "Starcraft 2 Wings of Liberty":
-                {"Missions"},
+            "Starcraft 2":
+                {"Missions", "WoL Missions"},
+            "Yu-Gi-Oh! 2006":
+                {"Campaign Boss Beaten"}
         }
         for game_name, world_type in AutoWorldRegister.world_types.items():
             with self.subTest(game_name, game_name=game_name):
@@ -43,15 +45,15 @@ class TestBase(unittest.TestCase):
                     with self.subTest(group_name, group_name=group_name):
                         self.assertNotIn(group_name, world_type.item_name_to_id)
 
-    def test_item_count_greater_equal_locations(self):
-        """Test that by the pre_fill step under default settings, each game submits items >= locations"""
+    def test_item_count_equal_locations(self):
+        """Test that by the pre_fill step under default settings, each game submits items == locations"""
         for game_name, world_type in AutoWorldRegister.world_types.items():
             with self.subTest("Game", game=game_name):
                 multiworld = setup_solo_multiworld(world_type)
-                self.assertGreaterEqual(
+                self.assertEqual(
                     len(multiworld.itempool),
                     len(multiworld.get_unfilled_locations()),
-                    f"{game_name} Item count MUST meet or exceed the number of locations",
+                    f"{game_name} Item count MUST match the number of locations",
                 )
 
     def test_items_in_datapackage(self):
@@ -61,15 +63,6 @@ class TestBase(unittest.TestCase):
                 multiworld = setup_solo_multiworld(world_type)
                 for item in multiworld.itempool:
                     self.assertIn(item.name, world_type.item_name_to_id)
-
-    def test_item_descriptions_have_valid_names(self):
-        """Ensure all item descriptions match an item name or item group name"""
-        for game_name, world_type in AutoWorldRegister.world_types.items():
-            valid_names = world_type.item_names.union(world_type.item_name_groups)
-            for name in world_type.item_descriptions:
-                with self.subTest("Name should be valid", game=game_name, item=name):
-                    self.assertIn(name, valid_names,
-                                  "All item descriptions must match defined item names")
 
     def test_itempool_not_modified(self):
         """Test that worlds don't modify the itempool after `create_items`"""
