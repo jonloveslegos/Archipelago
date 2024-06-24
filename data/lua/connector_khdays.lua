@@ -1368,6 +1368,76 @@ function reset_variables()
     already_chests = {}
 end
 
+function remove_bag_item(pos)
+	if  mainmemory.read_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x49C) == 0 then
+		print("ERROR: EMPTY BAG")
+		return
+	end
+	current_address = mainmemory.read_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x49C)-0x02000000
+	previous_address = 0
+	current_pos = 0
+	while current_pos ~= pos do
+		previous_address = current_address
+		current_address = mainmemory.read_u32_le(current_address+0xC)-0x02000000
+		current_pos = current_pos + 1
+		if current_address <= 0 then
+			print("ERROR: COULD NOT FIND ADDRESS OF BAG POS "..tostring(pos))
+			return
+		end
+	end
+	if previous_address ~= 0 then
+		mainmemory.write_u32_le(previous_address+0xC, mainmemory.read_u32_le(current_address+0xC))
+		if mainmemory.read_u32_le(current_address+0xC) ~= 0 then
+			mainmemory.write_u32_le(mainmemory.read_u32_le(current_address+0xC)-0x02000000+0x10, previous_address+0x02000000)
+		end
+	end
+	if pos == 0 then
+		mainmemory.write_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x49C, mainmemory.read_u32_le(current_address+0xC))
+		if mainmemory.read_u32_le(current_address+0xC) ~= 0 then
+			mainmemory.write_u32_le(mainmemory.read_u32_le(current_address+0xC)-0x02000000+0x10, 0)
+		end
+	end
+	if mainmemory.read_u32_le(current_address+0xC) == 0 then
+		if previous_address == 0 then
+			mainmemory.write_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x498, 0)
+			mainmemory.write_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x49C, 0)
+		else
+			mainmemory.write_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x498, previous_address+0x02000000)
+		end
+	end
+    mainmemory.write_u16_le(slotIds[pos], 0)
+	mainmemory.write_u8(current_address, 0)
+	mainmemory.write_u32_le(current_address+0xC, 0)
+	mainmemory.write_u32_le(current_address+0x10, 0)
+end
+
+function add_bag_item(itm)
+	current_address = mainmemory.read_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x49C)-0x02000000
+	if  mainmemory.read_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x49C) == 0 then
+		mainmemory.write_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x49C, mainmemory.read_u32_le(0x07F600)+0x290)
+		mainmemory.write_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x498, mainmemory.read_u32_le(0x07F600)+0x290)
+	end
+	previous_address = 0
+	current_pos = 0
+	while current_address > 0 do
+		previous_address = current_address
+		current_address = mainmemory.read_u32_le(current_address+0xC)-0x02000000
+		current_pos = current_pos + 1
+	end
+	if previous_address == 0 then
+		current_address = mainmemory.read_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x49C)-0x02000000
+	else
+		current_address = previous_address + 0x18
+	end
+	mainmemory.write_u8(current_address, itm)
+	mainmemory.write_u32_le(previous_address+0xC, current_address+0x02000000)
+	mainmemory.write_u32_le(mainmemory.read_u32_le(0x07F600)-0x02000000+0x498, current_address+0x02000000)
+    mainmemory.write_u8(slotIds[current_pos], itm)
+	if previous_address ~= 0 then
+		mainmemory.write_u32_le(current_address+0x10, previous_address+0x02000000)
+	end
+end
+
 currentMission = 1
 
 inShop = false
@@ -1584,13 +1654,12 @@ function main()
                             already_chests[mainmemory.read_u16_le(b+2)+1] = 1
                             if itemName ~= nil then
                                 if chestCount[mainmemory.read_u16_le(0x04C21C)]-mainmemory.read_u8(0x1A818B) >= mainmemory.read_u16_le(b+2)+1 then
-                                    mainmemory.write_u16_le(b, 0x0000)
                                     --print("(Obtained item from chest, please report if you got this item from a drop. Removing item from inventory.)")
                                 else
-                                    mainmemory.write_u16_le(b, 0x0000)
                                     --print("(Obtained item from drop, please report if you got this item from a chest. Adding to hub inventory.)")
                                     hasCount[itemName] = hasCount[itemName] + 1
                                 end
+								remove_bag_item(a)
                             else
                                 print("(UNKNOWN ITEM ID 0x"..string.format("%X", 0x000DC9+mainmemory.read_u16_le(b)-1).." Removing item from inventory.)")
                                 mainmemory.write_u16_le(b, 0x0000)
