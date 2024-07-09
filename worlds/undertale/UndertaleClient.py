@@ -9,7 +9,7 @@ import platform
 
 import Utils
 
-from typing import Dict
+from typing import List, Tuple
 from NetUtils import NetworkItem, ClientStatus
 from worlds import undertale
 from MultiServer import mark_raw
@@ -125,7 +125,7 @@ class UndertaleContext(CommonContext):
     kill_pack_size = None
     spare_pack_size = None
     spare_max = None
-    entrances: Dict[str, str] = None
+    entrances: List[Tuple[str, str]] = None
     save_game_folder = platformdirs.user_config_dir(appname="UNDERTALE", ensure_exists=True, appauthor=False)
 
     def __init__(self, server_address, password):
@@ -140,7 +140,7 @@ class UndertaleContext(CommonContext):
         self.syncing = False
         self.deathlink_status = False
         self.tem_armor = False
-        self.entrances = {}
+        self.entrances = []
         self.completed_count = 0
         self.completed_routes = {"pacifist": 0, "genocide": 0, "neutral": 0}
         # self.save_game_folder: files go in this path to pass data between us and the actual game
@@ -246,7 +246,6 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             os.mkdir(ctx.save_game_folder)
         ctx.route = args["slot_data"]["route_required"]
         ctx.pieces_needed = args["slot_data"]["key_pieces"]
-        ctx.entrances = args["slot_data"]["Entrance Rando"]
         ctx.kill_pack_size = args["slot_data"]["kill_sanity_pack_size"]
         ctx.spare_pack_size = args["slot_data"]["spare_sanity_pack_size"]
         ctx.spare_max = args["slot_data"]["spare_sanity_max"]
@@ -262,7 +261,14 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             with open(os.path.join(ctx.save_game_folder, "genonochest.flag"), "w") as f:
                 f.close()
         if args["slot_data"]["entrance_rando"]:
+            ctx.entrances = args["slot_data"]["Entrance Rando"]
             with open(os.path.join(ctx.save_game_folder, "roomrando.enabled"), "w") as f:
+                f.close()
+            filename = f"entrance_rando.dest"
+            with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+                for item in ctx.entrances:
+                    print(item)
+                    f.write(item[0]+"\n"+item[1]+"\n")
                 f.close()
         if not args["slot_data"]["key_hunt"]:
             ctx.pieces_needed = 0
@@ -293,11 +299,6 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
         with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
             for ss in set(args["checked_locations"]):
                 f.write(str(ss-12000)+"\n")
-            f.close()
-        filename = f"entrance_rando.dest"
-        with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
-            for s1, s2 in ctx.entrances.items():
-                f.write(s1+"\n"+s2+"\n")
             f.close()
     elif cmd == "LocationInfo":
         for loc in args["locations"]:

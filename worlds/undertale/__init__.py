@@ -3,14 +3,15 @@ from .Items import UndertaleItem, item_table, required_armor, required_weapons, 
     junk_weights_cut_items
 from .Locations import UndertaleAdvancement, advancement_table, exclusion_table
 from .er_rules import set_er_location_rules
-from .er_scripts import create_er_regions, create_er_regions_vanilla
+from .er_scripts import create_er_regions_vanilla, assemble_er
 from worlds.generic.Rules import exclusion_rules
-from BaseClasses import Tutorial, Item
+from BaseClasses import Tutorial, Item, MultiWorld
 from .Options import UndertaleOptions
+from .entrance_rando import ERPlacementState
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components
 from multiprocessing import Process
-from typing import Dict
+from typing import Dict, List, Tuple
 import Utils
 import math
 
@@ -53,6 +54,7 @@ class UndertaleWorld(World):
     options_dataclass = UndertaleOptions
     options: UndertaleOptions
     web = UndertaleWeb()
+    undertale_portal_pairs: List[Tuple[str, str]]
 
     topology_present = True
 
@@ -60,12 +62,14 @@ class UndertaleWorld(World):
     location_name_to_id = {name: data.id for name, data in advancement_table.items()}
 
     data_version = 7
-    undertale_portal_pairs: Dict[str, str]
     er_portal_hints: Dict[int, str]
+
+    def __init__(self, multiworld: "MultiWorld", player: int):
+        super().__init__(multiworld, player)
 
     def _get_undertale_data(self):
         return {
-            "world_seed": self.multiworld.per_slot_randoms[self.player].getrandbits(32),
+            "world_seed": self.random.getrandbits(32),
             "seed_name": self.multiworld.seed_name,
             "player_name": self.multiworld.get_player_name(self.player),
             "player_id": self.player,
@@ -90,9 +94,9 @@ class UndertaleWorld(World):
             "ice_traps": self.options.ice_traps.value,
             "spare_sanity": bool(self.options.spare_sanity.value),
             "entrance_rando": bool(self.options.entrance_rando.value),
+            "Entrance Rando": self.undertale_portal_pairs,
             "spare_sanity_max": self.options.spare_sanity_max.value,
-            "spare_sanity_pack_size": self.options.spare_sanity_pack_size.value,
-            "Entrance Rando": self.undertale_portal_pairs
+            "spare_sanity_pack_size": self.options.spare_sanity_pack_size.value
         }
 
     def get_filler_item_name(self):
@@ -109,9 +113,26 @@ class UndertaleWorld(World):
         if self.options.cut_items:
             junk_pool = junk_pool | junk_weights_cut_items.copy()
         if not self.options.only_flakes:
-            return self.multiworld.random.choices(list(junk_pool.keys()), weights=list(junk_pool.values()))[0]
+            return self.random.choices(list(junk_pool.keys()), weights=list(junk_pool.values()))[0]
         else:
             return "Temmie Flakes"
+
+    def pre_fill(self):
+        if self.options.entrance_rando:
+            self.undertale_portal_pairs = assemble_er(self)
+        else:
+            self.undertale_portal_pairs = ERPlacementState(self, True).pairings
+
+    def generate_early(self):
+        if self.options.route_required.current_key != "genocide" and \
+                self.options.route_required.current_key != "all_routes":
+            self.options.kill_sanity.value = 0
+            self.options.rando_love.value = 0
+            self.options.rando_stats.value = 0
+        if self.options.route_required.current_key == "genocide":
+            self.options.spare_sanity.value = 0
+        if not bool(self.options.kill_sanity.value):
+            self.options.kill_sanity_pack_size.value = 40
 
     def create_items(self):
         exclusion_pool = set()
@@ -171,10 +192,10 @@ class UndertaleWorld(World):
         if not self.options.kill_sanity or \
                 (self.options.route_required != "genocide" and
                  self.options.route_required != "all_routes"):
-            self.multiworld.precollected_items[self.player] += [self.create_item("Ruins Population Pack")]
-            self.multiworld.precollected_items[self.player] += [self.create_item("Snowdin Population Pack")]
-            self.multiworld.precollected_items[self.player] += [self.create_item("Waterfall Population Pack")]
-            self.multiworld.precollected_items[self.player] += [self.create_item("Hotland Population Pack")]
+            self.multiworld.push_precollected(self.create_item("Ruins Population Pack"))
+            self.multiworld.push_precollected(self.create_item("Snowdin Population Pack"))
+            self.multiworld.push_precollected(self.create_item("Waterfall Population Pack"))
+            self.multiworld.push_precollected(self.create_item("Hotland Population Pack"))
             exclusion_pool.update(exclusion_table["NoKills"])
         else:
             itempool += ["Ruins Population Pack"] * math.ceil(20/self.options.kill_sanity_pack_size.value)
@@ -207,7 +228,7 @@ class UndertaleWorld(World):
         if self.options.only_flakes:
             itempool = [item for item in itempool if item not in non_key_items]
 
-        if self.options.starting_area.current_key.title() == "None" or self.options.entrance_rando:
+        if self.options.starting_area.current_key.title() == "None":
             pass
         elif self.options.starting_area.current_key.title() == "All":
             all_keys = ["Ruins Key", "Snowdin Key", "Waterfall Key", "Hotland Key"]
@@ -235,59 +256,25 @@ class UndertaleWorld(World):
         exclusion_rules(self.multiworld, self.player, exclusion_checks)
 
         # Convert itempool into real items
-        itempool = [item for item in map(lambda itm_name: self.create_item(itm_name), itempool)]
+        completed_itempool = [item for item in map(lambda itm_name: self.create_item(itm_name), itempool)]
         # Fill remaining items with randomly generated junk or Temmie Flakes
-        while len(itempool) < len(self.multiworld.get_unfilled_locations(self.player)):
-            itempool += [self.create_filler()]
+        while len(completed_itempool) < len(self.multiworld.get_unfilled_locations(self.player)):
+            completed_itempool.append(self.create_filler())
 
-        self.multiworld.itempool += itempool
+        self.multiworld.itempool += completed_itempool
     
     def set_rules(self) -> None:
         set_er_location_rules(self)
 
-    def extend_hint_information(self, hint_data: Dict[int, Dict[int, str]]):
-        if self.options.entrance_rando:
-            hint_data[self.player] = self.er_portal_hints
-
     def create_regions(self):
-        self.undertale_portal_pairs = {}
-        self.er_portal_hints = {}
-        if self.options.entrance_rando:
-            portal_pairs, portal_hints = create_er_regions(self)
-            for portal1, portal2 in portal_pairs.items():
-                self.undertale_portal_pairs[portal1.scene_destination()] = portal2.scene_destination()
-            self.er_portal_hints = portal_hints
-        else:
-            portal_pairs = create_er_regions_vanilla(self)
-            for portal1, portal2 in portal_pairs.items():
-                self.undertale_portal_pairs[portal1.scene_destination()] = portal2.scene_destination()
+        create_er_regions_vanilla(self)
 
     def fill_slot_data(self):
         slot_data = self._get_undertale_data()
         for option_name in self.options.as_dict():
             option = getattr(self.multiworld, option_name)[self.player]
-            if (option_name == "rando_love" or option_name == "rando_stats" or option_name == "kill_sanity") and \
-                    self.options.route_required != "genocide" and \
-                    self.options.route_required != "all_routes":
-                option.value = False
+            if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
                 slot_data[option_name] = int(option.value)
-            elif (option_name == "spare_sanity") and \
-                    self.options.route_required == "genocide":
-                option.value = False
-                slot_data[option_name] = int(option.value)
-            elif (option_name == "kill_sanity_pack_size" and ((
-                    self.options.route_required != "genocide" and
-                    self.options.route_required != "all_routes") or not bool(self.options.kill_sanity.value))):
-                option.value = 40
-                slot_data[option_name] = int(option.value)
-            elif slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
-                slot_data[option_name] = int(option.value)
-
-        # state = self.multiworld.get_all_state(False)
-        # state.update_reachable_regions(self.player)
-        # Utils.visualize_regions(self.multiworld.get_region("Menu", self.player), "undertale_check_player_" +
-        #                         str(self.multiworld.player_name[self.player])+".puml", show_entrance_names=True,
-        #                         highlight_regions=state.reachable_regions[self.player])
         return slot_data
 
     def create_item(self, name: str) -> Item:
