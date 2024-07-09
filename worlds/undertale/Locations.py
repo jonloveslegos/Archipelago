@@ -11,6 +11,10 @@ class AdvData(typing.NamedTuple):
 class UndertaleAdvancement(Location):
     game: str = "Undertale"
 
+    def __init__(self, player: int, name: str, address: typing.Optional[int], parent):
+        super().__init__(player, name, address, parent)
+        self.event = not address
+
 
 advancement_table = {
     "Snowman Piece": AdvData(79100, "room_tundra6A"),

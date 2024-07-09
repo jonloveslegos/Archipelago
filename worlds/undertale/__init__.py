@@ -163,7 +163,8 @@ class UndertaleWorld(World):
         elif self.options.route_required == "neutral":
             itempool = [item for item in itempool if item != "Popato Chisps" and item != "Hot Cat" and
                         item != "Hot Dog...?"]
-        if self.options.route_required == "pacifist" or self.options.route_required == "all_routes":
+        if self.options.route_required == "pacifist" or \
+                self.options.route_required == "all_routes":
             itempool += ["Undyne Letter EX"]
         else:
             itempool.remove("Complete Skeleton")
