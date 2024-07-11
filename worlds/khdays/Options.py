@@ -28,11 +28,11 @@ class StartingCharacter(Choice):
     default = 0
 
 
-class DayRequirement(Range):
-    """What day do you need to start to win the game?"""
-    range_start = 8
-    range_end = 358
-    default = 358
+class ShardRequirement(Range):
+    """How many Memory Shards do you need to do the final day?"""
+    range_start = 1
+    range_end = 10
+    default = 5
 
 
 class RandomizeEmblems(Toggle):
@@ -57,7 +57,7 @@ class RandomizeHubGifts(Toggle):
 
 @dataclass
 class KHDaysOptions(PerGameCommonOptions):
-    DayRequirement: DayRequirement
+    ShardRequirement: ShardRequirement
     StartingCharacter: StartingCharacter
     RandomizeEmblems: RandomizeEmblems
     RandomizeSynthesis: RandomizeSynthesis

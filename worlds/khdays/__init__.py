@@ -164,7 +164,7 @@ class KHDaysWorld(World):
 
     def fill_slot_data(self) -> Dict[str, Any]:
         return {
-            "day_requirement": self.options.DayRequirement.value,
+            "shard_requirement": self.options.ShardRequirement.value,
             'starting_character': self.options.StartingCharacter.current_key,
             'randomize_emblems': bool(self.options.RandomizeEmblems.value),
             'randomize_synthesis': bool(self.options.RandomizeSynthesis.value),

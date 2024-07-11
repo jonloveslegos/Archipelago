@@ -320,3 +320,5 @@ for name in true_days:
     if name > 8 and "Day Unlock: "+str(name) not in item_table.keys():
         item_table["Day Unlock: "+str(name)] = ItemData(progression, 1, 0, 24000-i)
         i += 1
+
+item_table["Memory Shard"] = ItemData(progression, 10, 0, 23000)

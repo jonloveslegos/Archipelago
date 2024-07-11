@@ -6,7 +6,7 @@ import json
 import logging
 import random
 import time
-from typing import cast, Dict, Optional
+from typing import cast, Dict, Optional, List
 from asyncio import StreamReader, StreamWriter
 
 import Utils
@@ -15,7 +15,7 @@ from NetUtils import ClientStatus
 from CommonClient import CommonContext, server_loop, gui_enabled, ClientCommandProcessor, logger, \
     get_base_parser
 
-from worlds.khdays.Items import item_table, days, true_days
+from worlds.khdays.Items import item_table, days, true_days, character_list, ItemData
 from worlds.khdays.Locations import location_table
 from worlds.khdays.Rules import days_day_to_true_day
 
@@ -151,30 +151,17 @@ class KHDaysCommandProcessor(ClientCommandProcessor):
     def _cmd_set_character_one(self, char_name: str = ""):
         """Sets the first character in the next mission"""
         if isinstance(self.ctx, KHDaysContext):
-            if char_name in self.ctx.valid_characters:
-                self.ctx.char_1 = char_name
-                logger.info("Character one is now "+char_name)
-            else:
-                logger.info("Invalid character, did you misspell it?")
+            self.ctx.set_character_one(char_name)
 
     def _cmd_set_character_two(self, char_name: str = ""):
         """Sets the second character in the next mission"""
         if isinstance(self.ctx, KHDaysContext):
-            if char_name in self.ctx.valid_characters:
-                self.ctx.char_2 = char_name
-                logger.info("Character two is now "+char_name)
-            else:
-                logger.info("Invalid character, did you misspell it?")
+            self.ctx.set_character_two(char_name)
 
     def _cmd_set_day(self, day_number: str = ""):
         """Sets the day after the next mission"""
         if isinstance(self.ctx, KHDaysContext):
-            if day_number in self.ctx.valid_days:
-                self.ctx.chosen_day_number = days_to_bits[int(day_number)]
-                self.ctx.chosen_day = int(day_number)
-                logger.info("Next day will now be day "+day_number)
-            else:
-                logger.info("Invalid day, do you have it unlocked?")
+            self.ctx.set_day(day_number)
 
 
 class KHDaysContext(CommonContext):
@@ -200,7 +187,7 @@ class KHDaysContext(CommonContext):
         self.nds_status = CONNECTION_INITIAL_STATUS
         self.game = 'Kingdom Hearts Days'
         self.awaiting_rom = False
-        self.day_requirement = 358
+        self.shard_requirement = 5
         self.check_locs_count = {}
         self.chosen_day_number = days_to_bits[8]
         self.chosen_day = 8
@@ -210,8 +197,6 @@ class KHDaysContext(CommonContext):
         self.options["synthesis"] = True
         self.options["levels"] = True
         self.options["gifts"] = True
-        for i in days:
-            print(days_to_bits[i])
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -219,46 +204,173 @@ class KHDaysContext(CommonContext):
         await self.get_username()
         await self.send_connect()
 
+    def set_character_one(self, char_name: str = ""):
+        """Sets the first character in the next mission"""
+        if isinstance(self, KHDaysContext):
+            if char_name in self.valid_characters:
+                if char_name == self.char_2:
+                    logger.info("Both characters cannot be the same!")
+                else:
+                    self.char_1 = char_name
+                    logger.info("Character one is now "+char_name)
+            else:
+                logger.info("Invalid character, did you misspell it?")
+
+    def set_character_two(self, char_name: str = ""):
+        """Sets the second character in the next mission"""
+        if isinstance(self, KHDaysContext):
+            if char_name in self.valid_characters:
+                if char_name == self.char_1:
+                    logger.info("Both characters cannot be the same!")
+                else:
+                    self.char_2 = char_name
+                    logger.info("Character two is now "+char_name)
+            else:
+                logger.info("Invalid character, did you misspell it?")
+
+    def set_day(self, day_number: str = ""):
+        """Sets the day after the next mission"""
+        if isinstance(self, KHDaysContext):
+            if day_number in self.valid_days:
+                self.chosen_day_number = days_to_bits[int(day_number)]
+                self.chosen_day = int(day_number)
+                logger.info("Next day will now be day "+day_number)
+            else:
+                logger.info("Invalid day, do you have it unlocked?")
+
     def on_package(self, cmd: str, args: dict):
         if cmd == 'Connected':
             slot_data = args["slot_data"]
-            self.day_requirement = slot_data["day_requirement"]
+            self.shard_requirement = slot_data["shard_requirement"]
             self.connected = "true"
             self.chosen_day_number = days_to_bits[8]
             self.chosen_day = 8
-            self.valid_characters = ["Roxas"]
+            self.valid_characters = []
             self.options["synthesis"] = slot_data["randomize_synthesis"]
             self.options["levels"] = slot_data["randomize_level_rewards"]
             self.options["gifts"] = slot_data["randomize_hub_gifts"]
-            async_start(self.send_msgs([
-                {"cmd": "Get",
-                "keys": ["received_items"]}
-            ]))
-        elif cmd == 'Retrieved':
-            if "keys" not in args:
-                logger.warning(f"invalid Retrieved packet to KingdomHeartsDaysClient: {args}")
-                return
-            keys = cast(Dict[str, Optional[str]], args["keys"])
+            self.ui.update_tracker()
+
+        if cmd in {"ReceivedItems"}:
+            self.valid_characters = [items_by_id[item.item] for item in self.items_received if item.item < 25000 and item.item > 24000]
+            self.valid_days = ["8"]
+            for item in {items_by_id[item.item] for item in self.items_received if item.item <= 24000 and item.item > 23000}:
+                day_numb = item.removeprefix("Day Unlock: ")
+                self.valid_days.append(day_numb)
+                if true_days.count(int(day_numb)) > 1:
+                    for i in days:
+                        if days_day_to_true_day(i) == int(day_numb) and i != day_numb:
+                            self.valid_days.append(str(i))
+            shard_count = 0
+            for item in self.items_received:
+                if item.item == 23000:
+                    shard_count += 1
+            print(shard_count)
+            if shard_count >= self.shard_requirement:
+                self.valid_days.append("358")
+            self.ui.update_tracker()
 
     async def connection_closed(self):
         self.connected = "false"
         await super(KHDaysContext, self).connection_closed()
 
-    def on_print_json(self, args: dict):
-        if self.ui:
-            self.ui.print_json(copy.deepcopy(args["data"]))
-        else:
-            text = self.jsontotextparser(copy.deepcopy(args["data"]))
-            logger.info(text)
-
     def run_gui(self):
         from kvui import GameManager
+        from kivy.uix.tabbedpanel import TabbedPanelItem
+        from kivy.uix.button import Button
+        from kivy.uix.boxlayout import BoxLayout
+        from kivy.uix.label import Label
+        from kivy.uix.gridlayout import GridLayout
+
+        class TrackerLayout(BoxLayout):
+            pass
+
+        class CommanderSelect(BoxLayout):
+            pass
+
+        class CommanderButton(Button):
+            pass
+
+        class FactionBox(BoxLayout):
+            pass
+
+        class CommanderGroup(GridLayout):
+            pass
 
         class KHDaysManager(GameManager):
             logging_pairs = [
                 ("Client", "Archipelago")
             ]
             base_title = "Archipelago KH Days Client"
+            ctx: KHDaysContext
+            commander_buttons: Dict[int, List[CommanderButton]]
+            day_buttons: List[CommanderButton]
+            tracker_items: Dict[str, ItemData] = {
+                **item_table
+            }
+
+            def build(self):
+                container = super().build()
+                panel = TabbedPanelItem(text="Character Selector")
+                panel.content = self.build_tracker()
+                self.tabs.add_widget(panel)
+                panel = TabbedPanelItem(text="Day Selector")
+                panel.content = self.build_day_tracker()
+                self.tabs.add_widget(panel)
+                self.update_tracker()
+                return container
+
+            def build_day_tracker(self) -> TrackerLayout:
+                try:
+                    tracker = TrackerLayout(orientation="horizontal")
+                    self.day_buttons = []
+
+                    commander_group = CommanderGroup(cols=10)
+                    commander_buttons = []
+                    for commander in days+[358]:
+                        commander_button = CommanderButton(text="Day "+str(commander))
+                        commander_button.bind(on_press=lambda instance: self.ctx.set_day(instance.text.removeprefix("Day ")))
+                        commander_buttons.append(commander_button)
+                        commander_group.add_widget(commander_button)
+                    self.day_buttons = commander_buttons
+                    tracker.add_widget(commander_group)
+                    return tracker
+                except Exception as e:
+                    print(e)
+
+            def build_tracker(self) -> TrackerLayout:
+                try:
+                    tracker = TrackerLayout(orientation="horizontal")
+                    commander_select = CommanderSelect(orientation="vertical", spacing=20)
+                    self.commander_buttons = {}
+
+                    for i in range(2):
+                        faction_box = FactionBox()
+                        commander_group = CommanderGroup(cols=5)
+                        commander_buttons = []
+                        for commander in character_list:
+                            commander_button = CommanderButton(text=commander)
+                            if i == 0:
+                                commander_button.bind(on_press=lambda instance: self.ctx.set_character_one(instance.text))
+                            else:
+                                commander_button.bind(on_press=lambda instance: self.ctx.set_character_two(instance.text))
+                            commander_buttons.append(commander_button)
+                            commander_group.add_widget(commander_button)
+                        self.commander_buttons[i] = commander_buttons
+                        faction_box.add_widget(Label(text="Character "+str(i+1), size_hint_x=None, valign='middle', height=10))
+                        faction_box.add_widget(commander_group)
+                        commander_select.add_widget(faction_box)
+                    tracker.add_widget(commander_select)
+                    return tracker
+                except Exception as e:
+                    print(e)
+
+            def update_tracker(self):
+                for i in range(2):
+                    for commander_button in self.commander_buttons[i]:
+                        commander_button.disabled = not (commander_button.text in self.ctx.valid_characters)
+                for day_button in self.day_buttons:
+                    day_button.disabled = not (day_button.text.removeprefix("Day ") in self.ctx.valid_days)
 
         self.ui = KHDaysManager(self)
         self.ui_task = asyncio.create_task(self.ui.async_run(), name="UI")
@@ -329,15 +441,6 @@ async def nds_sync_task(ctx: KHDaysContext):
                     # 2. An array representing the memory values of the locations area (if in game)
                     data = await asyncio.wait_for(reader.readline(), timeout=5)
                     data_decoded = json.loads(data.decode())
-                    ctx.valid_characters = [items_by_id[item.item] for item in ctx.items_received if item.item < 25000 and item.item > 24000]
-                    ctx.valid_days = ["8"]
-                    for item in {items_by_id[item.item] for item in ctx.items_received if item.item <= 24000}:
-                        day_numb = item.removeprefix("Day Unlock: ")
-                        ctx.valid_days.append(day_numb)
-                        if true_days.count(int(day_numb)) > 1:
-                            for i in days:
-                                if days_day_to_true_day(i) == day_numb and i != day_numb:
-                                    ctx.valid_days.append(i)
                     if ctx.game is not None and 'checked_locs' in data_decoded:
                         for i in data_decoded["checked_locs"]:
                             if data_decoded["checked_locs"][i] not in ctx.locations_array:
@@ -349,7 +452,7 @@ async def nds_sync_task(ctx: KHDaysContext):
                             "locations": ctx.locations_array}
                         ])
                     if ctx.game is not None and 'day' in data_decoded:
-                        if not ctx.finished_game and int(data_decoded["day"]) >= ctx.day_requirement:
+                        if not ctx.finished_game and int(data_decoded["day"]) >= 358:
                             await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
                             ctx.finished_game = True
                 except asyncio.TimeoutError:
@@ -401,7 +504,6 @@ def main():
     # Text Mode to use !hint and such with games that have no text entry
     Utils.init_logging("KHDaysClient", exception_logger="Client")
 
-
     async def _main():
         ctx = KHDaysContext(None, None)
         ctx.server_task = asyncio.create_task(server_loop(ctx), name="ServerLoop")
@@ -417,7 +519,6 @@ def main():
 
         if ctx.nds_sync_task:
             await ctx.nds_sync_task
-
 
     import colorama
 

@@ -147,36 +147,6 @@ class KHDaysLogic(LogicMixin):
         print("not found: "+material_name)
         return False
 
-    def days_check_panels(self, state: CollectionState, player: int):
-        panel_count = state.count("Panel Slot", player)
-        slot_space_1 = [[1 for y in range(8)] for x in range(5)]
-        slot_space_2 = [[1 for y in range(8)] for x in range(5)]
-        slot_space_3 = [[1 for y in range(8)] for x in range(5)]
-        for y in range(3):
-            for x in range(5):
-                slot_space_1[x][y] = 0
-        x = 0
-        y = 3
-        space = 0
-        for i in range(panel_count):
-            if space == 0:
-                slot_space_1[x][y] = 0
-            elif space == 1:
-                slot_space_2[x][y] = 0
-            elif space == 2:
-                slot_space_3[x][y] = 0
-            x += 1
-            if x >= 5:
-                x = 0
-                y += 1
-            if y >= 8:
-                y = 0
-                x = 0
-                space += 1
-            if space >= 3:
-                break
-        return slot_space_1, slot_space_2, slot_space_3
-
     def days_levels_obtainable(self, state: CollectionState, player: int):
         obtainable = 0
         access_days = 0
@@ -474,4 +444,4 @@ def set_rules(world: MultiWorld, options: KHDaysOptions, player: int):
 
 
 def set_completion_rules(world: MultiWorld, player: int):
-    world.completion_condition[player] = lambda state, world=world: state.days_has_day_access(state, world.worlds[player].options.DayRequirement.value, player)
+    world.completion_condition[player] = lambda state, world=world: state.has("Memory Shard", player, world.worlds[player].options.ShardRequirement.value)

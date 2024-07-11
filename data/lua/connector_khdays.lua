@@ -1,5 +1,4 @@
 console.clear()
-print("NOTICE: Items obtained from a chest will be in your inventory until you change rooms. THAT IS UNFIXABLE!")
 print("NOTICE: Locations will only send out after you return to the hub.")
 print("NOTICE: Mission rewards 1-3 are for normal clear, 4-5 are for full clear.")
 
