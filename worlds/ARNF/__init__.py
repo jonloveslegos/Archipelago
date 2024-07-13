@@ -7,7 +7,7 @@ from typing import List, Dict
 from BaseClasses import Region, Entrance, Item, ItemClassification, MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import set_rule
-from .Items import ARNFItem, item_table, item_data_table, normal_item_prefix, classic_boss_rush_item_prefix
+from .Items import ARNFItem, item_table, item_data_table, normal_item_prefix, classic_boss_rush_item_prefix, exterminator_item_prefix
 from .Locations import ARNFLocation, location_table, get_ordered_item_pickups, normal_total_locations, classic_boss_rush_total_locations
 from .Options import ARNFOptions
 from .Regions import region_data_table
@@ -60,8 +60,9 @@ class ARNFWorld(World):
         
         #Generate the items
         for name, item in item_data_table.items():
-            if (    (name.startswith(normal_item_prefix) and self.options.normal_included.value == 1) or
-                    (name.startswith(classic_boss_rush_item_prefix) and self.options.classic_boss_rush_included.value == 1)):
+            if (    (name.startswith(normal_item_prefix) and self.options.game_mode.value == 1) or
+                    (name.startswith(classic_boss_rush_item_prefix) and self.options.game_mode.value == 2) or 
+                    (name.startswith(exterminator_item_prefix) and self.options.game_mode.value == 4)):
                 item_pool.append(self.create_item(name))
         
         logger.info(item_pool)
@@ -92,10 +93,7 @@ class ARNFWorld(World):
         #   which can then determine the availability of the victory.
         victory_region = create_region(self.multiworld, self.player, "Victory")
         self.multiworld.regions.append(victory_region)
-        ace_items = get_ordered_item_pickups(self.options.normal_included.value, self.options.classic_boss_rush_included.value, self.options.exterminator_included.value)
-        # shuffled = list(ace_items.values())
-        # random.shuffle(shuffled)
-        # shuffled_items = dict(zip(ace_items, shuffled))
+        ace_items = get_ordered_item_pickups(self.options.game_mode.value)
         logger = logging.getLogger()
         logger.info(ace_items)
         planet = create_region(self.multiworld, self.player, "NormalMode", ace_items)
@@ -114,7 +112,7 @@ class ARNFWorld(World):
 
 
     def fill_slot_data(self):
-        options_dict = self.options.as_dict("normal_included", "classic_boss_rush_included", "exterminator_included", "grant_achievements_mode", "start_with_explorb", "death_link", casing="camel")
+        options_dict = self.options.as_dict("game_mode", "grant_achievements_mode", "start_with_explorb", "start_with_wall_jump", "death_link", casing="camel")
         logger = logging.getLogger()
         logger.info(options_dict)
         return options_dict

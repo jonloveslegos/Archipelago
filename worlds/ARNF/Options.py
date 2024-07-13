@@ -2,22 +2,16 @@ from dataclasses import dataclass
 from Options import Toggle, DefaultOnToggle, DeathLink, Range, Choice, PerGameCommonOptions
 
 
-class NormalIncluded(Toggle):
-    """Whether a playthrough of normal mode is included for this player.  Please note that approximately 32 minor items and 4 non-progress major items are in each run."""
-    display_name = "Normal Mode Included"
-    default = 'true'
-
-
-class ClassicBossRushIncluded(Toggle):
-    """Whether a playthrough of Classic Boss Rush is included for this player.  Please note that 13 items are in each run."""
-    display_name = "Classic Boss Rush Included"
-    default = 'false'
-
-
-class ExterminatorIncluded(Toggle):
-    """Whether a playthrough of Exterminator is included for this player.  Please note that 47 items are in each run."""
-    display_name = "Exterminator Included"
-    default = 'false'
+class GameMode(Choice):
+    """The type of game mode that this player will be performing.
+    Normal contains approximately 36 non-progression items, and 3 progression items.
+    Classic Boss Rush (accessed via the Seeded Runs menu option, then under the Secrets menu on the left) contains 13 items.
+    Exterminator contains 47 non-progression items and 3 progression items."""
+    display_name = "Game Mode"
+    option_normal = 1
+    option_classic_boss_rush = 2
+    option_exterminator = 4
+    default = 1
 
 
 class GrantAchievementsMode(Choice):
@@ -35,11 +29,16 @@ class StartWithExplorb(Toggle):
     default = 'true'
 
 
+class StartWithWallJump(Toggle):
+    """Whether this player starts with Wall Jump enabled in all game modes.  Normally, this is unlocked by sequence breaking once."""
+    display_name = "Start With Wall Jump"
+    default = 'true'
+
+
 @dataclass
 class ARNFOptions(PerGameCommonOptions):
-    normal_included: NormalIncluded
-    classic_boss_rush_included: ClassicBossRushIncluded
-    exterminator_included: ExterminatorIncluded
+    game_mode: GameMode
     grant_achievements_mode: GrantAchievementsMode
     start_with_explorb: StartWithExplorb
+    start_with_wall_jump: StartWithWallJump
     death_link: DeathLink
