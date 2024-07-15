@@ -1,9 +1,9 @@
 from ..generic.Rules import set_rule
 from BaseClasses import MultiWorld, CollectionState
-from . import FNaFWWorld
+from .Options import FNaFWOptions
 
 
-def _fnaf_world_can_access_chara_area(state: CollectionState, player: int, this_world: FNaFWWorld, name: str):
+def _fnaf_world_can_access_chara_area(state: CollectionState, player: int, this_world: FNaFWOptions, name: str):
     result = False
     temp_name = name
     if temp_name == "Fazbear Hills":
@@ -36,20 +36,20 @@ def _fnaf_world_can_access_chara_area(state: CollectionState, player: int, this_
         result = result or _fnaf_world_can_access(state, player, this_world, "Pinwheel Circus")
         temp_name = "Top Layer"
     if temp_name == "Top Layer":
-        result = result or (_fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and this_world.options.hard_logic)
-        result = result or (_fnaf_world_can_access(state, player, this_world, "Dusting Fields") and this_world.options.hard_logic)
-        result = result or (_fnaf_world_can_access(state, player, this_world, "Choppy's Woods") and this_world.options.hard_logic)
+        result = result or (_fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and this_world.hard_logic)
+        result = result or (_fnaf_world_can_access(state, player, this_world, "Dusting Fields") and this_world.hard_logic)
+        result = result or (_fnaf_world_can_access(state, player, this_world, "Choppy's Woods") and this_world.hard_logic)
         result = result or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard")
         temp_name = "Pinwheel Funhouse"
     if temp_name == "Pinwheel Funhouse":
         result = result or _fnaf_world_can_access(state, player, this_world, "Pinwheel Funhouse")
-    result = result and (not this_world.options.require_find_char or state.has("Find Characters", player))
+    result = result and (not this_world.require_find_char or state.has("Find Characters", player))
     return result
 
 
-def _fnaf_world_can_access(state: CollectionState, player: int, this_world: FNaFWWorld, name: str):
+def _fnaf_world_can_access(state: CollectionState, player: int, this_world: FNaFWOptions, name: str):
     result = False
-    if (this_world.options.area_warping.current_key == "warp_item" and state.has("Warp Access", player)) or this_world.options.area_warping.current_key == "always":
+    if (this_world.area_warping.current_key == "warp_item" and state.has("Warp Access", player)) or this_world.area_warping.current_key == "always":
         if name == "Choppy's Woods":
             result = state.has("Choppy's Woods Access Switch", player) or state.has("Dusting Fields Access", player)
         elif name == "Lilygear Lake":
@@ -72,7 +72,7 @@ def _fnaf_world_can_access(state: CollectionState, player: int, this_world: FNaF
         elif name == "Blacktomb Yard":
             result = state.has("Blacktomb Yard Access Switch", player) and _fnaf_world_can_access(state, player, this_world, "Lilygear Lake")
         elif name == "Pinwheel Funhouse":
-            result = _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard") or (state.has("Pinwheel Circus Access Switch", player) and _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
+            result = state.has("Pinwheel Circus Access Switch", player) and _fnaf_world_can_access(state, player, this_world, "Lilygear Lake")
         elif name == "Pinwheel Circus":
             result = _fnaf_world_can_access(state, player, this_world, "Lilygear Lake")
     return result
@@ -83,7 +83,7 @@ def _fnaf_world_has_chip(state: CollectionState, player: int, name: str):
 
 
 # Sets rules on entrances and advancements that are always applied
-def set_rules(world: MultiWorld, player: int, this_world: FNaFWWorld):
+def set_rules(world: MultiWorld, player: int, this_world: FNaFWOptions):
 
     # Start with
     set_rule(world.get_location("Freddy", player), lambda state: True)
@@ -112,12 +112,12 @@ def set_rules(world: MultiWorld, player: int, this_world: FNaFWWorld):
     set_rule(world.get_location("Withered Bonnie", player), lambda state: _fnaf_world_can_access_chara_area(state, player, this_world, "Choppy's Woods"))
     set_rule(world.get_location("Phantom Foxy", player), lambda state: _fnaf_world_can_access_chara_area(state, player, this_world, "Choppy's Woods"))
     set_rule(world.get_location("Phantom Mangle", player), lambda state: _fnaf_world_can_access_chara_area(state, player, this_world, "Choppy's Woods"))
-    set_rule(world.get_location("Fazbear Hills: Endo Shop 2", player), lambda state: this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Choppy's Woods") or _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
-    set_rule(world.get_location("Fazbear Hills: Endo Shop 3", player), lambda state: this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
-    set_rule(world.get_location("Fazbear Hills: Lolbit Shop 2", player), lambda state: this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Choppy's Woods") or _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
-    set_rule(world.get_location("Fazbear Hills: Lolbit Shop 3", player), lambda state: this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
-    set_rule(world.get_location("Choppy's Woods: Lolbit Shop 2", player), lambda state: this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Choppy's Woods") or _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
-    set_rule(world.get_location("Choppy's Woods: Lolbit Shop 3", player), lambda state: this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
+    set_rule(world.get_location("Fazbear Hills: Endo Shop 2", player), lambda state: this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Choppy's Woods") or _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
+    set_rule(world.get_location("Fazbear Hills: Endo Shop 3", player), lambda state: this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
+    set_rule(world.get_location("Fazbear Hills: Lolbit Shop 2", player), lambda state: this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Choppy's Woods") or _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
+    set_rule(world.get_location("Fazbear Hills: Lolbit Shop 3", player), lambda state: this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
+    set_rule(world.get_location("Choppy's Woods: Lolbit Shop 2", player), lambda state: this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Choppy's Woods") or _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
+    set_rule(world.get_location("Choppy's Woods: Lolbit Shop 3", player), lambda state: this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
 
     # Update 2 secret path stuff
     set_rule(world.get_location("Jack-O-Bonnie", player), lambda state: True)
@@ -138,7 +138,7 @@ def set_rules(world: MultiWorld, player: int, this_world: FNaFWWorld):
     set_rule(world.get_location("Mysterious Mine: Dusting Fields Cave Entrance Top Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Dusting Fields"))
     set_rule(world.get_location("Dusting Fields: Lolbit Shop 1", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Dusting Fields"))
     set_rule(world.get_location("Dusting Fields: Lolbit Shop 2", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Dusting Fields"))
-    set_rule(world.get_location("Dusting Fields: Lolbit Shop 3", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Dusting Fields") and (this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard")))
+    set_rule(world.get_location("Dusting Fields: Lolbit Shop 3", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Dusting Fields") and (this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard")))
     set_rule(world.get_location("Lilygear Lake: Switch", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake") or _fnaf_world_can_access(state, player, this_world, "Dusting Fields"))
     set_rule(world.get_location("Choppy's Woods: Near Lolbit North Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
     set_rule(world.get_location("Lilygear Lake: Clip From Choppy's Woods Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Choppy's Woods"))
@@ -164,10 +164,10 @@ def set_rules(world: MultiWorld, player: int, this_world: FNaFWWorld):
     set_rule(world.get_location("Mysterious Mine: Topmost Cave Entrance Chest 2", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
     set_rule(world.get_location("Mysterious Mine: Lolbit Shop 1", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
     set_rule(world.get_location("Mysterious Mine: Lolbit Shop 2", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
-    set_rule(world.get_location("Mysterious Mine: Lolbit Shop 3", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and (this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard")))
+    set_rule(world.get_location("Mysterious Mine: Lolbit Shop 3", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and (this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard")))
     set_rule(world.get_location("Pinwheel Circus: Lolbit Shop 1", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
     set_rule(world.get_location("Pinwheel Circus: Lolbit Shop 2", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
-    set_rule(world.get_location("Pinwheel Circus: Lolbit Shop 3", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and (this_world.options.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard")))
+    set_rule(world.get_location("Pinwheel Circus: Lolbit Shop 3", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and (this_world.hard_logic or _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard")))
     set_rule(world.get_location("Choppy's Woods: False Trees Near Tent Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
     set_rule(world.get_location("Deep-Metal Mine: Lilygear Lake False Wall To Blacktomb Yard Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
     set_rule(world.get_location("Nightmare Bonnie", player), lambda state: _fnaf_world_can_access_chara_area(state, player, this_world, "Blacktomb Yard"))
@@ -192,9 +192,9 @@ def set_rules(world: MultiWorld, player: int, this_world: FNaFWWorld):
     set_rule(world.get_location("Deep-Metal Mine: Near Lolbit Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
     set_rule(world.get_location("Mysterious Mine: Clip From Blacktomb Yard Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
     set_rule(world.get_location("Pinwheel Circus: Switch", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
-    set_rule(world.get_location("Deep-Metal Mine: Tent Entrance before Browboy Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
-    set_rule(world.get_location("Pinwheel Circus: Past Browboy Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
-    set_rule(world.get_location("Pinwheel Funhouse: False Wall After Bubba Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
+    set_rule(world.get_location("Deep-Metal Mine: Tent Entrance before Browboy Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Pinwheel Funhouse"))
+    set_rule(world.get_location("Pinwheel Circus: Past Browboy Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Pinwheel Funhouse"))
+    set_rule(world.get_location("Pinwheel Funhouse: False Wall After Bubba Chest", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Pinwheel Funhouse"))
     set_rule(world.get_location("Lilygear Lake: Key Switch", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and (_fnaf_world_can_access(state, player, this_world, "Blacktomb Yard") or state.has("Key Shortcut Switch", player)))
     set_rule(world.get_location("Lilygear Lake: Key", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and (_fnaf_world_can_access(state, player, this_world, "Blacktomb Yard") or state.has("Key Shortcut Switch", player)))
     set_rule(world.get_location("Nightmare", player), lambda state: _fnaf_world_can_access_chara_area(state, player, this_world, "Pinwheel Funhouse"))
@@ -207,43 +207,43 @@ def set_rules(world: MultiWorld, player: int, this_world: FNaFWWorld):
     set_rule(world.get_location("Lilygear Lake: Laser Switch", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake") and state.has("Key", player))
     set_rule(world.get_location("Deep-Metal Mine: Laser Switch", player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard") and state.has("Key", player))
 
-    for i in range(this_world.options.fazcoin_chests.value):
+    for i in range(this_world.fazcoin_chests.value):
         set_rule(world.get_location("Fazbear Hills: Fazcoin Chest " + str(i + 1), player), lambda state: True)
-        set_rule(world.get_location("Choppy's Woods: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Choppy's Woods"))
+        set_rule(world.get_location("Choppy's Woods: Fazcoin Chest " + str(i + 1), player), lambda state: True)
         set_rule(world.get_location("Dusting Fields: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Dusting Fields"))
         set_rule(world.get_location("Lilygear Lake: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
         set_rule(world.get_location("Mysterious Mine: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Dusting Fields") or _fnaf_world_can_access(state, player, this_world, "Lilygear Lake"))
         set_rule(world.get_location("Blacktomb Yard: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
         set_rule(world.get_location("Deep-Metal Mine: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard"))
-        set_rule(world.get_location("Pinwheel Circus: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Pinwheel Circus"))
+        set_rule(world.get_location("Pinwheel Circus: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Pinwheel Funhouse"))
         set_rule(world.get_location("Pinwheel Funhouse: Fazcoin Chest " + str(i + 1), player), lambda state: _fnaf_world_can_access(state, player, this_world, "Pinwheel Funhouse"))
 
 
 # Sets rules on completion condition
-def set_completion_rules(world: MultiWorld, player: int, this_world: FNaFWWorld):
+def set_completion_rules(world: MultiWorld, player: int, this_world: FNaFWOptions):
     completion_requirements = lambda state: True
-    if this_world.options.ending_goal.current_key == "scott":
+    if this_world.ending_goal.current_key == "scott":
         completion_requirements = lambda state: _fnaf_world_can_access(state, player, this_world, "Pinwheel Circus")\
                                                 and state.has("Laser Switch 1", player)\
                                                 and state.has("Laser Switch 2", player)\
                                                 and state.has("Laser Switch 3", player)\
                                                 and state.has("Laser Switch 4", player)
-    elif this_world.options.ending_goal.current_key == "clock":
+    elif this_world.ending_goal.current_key == "clock":
         completion_requirements = lambda state: _fnaf_world_can_access(state, player, this_world, "Blacktomb Yard")\
                                                 and _fnaf_world_can_access(state, player, this_world, "Dusting Fields")\
                                                 and _fnaf_world_can_access(state, player, this_world, "Pinwheel Funhouse")\
                                                 and state.has("Key", player)
-    elif this_world.options.ending_goal.current_key == "fourth_glitch":
+    elif this_world.ending_goal.current_key == "fourth_glitch":
         completion_requirements = lambda state: _fnaf_world_can_access(state, player, this_world, "Pinwheel Funhouse")
-    elif this_world.options.ending_goal.current_key == "universe_end":
+    elif this_world.ending_goal.current_key == "universe_end":
         completion_requirements = lambda state: state.has("Fredbear", player)
-    elif this_world.options.ending_goal.current_key == "chipper":
+    elif this_world.ending_goal.current_key == "chipper":
         completion_requirements = lambda state: _fnaf_world_can_access(state, player, this_world, "Lilygear Lake")\
                                                 and state.has("Key", player)
-    elif this_world.options.ending_goal.current_key == "magic_rainbow":
+    elif this_world.ending_goal.current_key == "magic_rainbow":
         completion_requirements = lambda state: True
     else:
-        print(this_world.options.ending_goal.current_key)
+        print(this_world.ending_goal.current_key)
         completion_requirements = lambda state: False
 
     world.completion_condition[player] = lambda state: completion_requirements(state)

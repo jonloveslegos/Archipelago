@@ -133,6 +133,83 @@ class FNaFWContext(CommonContext):
         await self.get_username()
         await self.send_connect()
 
+    def clear_fnafw_ap_files(self):
+        self.finished_game = False
+        path = os.path.join(self.save_game_folder, "fnafwAP5")
+        if os.path.exists(path):
+            os.remove(path)
+        path = os.path.join(self.save_game_folder, "fnafwAPTokens5")
+        if os.path.exists(path):
+            os.remove(path)
+        path = os.path.join(self.save_game_folder, "fnafwAPSCOUT5")
+        if os.path.exists(path):
+            os.remove(path)
+
+    def clear_all_fnafw_files(self):
+        self.finished_game = False
+        path = os.path.join(self.save_game_folder, "fnafw5")
+        if os.path.exists(path):
+            os.remove(path)
+        path = os.path.join(self.save_game_folder, "fnafwDEATH5")
+        if os.path.exists(path):
+            os.remove(path)
+
+    def swap_fnafw_files(self, old_address: str, new_address: str):
+        self.finished_game = False
+        path = os.path.join(self.save_game_folder, "fnafw5")
+        if os.path.exists(path):
+            new_file = ""
+            to_name = 1
+            first_empty = -1
+            no_file_count = 0
+            while os.path.exists(os.path.join(self.save_game_folder, "fnafw5_"+str(to_name))) or no_file_count < 3:
+                if os.path.exists(os.path.join(self.save_game_folder, "fnafw5_"+str(to_name))):
+                    no_file_count = 0
+                    with open(os.path.join(self.save_game_folder, "fnafw5_"+str(to_name)), "r") as f:
+                        lines = f.read()
+                        if lines.__contains__("address="+new_address):
+                            new_file = os.path.join(self.save_game_folder, "fnafw5_"+str(to_name))
+                else:
+                    if first_empty == -1:
+                        first_empty = to_name
+                    no_file_count += 1
+                to_name += 1
+            while True:
+                try:
+                    shutil.copy(path, os.path.join(self.save_game_folder, "fnafw5_"+str(first_empty)))
+                    break
+                except PermissionError:
+                    pass
+            with open(os.path.join(self.save_game_folder, "fnafw5_"+str(first_empty)), "r+") as f:
+                if not f.read().__contains__("address="):
+                    f.write("address="+old_address+"\n")
+            while True:
+                try:
+                    os.remove(path)
+                    break
+                except PermissionError:
+                    pass
+            while True:
+                try:
+                    if new_file != "":
+                        shutil.copy(new_file, path)
+                        os.remove(new_file)
+                    break
+                except PermissionError:
+                    pass
+
+    async def connect(self, address: typing.Optional[str] = None):
+        await super().connect(address)
+
+    async def disconnect(self, allow_autoreconnect: bool = False):
+        await super().disconnect(allow_autoreconnect)
+
+    async def connection_closed(self):
+        await super().connection_closed()
+
+    async def shutdown(self):
+        await super().shutdown()
+
     def run_gui(self):
         from kvui import GameManager
 
@@ -167,21 +244,27 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
         ctx.area_warping = arguments["slot_data"]["area_warping"]
 
         ctx.cheap_endo = arguments["slot_data"]["cheap_endo"]
-        path = os.path.join(ctx.save_game_folder, "fnafw5")
-        if not os.path.exists(path):
-            while True:
-                try:
-                    with open(path, "w") as f:
-                        f.write("[fnafw]\n")
-                        f.close()
-                    break
-                except PermissionError:
-                    pass
         path = os.path.join(ctx.save_game_folder, "fnafwAP5")
         while True:
             try:
+                saved_address = ""
+                for i in range(10):
+                    saved_address += str(arguments["slot_data"]["fnafw_world_identifier"][i])
+                found = False
+                if os.path.exists(path):
+                    with open(path, "r") as f:
+                        lines = f.readlines()
+                        for line in lines:
+                            if line.strip() == "address="+saved_address:
+                                found = True
+                    if not found:
+                        for line in lines:
+                            if line.strip().__contains__("address="):
+                                ctx.swap_fnafw_files(line.strip().split("=")[1], saved_address)
+                                ctx.clear_fnafw_ap_files()
                 with open(path, "w") as f:
                     f.write("[fnafw]\n")
+                    f.write("address="+saved_address+"\n")
                     f.write("endinggoal="+ctx.ending_goal+"\n")
                     f.write("areawarping="+ctx.area_warping+"\n")
                     if ctx.cheap_endo:
@@ -192,6 +275,16 @@ async def process_fnafw_cmd(ctx: FNaFWContext, cmd: str, arguments: dict):
                 break
             except PermissionError:
                 pass
+        path = os.path.join(ctx.save_game_folder, "fnafw5")
+        if not os.path.exists(path):
+            while True:
+                try:
+                    with open(path, "w") as f:
+                        f.write("[fnafw]\n")
+                        f.close()
+                    break
+                except PermissionError:
+                    pass
         path = os.path.join(ctx.save_game_folder, "fnafwAPSCOUT5")
         while True:
             try:
@@ -456,8 +549,6 @@ async def game_watcher(ctx: FNaFWContext):
                     break
                 except PermissionError:
                     pass
-        if victory:
-            os.remove(path)
         ctx.locations_checked = sending
         message = [{"cmd": 'LocationChecks', "locations": sending}]
         await ctx.send_msgs(message)

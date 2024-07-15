@@ -16,14 +16,17 @@ class FNaFWFazcoinChests(Range):
     range_end = 3
 
 
-class FNaFWInitialCharacters(Toggle):
-    """Makes your starting characters be randomized"""
-    display_name = "Randomize Initial Characters"
+class FNaFWInitialCharacters(Choice):
+    """Decides your starting characters"""
+    display_name = "Initial Characters"
+    option_vanilla = 0
+    option_limited_random = 1
+    option_true_random = 2
     default = 1
 
 
 class FNaFWHardLogic(Toggle):
-    """Makes it possible to require grinding at the start of the game"""
+    """Makes it possible to require grinding tokens or top layer at the start of the game"""
     display_name = "Hard Logic"
     default = 0
 
@@ -98,7 +101,7 @@ class FNaFWAreaWarping(Choice):
 class FNaFWOptions(PerGameCommonOptions):
     ending_goal:                                  FNaFWGoal
     initial_characters:                           FNaFWInitialCharacters
-    exclude_halloween:                            FNaFWVanillaHalloween
+    vanilla_halloween:                            FNaFWVanillaHalloween
     vanilla_lasers:                               FNaFWVanillaLasers
     vanilla_pearl:                                FNaFWVanillaPearl
     hard_logic:                                   FNaFWHardLogic
