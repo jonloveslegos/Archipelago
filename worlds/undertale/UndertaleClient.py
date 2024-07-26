@@ -6,6 +6,7 @@ import bsdiff4
 import shutil
 import platformdirs
 import platform
+import uuid
 
 import Utils
 
@@ -17,10 +18,683 @@ from CommonClient import CommonContext, server_loop, \
     gui_enabled, ClientCommandProcessor, logger, get_base_parser
 from Utils import async_start
 
+undertale_gifting_options = {
+    "AcceptsAnyGift": True,
+    "DesiredTraits": [
+        "Trap", "Heal", "Speed", "Consumable", "Food", "Heal", "Health"
+    ],
+    "MinimumGiftVersion": 2,
+}
+
+undertale_gifts = {
+    "1": {
+        "ItemName": "Monster Candy",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.45,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.45,
+                "Duration": 1,
+            }
+        ]
+    },
+    "7": {
+        "ItemName": "Spider Donut",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.54,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.54,
+                "Duration": 1,
+            }
+        ]
+    },
+    "10": {
+        "ItemName": "Spider Cider",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 1.09,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 1.09,
+                "Duration": 1,
+            }
+        ]
+    },
+    "11": {
+        "ItemName": "Butterscotch Pie",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 4.5,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 4.5,
+                "Duration": 1,
+            }
+        ]
+    },
+    "63": {
+        "ItemName": "Snail Pie",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 4.45,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 4.45,
+                "Duration": 1,
+            }
+        ]
+    },
+    "16": {
+        "ItemName": "Snowman Piece",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 2.04,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 2.04,
+                "Duration": 1,
+            }
+        ]
+    },
+    "17": {
+        "ItemName": "Nice Cream",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.68,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.68,
+                "Duration": 1,
+            }
+        ]
+    },
+    "19": {
+        "ItemName": "Bisicle",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 1,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 1,
+                "Duration": 1,
+            }
+        ]
+    },
+    "20": {
+        "ItemName": "Unisicle",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.5,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.5,
+                "Duration": 1,
+            }
+        ]
+    },
+    "21": {
+        "ItemName": "Cinnamon Bunny",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 1,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 1,
+                "Duration": 1,
+            }
+        ]
+    },
+    "35": {
+        "ItemName": "Astronaut Food",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.95,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.95,
+                "Duration": 1,
+            }
+        ]
+    },
+    "37": {
+        "ItemName": "Crab Apple",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.81,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.81,
+                "Duration": 1,
+            }
+        ]
+    },
+    "41": {
+        "ItemName": "Sea Tea",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.6,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.45,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Speed",
+                "Quality": 1,
+                "Duration": 1,
+            }
+        ]
+    },
+    "23": {
+        "ItemName": "Abandoned Quiche",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 1.54,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 1.54,
+                "Duration": 1,
+            }
+        ]
+    },
+    "22": {
+        "ItemName": "Temmie Flakes",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.09,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.09,
+                "Duration": 1,
+            }
+        ]
+    },
+    "28": {
+        "ItemName": "Dog Salad",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.45,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.45,
+                "Duration": 1,
+            }
+        ]
+    },
+    "36": {
+        "ItemName": "Instant Noodles",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 2.72,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 2.72,
+                "Duration": 1,
+            }
+        ]
+    },
+    "38": {
+        "ItemName": "Hot Dog...?",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.9,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.9,
+                "Duration": 1,
+            }
+        ]
+    },
+    "39": {
+        "ItemName": "Hot Cat",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.95,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.95,
+                "Duration": 1,
+            }
+        ]
+    },
+    "59": {
+        "ItemName": "Junk Food",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.77,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.77,
+                "Duration": 1,
+            }
+        ]
+    },
+    "62": {
+        "ItemName": "Hush Puppy",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 2.96,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 2.96,
+                "Duration": 1,
+            }
+        ]
+    },
+    "42": {
+        "ItemName": "Starfait",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.63,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.63,
+                "Duration": 1,
+            }
+        ]
+    },
+    "40": {
+        "ItemName": "Glamburger",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 1.22,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 1.22,
+                "Duration": 1,
+            }
+        ]
+    },
+    "43": {
+        "ItemName": "Legendary Hero",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 1.81,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 1.81,
+                "Duration": 1,
+            }
+        ]
+    },
+    "61": {
+        "ItemName": "Face Steak",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 2.72,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 2.72,
+                "Duration": 1,
+            }
+        ]
+    },
+    "58": {
+        "ItemName": "Popato Chisps",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.59,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.59,
+                "Duration": 1,
+            }
+        ]
+    },
+    "18": {
+        "ItemName": "Puppydough Icecream",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 1.27,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 1.27,
+                "Duration": 1,
+            }
+        ]
+    },
+    "6": {
+        "ItemName": "Pumpkin Rings",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.36,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.36,
+                "Duration": 1,
+            }
+        ]
+    },
+    "2": {
+        "ItemName": "Croquet Roll",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.68,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.68,
+                "Duration": 1,
+            }
+        ]
+    },
+    "9": {
+        "ItemName": "Ghost Fruit",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.72,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.72,
+                "Duration": 1,
+            }
+        ]
+    },
+    "8": {
+        "ItemName": "Stoic Onion",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.22,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.22,
+                "Duration": 1,
+            }
+        ]
+    },
+    "5": {
+        "ItemName": "Rock Candy",
+        "Amount": 1,
+        "ItemValue": 0,
+        "Traits": [
+            {
+                "Trait": "Consumable",
+                "Quality": 0.04,
+                "Duration": 1,
+            },
+            {
+                "Trait": "Heal",
+                "Quality": 0.04,
+                "Duration": 1,
+            }
+        ]
+    },
+}
+
+
+async def pop_object(ctx, key: str, value: str):
+    await ctx.send_msgs([
+        {
+            "cmd": "Set",
+            "key": key,
+            "default": {},
+            "want_reply": False,
+            "operations": [
+                {"operation": "pop", "value": value}
+            ]
+        }
+    ])
+
+
+async def pick_gift_recipient(ctx, gift):
+    gift_base = undertale_gifts[gift.split("]:::[", maxsplit=1)[0]]
+    most_applicable_slot: str = gift.split("]:::[", maxsplit=1)[1]
+    chosen_slot = ctx.slot
+    for slot in ctx.player_names:
+        if ctx.player_names[slot] == most_applicable_slot:
+            chosen_slot = slot
+            break
+    found_giftee = False
+    for slot, info in ctx.stored_data[ctx.motherbox_key].items():
+        if int(slot) == chosen_slot:
+            found_giftee = True
+            desire = len(set(info["DesiredTraits"]).intersection([trait["Trait"] for trait in gift_base["Traits"]]))
+            if desire <= 0 and not info["AcceptsAnyGift"]:
+                chosen_slot = ctx.slot
+    if not found_giftee:
+        chosen_slot = ctx.slot
+    item_uuid = uuid.uuid4().hex
+    item = {
+        **gift_base,
+        "ID": item_uuid,
+        "Sender": ctx.player_names[ctx.slot],
+        "Receiver": ctx.player_names[chosen_slot],
+        "SenderTeam": ctx.team,
+        "ReceiverTeam": ctx.team,  # for the moment
+        "IsRefund": False
+    }
+    # print(item)
+    print(str(gift.split("]:::[", maxsplit=1)[0]))
+    await update_object(ctx, f"Giftbox;{ctx.team};{chosen_slot}", {
+        item_uuid: item,
+    })
+
+
+async def pop_gift(ctx):
+    if ctx.giftbox_key in ctx.stored_data.keys():
+        if ctx.stored_data[ctx.giftbox_key]:
+            key, gift = ctx.stored_data[ctx.giftbox_key].popitem()
+            await pop_object(ctx, ctx.giftbox_key, key)
+            # first, special cases
+            item_to_write = "22"
+            traits = [trait["Trait"] for trait in gift["Traits"]]
+            qualities = [quality["Quality"] for quality in gift["Traits"]]
+            if "Trap" in traits:
+                item_to_write = "trap"
+            elif "Speed" in traits:
+                item_to_write = "41"
+            elif any(x in traits for x in ["Consumable", "Food", "Heal", "Health"]):
+                closeness = 999999
+                for item in undertale_gifts:
+                    if abs(undertale_gifts[item]["Traits"][0]["Quality"]-qualities[traits.index("Consumable")]) < closeness:
+                        closeness = abs(undertale_gifts[item]["Traits"][0]["Quality"]-qualities[traits.index("Consumable")])
+                        item_to_write = item
+            filename = f"add.gift"
+            print(str(item_to_write))
+            with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
+                f.write(str(item_to_write)+"\n")
+                f.close()
+
+
+async def update_object(ctx, key: str, value: typing.Dict):
+    await ctx.send_msgs([
+        {
+            "cmd": "Set",
+            "key": key,
+            "default": {},
+            "want_reply": False,
+            "operations": [
+                {"operation": "update", "value": value}
+            ]
+        }
+    ])
+
+
+async def initialize_giftboxes(ctx, giftbox_key: str, motherbox_key: str, is_open: bool):
+    ctx.set_notify(motherbox_key, giftbox_key)
+    await update_object(ctx, f"Giftboxes;{ctx.team}", {f"{ctx.slot}":
+        {
+            "IsOpen": is_open,
+            **undertale_gifting_options
+        }})
+    ctx.gifting = is_open
+
 
 class UndertaleCommandProcessor(ClientCommandProcessor):
     def __init__(self, ctx):
         super().__init__(ctx)
+
+    def _cmd_gift(self):
+        """Toggles gifting for the current game."""
+        if not getattr(self.ctx, "gifting", None):
+            self.ctx.gifting = True
+        else:
+            self.ctx.gifting = not self.ctx.gifting
+        self.output(f"Gifting set to {self.ctx.gifting}")
+        async_start(update_object(self.ctx, f"Giftboxes;{self.ctx.team}", {
+            f"{self.ctx.slot}":
+                {
+                    "IsOpen": self.ctx.gifting,
+                    **undertale_gifting_options
+                }
+        }))
 
     def _cmd_resync(self):
         """Manually trigger a resync."""
@@ -114,7 +788,7 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
 
 
 class UndertaleContext(CommonContext):
-    tags = {"AP", "Online"}
+    tags = {"AP", "Online", "Minigame"}
     game = "Undertale"
     command_processor = UndertaleCommandProcessor
     items_handling = 0b111
@@ -125,6 +799,11 @@ class UndertaleContext(CommonContext):
     kill_pack_size = None
     spare_pack_size = None
     spare_max = None
+    giftbox_key = ""
+    motherbox_key = ""
+    enable_gifting = False
+    gifting = False
+    initialize_gifting = False
     entrances: List[Tuple[str, str]] = None
     save_game_folder = platformdirs.user_config_dir(appname="UNDERTALE", ensure_exists=True, appauthor=False)
 
@@ -137,6 +816,11 @@ class UndertaleContext(CommonContext):
         self.finished_game = False
         self.game = "Undertale"
         self.got_deathlink = False
+        self.giftbox_key = ""
+        self.motherbox_key = ""
+        self.enable_gifting = False
+        self.gifting = False
+        self.initialize_gifting = False
         self.syncing = False
         self.deathlink_status = False
         self.tem_armor = False
@@ -164,7 +848,7 @@ class UndertaleContext(CommonContext):
                 f.write(patchedFile)
         os.makedirs(name=os.path.join(os.getcwd(), "Undertale", "Custom Sprites"), exist_ok=True)
         with open(os.path.expandvars(os.path.join(os.getcwd(), "Undertale", "Custom Sprites",
-                                     "which_character.txt")), "w") as f:
+                                                  "which_character.txt")), "w") as f:
             f.writelines(["// Put the folder name of the sprites you want to play as, make sure it is the only "
                           "line other than this one.\n", "frisk"])
             f.close()
@@ -181,11 +865,11 @@ class UndertaleContext(CommonContext):
         for root, dirs, files in os.walk(path):
             for file in files:
                 try:
-                    if "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
+                    if "total_pieces" == file or "add.gift" == file or "remove.gift" == file or "team_players" == file or "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
                             "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
                     elif file.endswith(("disconnected", ".item", ".victory", ".route", ".playerspot", ".mad",
-                                        ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando")):
+                                        ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando", ".minigame")):
                         os.remove(os.path.join(root, file))
                 except Exception as error:
                     print(str(error))
@@ -246,17 +930,20 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             os.mkdir(ctx.save_game_folder)
         ctx.route = args["slot_data"]["route_required"]
         ctx.pieces_needed = args["slot_data"]["key_pieces"]
+        with open(os.path.join(ctx.save_game_folder, "total_pieces"), "w") as f:
+            f.write(str(ctx.pieces_needed))
+            f.close()
         ctx.kill_pack_size = args["slot_data"]["kill_sanity_pack_size"]
         ctx.spare_pack_size = args["slot_data"]["spare_sanity_pack_size"]
         ctx.spare_max = args["slot_data"]["spare_sanity_max"]
         ctx.tem_armor = args["slot_data"]["temy_include"]
 
-        await ctx.send_msgs([{"cmd": "Get", "keys": [str(ctx.slot)+" RoutesDone neutral",
-                                                     str(ctx.slot)+" RoutesDone pacifist",
-                                                     str(ctx.slot)+" RoutesDone genocide"]}])
-        await ctx.send_msgs([{"cmd": "SetNotify", "keys": [str(ctx.slot)+" RoutesDone neutral",
-                                                           str(ctx.slot)+" RoutesDone pacifist",
-                                                           str(ctx.slot)+" RoutesDone genocide"]}])
+        await ctx.send_msgs([{"cmd": "Get", "keys": [str(ctx.slot) + " RoutesDone neutral",
+                                                     str(ctx.slot) + " RoutesDone pacifist",
+                                                     str(ctx.slot) + " RoutesDone genocide"]}])
+        await ctx.send_msgs([{"cmd": "SetNotify", "keys": [str(ctx.slot) + " RoutesDone neutral",
+                                                           str(ctx.slot) + " RoutesDone pacifist",
+                                                           str(ctx.slot) + " RoutesDone genocide"]}])
         if args["slot_data"]["only_flakes"]:
             with open(os.path.join(ctx.save_game_folder, "genonochest.flag"), "w") as f:
                 f.close()
@@ -268,14 +955,18 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 for item in ctx.entrances:
                     print(item)
-                    f.write(item[0]+"\n"+item[1]+"\n")
+                    f.write(item[0] + "\n" + item[1] + "\n")
                 f.close()
+        ctx.enable_gifting = bool(args["slot_data"]["gifting"])
         if not args["slot_data"]["key_hunt"]:
             ctx.pieces_needed = 0
         if args["slot_data"]["rando_love"]:
             filename = f"loverando.lv"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 f.close()
+        with open(os.path.join(ctx.save_game_folder, f"allow_gifting"), "w") as f:
+            f.write(str(ctx.enable_gifting))
+            f.close()
         if args["slot_data"]["rando_stats"]:
             filename = f"statrando.lv"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
@@ -285,25 +976,36 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             f.close()
         filename = f"kill_size.pack"
         with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
-            f.write(str(ctx.kill_pack_size)+"\n")
+            f.write(str(ctx.kill_pack_size) + "\n")
             f.close()
         filename = f"spare_size.pack"
         with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
-            f.write(str(ctx.spare_pack_size)+"\n")
+            f.write(str(ctx.spare_pack_size) + "\n")
             f.close()
         filename = f"spare_max.pack"
         with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
-            f.write(str(ctx.spare_max)+"\n")
+            f.write(str(ctx.spare_max) + "\n")
             f.close()
         filename = f"check.spot"
         with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
             for ss in set(args["checked_locations"]):
-                f.write(str(ss-12000)+"\n")
+                f.write(str(ss - 12000) + "\n")
             f.close()
+        filename = f"team_players"
+        with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+            f.write(str(len(ctx.player_names))+"\n")
+            for ss in ctx.player_names:
+                if ctx.player_names[ss] != "Archipelago":
+                    f.write(ctx.player_names[ss]+"\n")
+            f.close()
+        ctx.giftbox_key = f"Giftbox;{ctx.team};{ctx.slot}"
+        ctx.motherbox_key = f"Giftboxes;{ctx.team}"
+        await initialize_giftboxes(ctx, ctx.giftbox_key, ctx.motherbox_key, ctx.enable_gifting)
+        ctx.initialize_gifting = True
     elif cmd == "LocationInfo":
         for loc in args["locations"]:
             locationid = loc.location
-            filename = f"{str(locationid-12000)}.hint"
+            filename = f"{str(locationid - 12000)}.hint"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 toDraw = ""
                 for i in range(20):
@@ -314,22 +1016,22 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                 f.write(toDraw)
                 f.close()
     elif cmd == "Retrieved":
-        if str(ctx.slot)+" RoutesDone neutral" in args["keys"]:
-            if args["keys"][str(ctx.slot)+" RoutesDone neutral"] is not None:
-                ctx.completed_routes["neutral"] = args["keys"][str(ctx.slot)+" RoutesDone neutral"]
-        if str(ctx.slot)+" RoutesDone genocide" in args["keys"]:
-            if args["keys"][str(ctx.slot)+" RoutesDone genocide"] is not None:
-                ctx.completed_routes["genocide"] = args["keys"][str(ctx.slot)+" RoutesDone genocide"]
-        if str(ctx.slot)+" RoutesDone pacifist" in args["keys"]:
+        if str(ctx.slot) + " RoutesDone neutral" in args["keys"]:
+            if args["keys"][str(ctx.slot) + " RoutesDone neutral"] is not None:
+                ctx.completed_routes["neutral"] = args["keys"][str(ctx.slot) + " RoutesDone neutral"]
+        if str(ctx.slot) + " RoutesDone genocide" in args["keys"]:
+            if args["keys"][str(ctx.slot) + " RoutesDone genocide"] is not None:
+                ctx.completed_routes["genocide"] = args["keys"][str(ctx.slot) + " RoutesDone genocide"]
+        if str(ctx.slot) + " RoutesDone pacifist" in args["keys"]:
             if args["keys"][str(ctx.slot) + " RoutesDone pacifist"] is not None:
-                ctx.completed_routes["pacifist"] = args["keys"][str(ctx.slot)+" RoutesDone pacifist"]
+                ctx.completed_routes["pacifist"] = args["keys"][str(ctx.slot) + " RoutesDone pacifist"]
     elif cmd == "SetReply":
         if args["value"] is not None:
-            if str(ctx.slot)+" RoutesDone pacifist" == args["key"]:
+            if str(ctx.slot) + " RoutesDone pacifist" == args["key"]:
                 ctx.completed_routes["pacifist"] = args["value"]
-            elif str(ctx.slot)+" RoutesDone genocide" == args["key"]:
+            elif str(ctx.slot) + " RoutesDone genocide" == args["key"]:
                 ctx.completed_routes["genocide"] = args["value"]
-            elif str(ctx.slot)+" RoutesDone neutral" == args["key"]:
+            elif str(ctx.slot) + " RoutesDone neutral" == args["key"]:
                 ctx.completed_routes["neutral"] = args["value"]
     elif cmd == "ReceivedItems":
         start_index = args["index"]
@@ -357,55 +1059,55 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                 with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                     if NetworkItem(*item).item == 77701:
                         if placedWeapon == 0:
-                            f.write(str(77013-11000))
+                            f.write(str(77013 - 11000))
                         elif placedWeapon == 1:
-                            f.write(str(77014-11000))
+                            f.write(str(77014 - 11000))
                         elif placedWeapon == 2:
-                            f.write(str(77025-11000))
+                            f.write(str(77025 - 11000))
                         elif placedWeapon == 3:
-                            f.write(str(77045-11000))
+                            f.write(str(77045 - 11000))
                         elif placedWeapon == 4:
-                            f.write(str(77049-11000))
+                            f.write(str(77049 - 11000))
                         elif placedWeapon == 5:
-                            f.write(str(77047-11000))
+                            f.write(str(77047 - 11000))
                         elif placedWeapon == 6:
                             if str(ctx.route) == "genocide" or str(ctx.route) == "all_routes":
-                                f.write(str(77052-11000))
+                                f.write(str(77052 - 11000))
                             else:
-                                f.write(str(77051-11000))
+                                f.write(str(77051 - 11000))
                         else:
-                            f.write(str(77003-11000))
+                            f.write(str(77003 - 11000))
                         placedWeapon += 1
                     elif NetworkItem(*item).item == 77702:
                         if placedArmor == 0:
-                            f.write(str(77012-11000))
+                            f.write(str(77012 - 11000))
                         elif placedArmor == 1:
-                            f.write(str(77015-11000))
+                            f.write(str(77015 - 11000))
                         elif placedArmor == 2:
-                            f.write(str(77024-11000))
+                            f.write(str(77024 - 11000))
                         elif placedArmor == 3:
-                            f.write(str(77044-11000))
+                            f.write(str(77044 - 11000))
                         elif placedArmor == 4:
-                            f.write(str(77048-11000))
+                            f.write(str(77048 - 11000))
                         elif placedArmor == 5:
                             if str(ctx.route) == "genocide":
-                                f.write(str(77053-11000))
+                                f.write(str(77053 - 11000))
                             else:
-                                f.write(str(77046-11000))
+                                f.write(str(77046 - 11000))
                         elif placedArmor == 6 and ((not str(ctx.route) == "genocide") or ctx.tem_armor):
                             if str(ctx.route) == "all_routes":
-                                f.write(str(77053-11000))
+                                f.write(str(77053 - 11000))
                             elif str(ctx.route) == "genocide":
-                                f.write(str(77064-11000))
+                                f.write(str(77064 - 11000))
                             else:
-                                f.write(str(77050-11000))
+                                f.write(str(77050 - 11000))
                         elif placedArmor == 7 and ctx.tem_armor and not str(ctx.route) == "genocide":
-                            f.write(str(77064-11000))
+                            f.write(str(77064 - 11000))
                         else:
-                            f.write(str(77004-11000))
+                            f.write(str(77004 - 11000))
                         placedArmor += 1
                     else:
-                        f.write(str(NetworkItem(*item).item-11000))
+                        f.write(str(NetworkItem(*item).item - 11000))
                     f.close()
                 ctx.items_received.append(NetworkItem(*item))
                 if [item.item for item in ctx.items_received].count(77000) >= ctx.pieces_needed > 0:
@@ -424,7 +1126,7 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             filename = f"check.spot"
             with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
                 for ss in set(args["checked_locations"]):
-                    f.write(str(ss-12000)+"\n")
+                    f.write(str(ss - 12000) + "\n")
                 f.close()
 
     elif cmd == "Bounced":
@@ -437,6 +1139,13 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                     f.write(str(data["x"]) + str(data["y"]) + str(data["room"]) + str(
                         data["spr"]) + str(data["frm"]))
                     f.close()
+        elif "Minigame" in tags:
+            data = args.get("data", {})
+            filename = f"game" + str(data["game_id"]) + "player" + str(data["player"]) + ".minigame"
+            with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+                for itm in data["to_write_lines"]:
+                    f.write(str(itm.rstrip('\n') + "\n"))
+                f.close()
 
 
 async def multi_watcher(ctx: UndertaleContext):
@@ -444,6 +1153,16 @@ async def multi_watcher(ctx: UndertaleContext):
         path = ctx.save_game_folder
         for root, dirs, files in os.walk(path):
             for file in files:
+                if "myself.minigame" in file:
+                    with open(os.path.join(root, file), "r") as mine:
+                        game_id = mine.readline()
+                        player = mine.readline()
+                        lines = mine.readlines()
+                        mine.close()
+                    message = [{"cmd": "Bounce", "tags": ["Minigame"],
+                                "data": {"player": player.rstrip('\n'), "game_id": game_id.rstrip('\n'), "to_write_lines": lines}}]
+                    os.remove(os.path.join(root, file))
+                    await ctx.send_msgs(message)
                 if "spots.mine" in file and "Online" in ctx.tags:
                     with open(os.path.join(root, file), "r") as mine:
                         this_x = mine.readline()
@@ -481,33 +1200,42 @@ async def game_watcher(ctx: UndertaleContext):
         sending = []
         victory = False
         found_routes = 0
+        if hasattr(ctx, "gifting") and ctx.gifting and ctx.initialize_gifting:
+            await pop_gift(ctx)
         for root, dirs, files in os.walk(path):
             for file in files:
                 if "dontbemad.mad" in file:
                     os.remove(os.path.join(root, file))
                     if "DeathLink" in ctx.tags:
                         await ctx.send_death()
+                if "remove.gift" in file:
+                    if hasattr(ctx, "gifting") and ctx.gifting and ctx.initialize_gifting:
+                        with open(os.path.join(root, file), "r") as f:
+                            lines = f.readlines()
+                        for lin in lines:
+                            await pick_gift_recipient(ctx, lin.rstrip('\n').rstrip(' '))
+                        os.remove(os.path.join(root, file))
                 if "scout" == file:
                     sending = []
                     try:
                         with open(os.path.join(root, file), "r") as f:
                             lines = f.readlines()
                         for lin in lines:
-                            if ctx.server_locations.__contains__(int(lin)+12000):
-                                sending = sending + [int(lin.rstrip('\n'))+12000]
+                            if ctx.server_locations.__contains__(int(lin) + 12000):
+                                sending = sending + [int(lin.rstrip('\n')) + 12000]
                     except Exception as error:
                         print(str(error))
                     finally:
                         await ctx.send_msgs([{"cmd": "LocationScouts", "locations": sending,
                                               "create_as_hint": int(2)}])
-                        os.remove(root+"/"+file)
+                        os.remove(root + "/" + file)
                 if "check.spot" in file:
                     sending = []
                     try:
                         with open(os.path.join(root, file), "r") as f:
                             lines = f.readlines()
                         for lin in lines:
-                            sending = sending+[(int(lin.rstrip('\n')))+12000]
+                            sending = sending + [(int(lin.rstrip('\n'))) + 12000]
                         message = [{"cmd": "LocationChecks", "locations": sending}]
                         await ctx.send_msgs(message)
                     except Exception as error:
@@ -529,11 +1257,11 @@ async def game_watcher(ctx: UndertaleContext):
                             if len(text) == 0:
                                 logger.info("Goal: Completed Neutral route! Nothing is left.")
                             elif text.__contains__(", "):
-                                logger.info("Goal: Completed Neutral route! "+text+" are left.")
+                                logger.info("Goal: Completed Neutral route! " + text + " are left.")
                             else:
-                                logger.info("Goal: Completed Neutral route! Only "+text+" is left.")
+                                logger.info("Goal: Completed Neutral route! Only " + text + " is left.")
                             ctx.completed_routes["neutral"] = 1
-                            await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot)+" RoutesDone neutral",
+                            await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot) + " RoutesDone neutral",
                                                   "default": 0, "want_reply": True, "operations": [{"operation": "max",
                                                                                                     "value": 1}]}])
                         elif "pacifist" in file and ctx.completed_routes["pacifist"] != 1:
@@ -547,11 +1275,11 @@ async def game_watcher(ctx: UndertaleContext):
                             if len(text) == 0:
                                 logger.info("Goal: Completed Pacifist route! Nothing is left.")
                             elif text.__contains__(", "):
-                                logger.info("Goal: Completed Pacifist route! "+text+" are left.")
+                                logger.info("Goal: Completed Pacifist route! " + text + " are left.")
                             else:
-                                logger.info("Goal: Completed Pacifist route! Only "+text+" is left.")
+                                logger.info("Goal: Completed Pacifist route! Only " + text + " is left.")
                             ctx.completed_routes["pacifist"] = 1
-                            await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot)+" RoutesDone pacifist",
+                            await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot) + " RoutesDone pacifist",
                                                   "default": 0, "want_reply": True, "operations": [{"operation": "max",
                                                                                                     "value": 1}]}])
                         elif "genocide" in file and ctx.completed_routes["genocide"] != 1:
@@ -565,11 +1293,11 @@ async def game_watcher(ctx: UndertaleContext):
                             if len(text) == 0:
                                 logger.info("Goal: Completed Genocide route! Nothing is left.")
                             elif text.__contains__(", "):
-                                logger.info("Goal: Completed Genocide route! "+text+" are left.")
+                                logger.info("Goal: Completed Genocide route! " + text + " are left.")
                             else:
-                                logger.info("Goal: Completed Genocide route! Only "+text+" is left.")
+                                logger.info("Goal: Completed Genocide route! Only " + text + " is left.")
                             ctx.completed_routes["genocide"] = 1
-                            await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot)+" RoutesDone genocide",
+                            await ctx.send_msgs([{"cmd": "Set", "key": str(ctx.slot) + " RoutesDone genocide",
                                                   "default": 0, "want_reply": True, "operations": [{"operation": "max",
                                                                                                     "value": 1}]}])
         if str(ctx.route) == "all_routes":

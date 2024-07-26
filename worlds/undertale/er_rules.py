@@ -445,14 +445,16 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                                                   math.ceil((i + 1) / world.options.spare_sanity_pack_size.value)) and (
                                             state.can_reach("Hotland Grind Rooms", "Region", player)))
     if _undertale_is_route(world, 1):
+        set_rule(multiworld.get_location("Papyrus Date (Event)", player),
+                 lambda state: state.has("Complete Skeleton", player) and state.has("Papyrus Fight (Event)", player))
         set_rule(multiworld.get_location("Undyne Date (Event)", player),
-                 lambda state: state.has("Papyrus Date (Event)", player) and state.has("Undyne Fight (Event)", player))
+                 lambda state: state.has("Papyrus Date (Event)", player) and state.has("Fish", player) and state.has("Undyne Fight (Event)", player))
         set_rule(multiworld.get_location("Alphys Date (Event)", player),
                  lambda state: state.can_reach("room_water_trashzone1", "Region", player) and state.can_reach(
                      "room_fire_core_final", "Region", player) and state.has("Undyne Letter EX", player) and state.has(
                      "Undyne Date (Event)", player))
         set_rule(multiworld.get_location("Undyne Cook-off", player),
-                 lambda state: state.has("Papyrus Date (Event)", player) and state.has("Undyne Fight (Event)", player))
+                 lambda state: state.has("Undyne Date (Event)", player))
         set_rule(multiworld.get_location("Alphys Date", player),
                  lambda state: state.has("Alphys Date (Event)", player))
         set_rule(multiworld.get_location("Right Spider Bake Sale", player),
@@ -614,7 +616,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
     set_rule(multiworld.get_location("Temmie Shop 3", player),
              lambda state: state.can_reach("room_water_piano", "Region", player))
     set_rule(multiworld.get_location("Temmie Shop 4", player),
-             lambda state: state.can_reach("room_water_piano", "Region", player) and state.has("1000G", player, 2))
+             lambda state: state.can_reach("room_water_piano", "Region", player) and state.has("1000G", player, 1))
     set_rule(multiworld.get_location("Bratty Catty Shop 1", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))

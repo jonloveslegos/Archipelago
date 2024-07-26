@@ -37,15 +37,23 @@ class IncludeTemy(Toggle):
 
 
 class KeyPieces(Range):
-    """How many Key Pieces are added to the pool, only matters with Key Piece Hunt enabled."""
+    """How many required Key Pieces are added to the pool, only matters with Key Piece Hunt enabled."""
     display_name = "Key Piece Amount"
     default = 5
     range_start = 1
     range_end = 10
 
 
+class ExtraKeyPieces(Range):
+    """How many extra Key Pieces are added to the pool, only matters with Key Piece Hunt enabled."""
+    display_name = "Extra Key Piece Amount"
+    default = 0
+    range_start = 0
+    range_end = 10
+
+
 class KeyHunt(Toggle):
-    """Adds Key Pieces to the item pool, you need all of them to enter the last corridor."""
+    """Adds Key Pieces to the item pool, you need a specified amount of them to enter the last corridor."""
     display_name = "Key Piece Hunt"
     default = 0
 
@@ -153,12 +161,19 @@ class EntranceRando(Toggle):
     display_name = "Entrance Rando"
 
 
+class Gifting(Toggle):
+    """Allows gifting items to other players."""
+    display_name = "Gifting"
+    default = 0
+
+
 @dataclass
 class UndertaleOptions(PerGameCommonOptions):
     route_required:                           RouteRequired
     starting_area:                            StartingArea
     key_hunt:                                 KeyHunt
     key_pieces:                               KeyPieces
+    extra_key_pieces:                         ExtraKeyPieces
     rando_item_button:                        RandoBattleOptions
     rando_jump:                               RandomizeJump
     rando_love:                               RandomizeLove
@@ -175,4 +190,5 @@ class UndertaleOptions(PerGameCommonOptions):
     prog_weapons:                             ProgressiveWeapons
     no_equips:                                NoEquips
     only_flakes:                              OnlyFlakes
-    entrance_rando:                           EntranceRando
+    gifting:                                  Gifting
+    # entrance_rando:                           EntranceRando

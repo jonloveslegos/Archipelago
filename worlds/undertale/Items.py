@@ -85,8 +85,8 @@ item_table = {
     "100G": ItemData(77999, ItemClassification.useful),
     "500G": ItemData(77998, ItemClassification.useful),
     "1000G": ItemData(77997, ItemClassification.progression),
-    "Generated Weapon": ItemData(77996, ItemClassification.useful),
-    "Generated Armor": ItemData(77995, ItemClassification.useful),
+    # "Generated Weapon": ItemData(77996, ItemClassification.useful),
+    # "Generated Armor": ItemData(77995, ItemClassification.useful),
     "ATK Up": ItemData(77065, ItemClassification.useful),
     "DEF Up": ItemData(77066, ItemClassification.useful),
     "HP Up": ItemData(77067, ItemClassification.useful),
@@ -112,14 +112,9 @@ item_table = {
 
 non_key_items = {
     "Butterscotch Pie": 1,
-    "500G": 2,
-    "Face Steak": 1,
     "Snowman Piece": 1,
     "Instant Noodles": 1,
-    "Astronaut Food": 2,
-    "Hot Cat": 1,
     "Abandoned Quiche": 1,
-    "Hush Puppy": 1,
 }
 
 required_armor = {
@@ -152,7 +147,7 @@ plot_items = {
 key_items = {
     "Complete Skeleton": 1,
     "Fish": 1,
-    "1000G": 2,
+    "1000G": 1,
     "DT Extractor": 1,
     "Mettaton Plush": 1,
     "Punch Card": 3,
@@ -186,8 +181,12 @@ junk_weights_all = {
     "Starfait": 12,
     "Punch Card": 8,
     "Monster Candy": 6,
+    "Face Steak": 3,
+    "Astronaut Food": 5,
+    "Hot Cat": 8,
+    "Hush Puppy": 4,
     "100G": 6,
-    "500G": 3,
+    "500G": 4,
 }
 
 junk_weights_cut_items = {
@@ -214,8 +213,10 @@ junk_weights_neutral = {
     "Starfait": 12,
     "Punch Card": 8,
     "Monster Candy": 6,
+    "Face Steak": 3,
+    "Astronaut Food": 5,
     "100G": 6,
-    "500G": 3,
+    "500G": 4,
 }
 
 junk_weights_pacifist = {
@@ -235,8 +236,12 @@ junk_weights_pacifist = {
     "Starfait": 12,
     "Punch Card": 8,
     "Monster Candy": 6,
+    "Face Steak": 3,
+    "Astronaut Food": 5,
+    "Hot Cat": 8,
+    "Hush Puppy": 4,
     "100G": 6,
-    "500G": 3,
+    "500G": 4,
 }
 
 junk_weights_genocide = {
@@ -252,6 +257,8 @@ junk_weights_genocide = {
     "Cinnamon Bun": 10,
     "Starfait": 12,
     "Monster Candy": 6,
+    "Face Steak": 3,
+    "Astronaut Food": 5,
     "100G": 6,
-    "500G": 3,
+    "500G": 4,
 }

@@ -82,6 +82,7 @@ class UndertaleWorld(World):
             "no_equips": bool(self.options.no_equips.value),
             "key_hunt": bool(self.options.key_hunt.value),
             "key_pieces": self.options.key_pieces.value,
+            "extra_key_pieces": self.options.extra_key_pieces.value,
             "rando_love": bool(self.options.rando_love.value),
             "rando_stats": bool(self.options.rando_stats.value),
             "prog_armor": bool(self.options.prog_armor.value),
@@ -93,7 +94,10 @@ class UndertaleWorld(World):
             "kill_sanity_pack_size": self.options.kill_sanity_pack_size.value,
             "ice_traps": self.options.ice_traps.value,
             "spare_sanity": bool(self.options.spare_sanity.value),
-            "entrance_rando": bool(self.options.entrance_rando.value),
+            # "gifting": False,
+            "gifting": bool(self.options.gifting.value),
+            "entrance_rando": False,
+            # "entrance_rando": bool(self.options.entrance_rando.value),
             "Entrance Rando": self.undertale_portal_pairs,
             "spare_sanity_max": self.options.spare_sanity_max.value,
             "spare_sanity_pack_size": self.options.spare_sanity_pack_size.value
@@ -118,9 +122,9 @@ class UndertaleWorld(World):
             return "Temmie Flakes"
 
     def pre_fill(self):
-        if self.options.entrance_rando:
-            self.undertale_portal_pairs = assemble_er(self)
-        else:
+        # if self.options.entrance_rando:
+            # self.undertale_portal_pairs = assemble_er(self)
+        # else:
             self.undertale_portal_pairs = ERPlacementState(self, True).pairings
 
     def generate_early(self):
@@ -158,20 +162,18 @@ class UndertaleWorld(World):
         self.multiworld.push_precollected(self.create_item("ACT"))
         self.multiworld.push_precollected(self.create_item("MERCY"))
         if self.options.route_required == "genocide":
-            itempool = [item for item in itempool if item != "Popato Chisps" and item != "Stained Apron" and
-                        item != "Nice Cream" and item != "Hot Cat" and item != "Hot Dog...?" and item != "Punch Card"]
+            itempool = [item for item in itempool if item != "Stained Apron"
+                        and item != "Hot Dog...?" and item != "Punch Card"]
         elif self.options.route_required == "neutral":
-            itempool = [item for item in itempool if item != "Popato Chisps" and item != "Hot Cat" and
-                        item != "Hot Dog...?"]
+            itempool = [item for item in itempool if item != "Hot Dog...?"]
         if self.options.route_required == "pacifist" or self.options.route_required == "all_routes":
             itempool += ["Undyne Letter EX"]
         else:
             itempool.remove("Complete Skeleton")
             itempool.remove("Fish")
             itempool.remove("DT Extractor")
-            itempool.remove("Hush Puppy")
         if self.options.key_hunt:
-            itempool += ["Key Piece"] * self.options.key_pieces.value
+            itempool += ["Key Piece"] * (self.options.key_pieces.value + self.options.extra_key_pieces.value)
         else:
             itempool += ["Left Home Key"]
             itempool += ["Right Home Key"]
