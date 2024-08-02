@@ -253,7 +253,7 @@ class UndertaleWorld(World):
 
         # Choose locations to automatically exclude based on settings
         exclusion_checks = set()
-        exclusion_checks.update(["Nicecream Punch Card Trade", "Hotel Door Hush Puppy"])
+        exclusion_checks.update(["Free Nicecream", "Hotel Door Hush Puppy"])
         exclusion_rules(self.multiworld, self.player, exclusion_checks)
 
         # Convert itempool into real items

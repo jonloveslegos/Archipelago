@@ -198,8 +198,7 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
             "Hotland Population Pack", player, math.ceil(40 / world.options.kill_sanity_pack_size.value))))
 
     world.get_region("Metta Entrance").connect(
-        connecting_region=world.get_region("room_fire_core_premett"),
-        rule=lambda state: state.has("Mettaton Plush", player))
+        connecting_region=world.get_region("room_fire_core_premett"))
 
     world.get_region("room_water_blookyard").connect(
         connecting_region=world.get_region("hapsta door"),
@@ -209,8 +208,7 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
         connecting_region=world.get_region("room_water_blookyard"))
 
     world.get_region("room_fire_core_premett").connect(
-        connecting_region=world.get_region("Metta Entrance"),
-        rule=lambda state: state.has("Mettaton Plush", player))
+        connecting_region=world.get_region("Metta Entrance"))
 
     world.get_region("room_water8").connect(
         connecting_region=world.get_region("room_water9"))
@@ -298,7 +296,7 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
 
     world.get_region("room_sanscorridor").connect(
         connecting_region=world.get_region("room_castle_finalshoehorn"),
-        rule=lambda state: (state.has("Jump", player) or not _undertale_is_route(world, 2)))
+        rule=lambda state: ((state.has("ITEM", player) and state.has("Jump", player)) or not _undertale_is_route(world, 2)))
 
     world.get_region("room_castle_finalshoehorn").connect(
         connecting_region=world.get_region("room_sanscorridor"))
@@ -491,7 +489,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                  lambda state: state.can_reach("room_fire_core_final", "Region", player) and state.has("Undyne Date (Event)",
                                                                                                        player))
     if (not _undertale_is_route(world, 2)) or _undertale_is_route(world, 3):
-        set_rule(multiworld.get_location("Nicecream Punch Card Trade", player),
+        set_rule(multiworld.get_location("Free Nicecream", player),
                  lambda state: state.has("Punch Card", player, 3))
         set_rule(multiworld.get_location("Nicecream Snowdin", player),
                  lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
@@ -516,10 +514,10 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                  lambda state: state.has("Jump", player) and state.has("Snowdin Population Pack", player, math.ceil(
                      16 / world.options.kill_sanity_pack_size.value)))
         set_rule(multiworld.get_location("Undyne Fight", player),
-                 lambda state: state.has("Waterfall Population Pack", player,
+                 lambda state: state.has("ITEM", player) and state.has("Waterfall Population Pack", player,
                                          math.ceil(18 / world.options.kill_sanity_pack_size.value)))
         set_rule(multiworld.get_location("Undyne Fight (Event)", player),
-                 lambda state: state.has("Waterfall Population Pack", player,
+                 lambda state: state.has("ITEM", player) and state.has("Waterfall Population Pack", player,
                                          math.ceil(18 / world.options.kill_sanity_pack_size.value)))
     if _undertale_is_route(world, 2) and bool(world.options.kill_sanity.value):
         for i in range(0, 16):

@@ -41,7 +41,7 @@ def _undertale_exp_available(state: CollectionState, world: "UndertaleWorld", pl
     if state.can_reach("Waterfall Grind Rooms", "Region", player):
         exp += (min(18, state.count("Waterfall Population Pack", player) * pack_size) * 3)
         exp += 52
-        if state.can_reach("room_water20", "Region", player) and state.count("Waterfall Population Pack", player) * \
+        if state.can_reach("room_water20", "Region", player) and state.has("ITEM", player) and state.count("Waterfall Population Pack", player) * \
                 pack_size >= 18:
             exp += 1500
     if state.can_reach("room_fire_turn", "Region", player):

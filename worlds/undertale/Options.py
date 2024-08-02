@@ -19,7 +19,7 @@ class RandomizeJump(Toggle):
 
 
 class StartingArea(Choice):
-    """Which area to start with access to. (Ignored with entrance rando enabled)"""
+    """Which area to start with access to. (You will always have access to New Home.)"""
     display_name = "Starting Area"
     option_ruins = 0
     option_snowdin = 1
@@ -28,6 +28,12 @@ class StartingArea(Choice):
     option_all = 4
     option_none = 5
     default = 0
+
+
+class AllBosses(Toggle):
+    """Requires beating all bosses to goal."""
+    display_name = "Require All Bosses"
+    default = 1
 
 
 class IncludeTemy(Toggle):
@@ -157,7 +163,7 @@ class SpareSanityPackSize(Range):
 
 
 class EntranceRando(Toggle):
-    """Randomize the connections between scenes. You also will not start with any keys."""
+    """Randomize the connections between scenes."""
     display_name = "Entrance Rando"
 
 

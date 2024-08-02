@@ -12,7 +12,7 @@ class UndertaleItem(Item):
 
 
 item_table = {
-    "Progressive Plot": ItemData(77700, ItemClassification.progression),
+    # "Progressive Plot": ItemData(77700, ItemClassification.progression),
     "Progressive Weapons": ItemData(77701, ItemClassification.useful),
     "Progressive Armor": ItemData(77702, ItemClassification.useful),
     "Monster Candy": ItemData(77001, ItemClassification.filler),
@@ -77,7 +77,7 @@ item_table = {
     "Complete Skeleton": ItemData(77779, ItemClassification.progression),
     "Fish": ItemData(77780, ItemClassification.progression),
     "DT Extractor": ItemData(77782, ItemClassification.progression),
-    "Mettaton Plush": ItemData(77786, ItemClassification.progression),
+    # "Mettaton Plush": ItemData(77786, ItemClassification.progression),
     "Left Home Key": ItemData(77787, ItemClassification.progression),
     "LOVE": ItemData(77788, ItemClassification.useful),
     "Right Home Key": ItemData(77789, ItemClassification.progression),
@@ -140,7 +140,6 @@ required_weapons = {
 plot_items = {
     "Complete Skeleton": 1,
     "Fish": 1,
-    "Mettaton Plush": 1,
     "DT Extractor": 1,
 }
 
@@ -149,7 +148,6 @@ key_items = {
     "Fish": 1,
     "1000G": 1,
     "DT Extractor": 1,
-    "Mettaton Plush": 1,
     "Punch Card": 3,
     "Hot Dog...?": 1,
     "ATK Up": 19,

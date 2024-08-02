@@ -868,7 +868,7 @@ class UndertaleContext(CommonContext):
                     if "total_pieces" == file or "add.gift" == file or "remove.gift" == file or "team_players" == file or "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
                             "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
-                    elif file.endswith(("disconnected", ".item", ".victory", ".route", ".playerspot", ".mad",
+                    elif file.endswith(("disconnected", "connected", ".item", ".victory", ".route", ".playerspot", ".mad",
                                         ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando", ".minigame")):
                         os.remove(os.path.join(root, file))
                 except Exception as error:
@@ -1002,6 +1002,9 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
         ctx.motherbox_key = f"Giftboxes;{ctx.team}"
         await initialize_giftboxes(ctx, ctx.giftbox_key, ctx.motherbox_key, ctx.enable_gifting)
         ctx.initialize_gifting = True
+        filename = f"connected"
+        with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+            f.close()
     elif cmd == "LocationInfo":
         for loc in args["locations"]:
             locationid = loc.location
