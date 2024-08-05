@@ -1,5 +1,4 @@
 from __future__ import annotations
-import multiprocessing
 
 import Utils
 
@@ -87,6 +86,18 @@ class FFPSContext(CommonContext):
             await super().server_auth(password_requested)
         await self.get_username()
         await self.send_connect()
+
+    def run_gui(self):
+        from kvui import GameManager
+
+        class UTManager(GameManager):
+            logging_pairs = [
+                ("Client", "Archipelago")
+            ]
+            base_title = "Archipelago FFPS Client"
+
+        self.ui = UTManager(self)
+        self.ui_task = asyncio.create_task(self.ui.async_run(), name="UI")
 
 
 async def not_in_use(filename):
@@ -256,6 +267,16 @@ async def game_watcher(ctx: FFPSContext):
                             f.write("speakers=0\n")
                         if not lines.__contains__("money="):
                             f.write("money=200\n")
+                        if not lines.__contains__("first="):
+                            f.write("first=1\n")
+                        if not lines.__contains__("night="):
+                            f.write("night=1\n")
+                        if not lines.__contains__("phase="):
+                            f.write("phase=1\n")
+                        if not lines.__contains__("skipScare="):
+                            f.write("skipScare=0\n")
+                        if not lines.__contains__("n="):
+                            f.write("n=2\n")
                         f.close()
                     break
                 except PermissionError:
@@ -337,39 +358,34 @@ async def game_watcher(ctx: FFPSContext):
         await asyncio.sleep(0.1)
 
 
-if __name__ == '__main__':
-    async def main():
-        multiprocessing.freeze_support()
-        parser = get_base_parser()
-        parser.add_argument('apz5_file', default="", type=str, nargs="?",
-                            help='Path to an APZ5 file')
-        args = parser.parse_args()
+def main():
+    Utils.init_logging("FFPSClient", exception_logger="Client")
 
-        ctx = FFPSContext(args.connect, args.password)
+    async def _main():
+        ctx = FFPSContext(None, None)
         ctx.server_task = asyncio.create_task(server_loop(ctx), name="server loop")
+        if not os.path.exists(os.getcwd() + "/FFPS Game"):
+            os.mkdir(os.getcwd() + "/FFPS Game")
+
+        asyncio.create_task(
+            game_watcher(ctx), name="FFPSProgressionWatcher")
+
         if gui_enabled:
             ctx.run_gui()
         ctx.run_cli()
 
-        if not os.path.exists(os.getcwd() + "/FFPS Game"):
-            os.mkdir(os.getcwd() + "/FFPS Game")
-
-        progression_watcher = asyncio.create_task(
-            game_watcher(ctx), name="FFPSProgressionWatcher")
-
         await ctx.exit_event.wait()
-        ctx.server_address = None
-
         await ctx.shutdown()
-
-        await progression_watcher
 
     import colorama
 
-    parser = get_base_parser(description="FFPS Client, for text interfacing.")
-
-    args, rest = parser.parse_known_args()
     colorama.init()
 
-    asyncio.run(main())
+    asyncio.run(_main())
     colorama.deinit()
+
+
+if __name__ == "__main__":
+    parser = get_base_parser(description="FFPS Client, for text interfacing.")
+    args = parser.parse_args()
+    main()

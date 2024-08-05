@@ -1,16 +1,26 @@
 import os
 
-import BaseClasses
 from .Items import FFPSItem, item_table
 from .Locations import FFPSLocations, location_table, exclusion_table
 from .Regions import FFPS_regions, link_FFPS_structures
 from .Rules import set_rules, set_completion_rules
 
 from BaseClasses import Region, Entrance, Item, Tutorial
-from .Options import FFPS_options
+from .Options import FFPSOptions
 from ..AutoWorld import World, WebWorld
+from worlds.LauncherComponents import Component, components
+from multiprocessing import Process
 
-client_version = 7
+
+def run_client():
+    print('running FFPS client')
+    from .FFPSClient import main  # lazy import
+    p = Process(target=main)
+    p.start()
+
+
+# components.append(Component("FFPS Client", "FFPSClient"))
+components.append(Component("FFPS Client", func=run_client))
 
 
 def data_path(*args):
@@ -36,13 +46,11 @@ class FFPSWorld(World):
     """
     game = "FFPS"
     web = FFPSWeb()
-    option_definitions = FFPS_options
-    topology_present = True
+    options_dataclass = FFPSOptions
+    options: FFPSOptions
 
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.id for name, data in location_table.items()}
-
-    data_version = 4
 
     def _get_FFPS_data(self):
         return {
@@ -50,12 +58,11 @@ class FFPSWorld(World):
             'seed_name': self.multiworld.seed_name,
             'player_name': self.multiworld.get_player_name(self.player),
             'player_id': self.player,
-            'client_version': client_version,
             'race': self.multiworld.is_race,
-            'max_anim_appears': int(self.multiworld.max_animatronics_appearing[self.player]),
-            'catalogue_rando': bool(self.multiworld.catalogue_rando[self.player]),
-            'night_difficulty': int(self.multiworld.night_difficulty[self.player]),
-            'upgrade_rando': bool(self.multiworld.upgrade_rando[self.player]),
+            'max_anim_appears': int(self.options.max_animatronics_appearing),
+            'catalogue_rando': bool(self.options.catalogue_rando),
+            'night_difficulty': int(self.options.night_difficulty),
+            'upgrade_rando': bool(self.options.upgrade_rando),
         }
 
     def generate_basic(self):
@@ -102,7 +109,7 @@ class FFPSWorld(World):
         set_completion_rules(self.multiworld, self.player)
 
     def create_regions(self):
-        def FFPSRegion(region_name: str, exits=[]):
+        def FFPSRegion(region_name: str, exits):
             ret = Region(region_name, self.player, self.multiworld)
             ret.locations = [FFPSLocations(self.player, loc_name, loc_data.id, ret)
                              for loc_name, loc_data in location_table.items()
@@ -116,8 +123,8 @@ class FFPSWorld(World):
 
     def fill_slot_data(self):
         slot_data = self._get_FFPS_data()
-        for option_name in FFPS_options:
-            option = getattr(self.multiworld, option_name)[self.player]
+        for option_name in self.options.as_dict():
+            option = getattr(self.options, option_name)
             if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
                 slot_data[option_name] = int(option.value)
         return slot_data
@@ -126,3 +133,6 @@ class FFPSWorld(World):
         item_data = item_table[name]
         item = FFPSItem(name, item_data.classification, item_data.code, self.player)
         return item
+
+    def get_filler_item_name(self):
+        return "Nothing"

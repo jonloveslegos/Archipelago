@@ -25,7 +25,7 @@ item_table = {
     "Fruit Maze Decor": ItemData(55610, ItemClassification.useful, "204"),
     "Roller Coaster Decor": ItemData(55611, ItemClassification.useful, "306"),
     "Confetti Floor": ItemData(55612, ItemClassification.useful, "402"),
-    "Stage Upgrade": ItemData(55613, ItemClassification.useful, "stage"),
+    "Stage Upgrade": ItemData(55613, ItemClassification.progression, "stage"),
     "Pizza Light Decor": ItemData(55614, ItemClassification.useful, "404"),
     "Security Puppet Decor": ItemData(55615, ItemClassification.useful, "410"),
     "Punch Clown Decor": ItemData(55616, ItemClassification.useful, "308"),

@@ -1,5 +1,6 @@
 import typing
-from Options import Option, Range, Toggle, Choice
+from Options import Option, Range, Toggle, Choice, PerGameCommonOptions
+from dataclasses import dataclass
 
 
 class MaxAnimAppear(Range):
@@ -30,9 +31,9 @@ class NightDifficulty(Choice):
     default = 0
 
 
-FFPS_options: typing.Dict[str, type(Option)] = {
-    "max_animatronics_appearing":                           MaxAnimAppear,
-    "catalogue_rando":                           RandoCatalogueUnlocks,
-    "night_difficulty":                           NightDifficulty,
-    "upgrade_rando":                           ToolUpgradeRando,
-}
+@dataclass
+class FFPSOptions(PerGameCommonOptions):
+    max_animatronics_appearing:                           MaxAnimAppear
+    catalogue_rando:                           RandoCatalogueUnlocks
+    night_difficulty:                           NightDifficulty
+    upgrade_rando:                           ToolUpgradeRando
