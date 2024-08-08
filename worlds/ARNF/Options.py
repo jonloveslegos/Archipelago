@@ -26,13 +26,19 @@ class GrantAchievementsMode(Choice):
 class StartWithExplorb(Toggle):
     """Whether this player starts with an Explorb in all game modes.  This orb points out where items are hidden, making it easier for players unfamiliar with the hidden locations."""
     display_name = "Start With Explorb"
-    default = 'true'
+    default = 'false'
+
+
+class StartWithMasterMap(Toggle):
+    """Whether this player starts with a Master Map in all game modes.  The map will be entirely revealed."""
+    display_name = "Start With Master Map"
+    default = 'false'
 
 
 class StartWithWallJump(Toggle):
     """Whether this player starts with Wall Jump enabled in all game modes.  Normally, this is unlocked by sequence breaking once."""
     display_name = "Start With Wall Jump"
-    default = 'true'
+    default = 'false'
 
 
 @dataclass
@@ -40,5 +46,6 @@ class ARNFOptions(PerGameCommonOptions):
     game_mode: GameMode
     grant_achievements_mode: GrantAchievementsMode
     start_with_explorb: StartWithExplorb
+    start_with_master_map: StartWithMasterMap
     start_with_wall_jump: StartWithWallJump
     death_link: DeathLink

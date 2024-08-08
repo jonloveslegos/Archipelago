@@ -3,14 +3,14 @@ from typing import Dict, List, NamedTuple
 
 class ARNFRegionData(NamedTuple):
     connecting_regions: List[str] = []
+    
 
 
 region_data_table: Dict[str, ARNFRegionData] = {
     "Menu": ARNFRegionData(["BreakoutOne"]),
     "BreakoutOne": ARNFRegionData(["BreakoutTwo"]),
     "BreakoutTwo": ARNFRegionData(["BreakoutThree"]),
-    "BreakoutThree": ARNFRegionData(["BreakoutFour"]),
-    "BreakoutFour": ARNFRegionData(["Victory"]),
+    "BreakoutThree": ARNFRegionData(["Victory"]),
     "Victory": ARNFRegionData()
 }
 
