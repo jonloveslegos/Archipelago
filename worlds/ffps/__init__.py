@@ -66,6 +66,7 @@ class FFPSWorld(World):
             'wallet_sanity': bool(self.options.wallet_sanity),
             'full_wallet': bool(self.options.full_wallet),
             'day_sanity': bool(self.options.day_sanity),
+            'skipable_night': bool(self.options.skipable_night),
         }
 
     def generate_basic(self):

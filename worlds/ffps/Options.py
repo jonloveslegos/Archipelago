@@ -25,6 +25,12 @@ class FullWallet(Toggle):
     default = 0
 
 
+class SkipableNight(Toggle):
+    """Makes it where you can immediately finish the office section if you have not received any animatronics."""
+    display_name = "Skip-able Night"
+    default = 1
+
+
 class ToolUpgradeRando(Toggle):
     """Turns the speed upgrades for the tasks into checks."""
     display_name = "Speed Upgrade Rando"
@@ -78,3 +84,4 @@ class FFPSOptions(PerGameCommonOptions):
     wallet_sanity:                                    WalletSanity
     full_wallet:                           FullWallet
     day_sanity:                            DaySanity
+    skipable_night:                         SkipableNight

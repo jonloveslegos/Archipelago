@@ -84,6 +84,7 @@ class FFPSContext(CommonContext):
         self.recieved_maxmoney = 0
         self.wallet_money = False
         self.night_select = 0
+        self.skipable_night = 0
         self.maxm = 999999
         self.game = 'FFPS'
 
@@ -123,6 +124,7 @@ async def process_ffps_cmd(ctx: FFPSContext, cmd: str, args: dict):
         ctx.difficulty = args["slot_data"]["night_difficulty"]
         ctx.wallet_money = False
         ctx.night_select = args["slot_data"]["day_sanity"]
+        ctx.skipable_night = args["slot_data"]["skipable_night"]
         ctx.easier_money_grinding = args["slot_data"]["easier_money_grinding"]
         if args["slot_data"]["wallet_sanity"]:
             ctx.maxm = 25
@@ -141,6 +143,7 @@ async def process_ffps_cmd(ctx: FFPSContext, cmd: str, args: dict):
                 f.write("skipScare=0\n")
                 f.write("diffap=" + str(ctx.difficulty) + "\n")
                 f.write("nightselect=" + str(ctx.night_select) + "\n")
+                f.write("skipable_night=" + str(ctx.skipable_night) + "\n")
                 f.close()
         else:
             with open(path, "r") as f:
@@ -168,6 +171,10 @@ async def process_ffps_cmd(ctx: FFPSContext, cmd: str, args: dict):
                                               "nightselect=" + str(ctx.night_select))
                         lines = lines.replace("nightselect=0",
                                               "nightselect=" + str(ctx.night_select))
+                        lines = lines.replace("skipable_night=1",
+                                              "skipable_night=" + str(ctx.skipable_night))
+                        lines = lines.replace("skipable_night=0",
+                                              "skipable_night=" + str(ctx.skipable_night))
                         f.writelines(lines)
                         f.close()
                     break
@@ -349,6 +356,8 @@ async def game_watcher(ctx: FFPSContext):
                             f.write("diffap=" + str(ctx.difficulty) + "\n")
                         if not lines.__contains__("nightselect="):
                             f.write("nightselect=" + str(ctx.night_select) + "\n")
+                        if not lines.__contains__("skipable_night="):
+                            f.write("skipable_night=" + str(ctx.skipable_night) + "\n")
                         if not lines.__contains__("n="):
                             f.write("n=2\n")
                         for itm in ffps.shop_table:
