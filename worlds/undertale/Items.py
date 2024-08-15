@@ -92,7 +92,7 @@ item_table = {
     "HP Up": ItemData(77067, ItemClassification.useful),
     "FIGHT": ItemData(77077, ItemClassification.useful),
     "ACT": ItemData(77078, ItemClassification.useful),
-    "ITEM": ItemData(77079, ItemClassification.useful),
+    "ITEM": ItemData(77079, ItemClassification.progression),
     "MERCY": ItemData(77080, ItemClassification.useful),
     "Ruins Key": ItemData(77081, ItemClassification.progression),
     "Snowdin Key": ItemData(77082, ItemClassification.progression),
