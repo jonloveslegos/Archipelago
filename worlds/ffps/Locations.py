@@ -9,6 +9,11 @@ class LocData(typing.NamedTuple):
     setId: str
 
 
+class CSData(typing.NamedTuple):
+    id: typing.Optional[int]
+    amount: int
+
+
 class FFPSLocations(Location):
     game: str = "FFPS"
 
@@ -30,9 +35,38 @@ location_table = {
     "Bought Internet Upgrade": LocData(57509, 'Office', "hispeed"),
 }
 
+money_table = [
+    CSData(57510, 1000),
+    CSData(57511, 2000),
+    CSData(57512, 3000),
+    CSData(57513, 4000),
+    CSData(57514, 5000),
+    CSData(57515, 6000),
+    CSData(57516, 7000),
+    CSData(57517, 8000),
+    CSData(57518, 9000),
+    CSData(57519, 10000),
+    CSData(57520, 11000),
+    CSData(57521, 12000),
+    CSData(57522, 13000),
+    CSData(57523, 14000),
+    CSData(57524, 15000),
+    CSData(57525, 16000),
+    CSData(57526, 17000),
+    CSData(57527, 18000),
+    CSData(57528, 19000),
+    CSData(57529, 20000),
+]
+
+for itm in money_table:
+    location_table.update({"Obtained "+str(itm.amount)+" Points": LocData(itm.id, 'Pizzeria', "")})
+
 for name, data in item_table.items():
     if data.setId != "":
-        if data.code >= 55600 and data.setId != "stage" and data.setId != "cups" and data.setId != "speakers":
+        if data.code >= 55600 and data.setId != "day2" and data.setId != "day3" and data.setId != "day4" and \
+                data.setId != "day5" and data.setId != "day6" and data.setId != "stage" and \
+                data.setId != "maxmoney" and data.setId != "money" and data.setId != "cups" and \
+                data.setId != "speakers":
             location_table.update({"Buy " + name: LocData(len(location_table)+57500, 'Pizzeria', data.setId), })
 for i in range(5):
     location_table.update({"Buy Stage Upgrade " +

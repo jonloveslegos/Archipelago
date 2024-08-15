@@ -1,7 +1,5 @@
-import os
-
-from .Items import FFPSItem, item_table
-from .Locations import FFPSLocations, location_table, exclusion_table
+from .Items import FFPSItem, item_table, shop_table
+from .Locations import FFPSLocations, location_table, exclusion_table, money_table
 from .Regions import FFPS_regions, link_FFPS_structures
 from .Rules import set_rules, set_completion_rules
 
@@ -23,8 +21,9 @@ def run_client():
 components.append(Component("FFPS Client", func=run_client))
 
 
-def data_path(*args):
-    return os.path.join(os.path.dirname(__file__), 'data', *args)
+def data_path(file_name: str):
+    import pkgutil
+    return pkgutil.get_data(__name__, "data/" + file_name)
 
 
 class FFPSWeb(WebWorld):
@@ -54,7 +53,7 @@ class FFPSWorld(World):
 
     def _get_FFPS_data(self):
         return {
-            'world_seed': self.multiworld.per_slot_randoms[self.player].getrandbits(32),
+            'world_seed': self.random.getrandbits(32),
             'seed_name': self.multiworld.seed_name,
             'player_name': self.multiworld.get_player_name(self.player),
             'player_id': self.player,
@@ -63,6 +62,10 @@ class FFPSWorld(World):
             'catalogue_rando': bool(self.options.catalogue_rando),
             'night_difficulty': int(self.options.night_difficulty),
             'upgrade_rando': bool(self.options.upgrade_rando),
+            'easier_money_grinding': bool(self.options.easier_money_grinding),
+            'wallet_sanity': bool(self.options.wallet_sanity),
+            'full_wallet': bool(self.options.full_wallet),
+            'day_sanity': bool(self.options.day_sanity),
         }
 
     def generate_basic(self):
@@ -75,11 +78,17 @@ class FFPSWorld(World):
         itempool += ["Stage Upgrade"] * 4
         itempool += ["Cup Upgrade"] * 3
         itempool += ["Speaker Upgrade"] * 1
+        itempool += ["Wallet Capacity Increase"] * 11
 
-        self.multiworld.random.shuffle(itempool)
+        if not self.options.day_sanity:
+            itempool = [item for item in itempool if item != "Tuesday Unlock" and item != "Wednesday Unlock" and
+                        item != "Thursday Unlock" and item != "Friday Unlock" and item != "Saturday Unlock"]
+
+        if not self.options.wallet_sanity:
+            itempool = [item for item in itempool if item != "Wallet Capacity Increase"]
 
         # Convert itempool into real items
-        if not getattr(self.multiworld, f"catalogue_rando")[self.player]:
+        if not self.options.catalogue_rando:
             self.multiworld.get_location("Unlocked Catalogue 2", self.player).place_locked_item(
                 self.create_item("Catalogue 2 Unlock"))
             self.multiworld.get_location("Unlocked Catalogue 3", self.player).place_locked_item(
@@ -90,7 +99,7 @@ class FFPSWorld(World):
             itempool.remove("Catalogue 3 Unlock")
             itempool.remove("Catalogue 4 Unlock")
 
-        if not getattr(self.multiworld, f"upgrade_rando")[self.player]:
+        if not self.options.upgrade_rando:
             self.multiworld.get_location("Bought Printer Upgrade", self.player).place_locked_item(
                 self.create_item("Printer Upgrade"))
             self.multiworld.get_location("Bought Handyman Upgrade", self.player).place_locked_item(
@@ -101,11 +110,15 @@ class FFPSWorld(World):
             itempool.remove("Handyman Upgrade")
             itempool.remove("Internet Upgrade")
 
-        itempool = [item for item in map(lambda name: self.create_item(name), itempool)]
-        self.multiworld.itempool += itempool
+        complete_item_pool = [item for item in map(lambda name: self.create_item(name), itempool)]
+
+        while len(complete_item_pool) < len(self.multiworld.get_unfilled_locations(self.player)):
+            complete_item_pool.append(self.create_filler())
+
+        self.multiworld.itempool += complete_item_pool
 
     def set_rules(self):
-        set_rules(self.multiworld, self.player)
+        set_rules(self, self.player)
         set_completion_rules(self.multiworld, self.player)
 
     def create_regions(self):
@@ -135,4 +148,4 @@ class FFPSWorld(World):
         return item
 
     def get_filler_item_name(self):
-        return "Nothing"
+        return "250 Money"
