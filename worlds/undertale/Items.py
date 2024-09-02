@@ -32,12 +32,12 @@ item_table = {
     "Manly Bandanna": ItemData(77015, ItemClassification.useful),
     "Snowman Piece": ItemData(77016, ItemClassification.useful),
     "Nice Cream": ItemData(77017, ItemClassification.filler),
-    "Puppydough Icecream": ItemData(77018, ItemClassification.filler),
+    "Puppydough Icecream": ItemData(77018, ItemClassification.useful),
     "Bisicle": ItemData(77019, ItemClassification.filler),
     "Unisicle": ItemData(77020, ItemClassification.filler),
-    "Cinnamon Bun": ItemData(77021, ItemClassification.filler),
+    "Cinnamon Bun": ItemData(77021, ItemClassification.useful),
     "Temmie Flakes": ItemData(77022, ItemClassification.filler),
-    "Abandoned Quiche": ItemData(77023, ItemClassification.filler),
+    "Abandoned Quiche": ItemData(77023, ItemClassification.useful),
     "Old Tutu": ItemData(77024, ItemClassification.useful),
     "Ballet Shoes": ItemData(77025, ItemClassification.useful),
     "Punch Card": ItemData(77026, ItemClassification.progression),
@@ -49,10 +49,10 @@ item_table = {
     "Crab Apple": ItemData(77037, ItemClassification.filler),
     "Hot Dog...?": ItemData(77038, ItemClassification.progression),
     "Hot Cat": ItemData(77039, ItemClassification.filler),
-    "Glamburger": ItemData(77040, ItemClassification.filler),
+    "Glamburger": ItemData(77040, ItemClassification.useful),
     "Sea Tea": ItemData(77041, ItemClassification.filler),
     "Starfait": ItemData(77042, ItemClassification.filler),
-    "Legendary Hero": ItemData(77043, ItemClassification.filler),
+    "Legendary Hero": ItemData(77043, ItemClassification.useful),
     "Cloudy Glasses": ItemData(77044, ItemClassification.useful),
     "Torn Notebook": ItemData(77045, ItemClassification.useful),
     "Stained Apron": ItemData(77046, ItemClassification.useful),
@@ -69,8 +69,8 @@ item_table = {
     "Undyne Letter EX": ItemData(77057, ItemClassification.progression),
     "Popato Chisps": ItemData(77058, ItemClassification.filler),
     "Junk Food": ItemData(77059, ItemClassification.filler),
-    "Mystery Key": ItemData(77060, ItemClassification.filler),
-    "Face Steak": ItemData(77061, ItemClassification.filler),
+    "Mystery Key": ItemData(77060, ItemClassification.progression),
+    "Face Steak": ItemData(77061, ItemClassification.useful),
     "Hush Puppy": ItemData(77062, ItemClassification.filler),
     "Snail Pie": ItemData(77063, ItemClassification.filler),
     "temy armor": ItemData(77064, ItemClassification.useful),
@@ -85,6 +85,8 @@ item_table = {
     "100G": ItemData(77999, ItemClassification.useful),
     "500G": ItemData(77998, ItemClassification.useful),
     "1000G": ItemData(77997, ItemClassification.progression),
+    "Generated Weapon": ItemData(77996, ItemClassification.useful),
+    "Generated Armor": ItemData(77995, ItemClassification.useful),
     "ATK Up": ItemData(77065, ItemClassification.useful),
     "DEF Up": ItemData(77066, ItemClassification.useful),
     "HP Up": ItemData(77067, ItemClassification.useful),
@@ -96,10 +98,16 @@ item_table = {
     "Snowdin Key": ItemData(77082, ItemClassification.progression),
     "Waterfall Key": ItemData(77083, ItemClassification.progression),
     "Hotland Key": ItemData(77084, ItemClassification.progression),
-    "Core Key": ItemData(77085, ItemClassification.progression),
-    "Undyne Date": ItemData(None, ItemClassification.progression),
-    "Alphys Date": ItemData(None, ItemClassification.progression),
-    "Papyrus Date": ItemData(None, ItemClassification.progression),
+    "Jump": ItemData(77086, ItemClassification.progression),
+    "Ruins Population Pack": ItemData(77087, ItemClassification.progression),
+    "Snowdin Population Pack": ItemData(77088, ItemClassification.progression),
+    "Waterfall Population Pack": ItemData(77089, ItemClassification.progression),
+    "Hotland Population Pack": ItemData(77090, ItemClassification.progression),
+    "Ruins Spare": ItemData(77092, ItemClassification.progression),
+    "Snowdin Spare": ItemData(77093, ItemClassification.progression),
+    "Waterfall Spare": ItemData(77094, ItemClassification.progression),
+    "Hotland Spare": ItemData(77095, ItemClassification.progression),
+    "Ice Trap": ItemData(77091, ItemClassification.trap)
 }
 
 non_key_items = {
@@ -111,8 +119,6 @@ non_key_items = {
     "Astronaut Food": 2,
     "Hot Cat": 1,
     "Abandoned Quiche": 1,
-    "Spider Donut": 1,
-    "Spider Cider": 1,
     "Hush Puppy": 1,
 }
 
@@ -159,7 +165,9 @@ key_items = {
     "Snowdin Key": 1,
     "Waterfall Key": 1,
     "Hotland Key": 1,
-    "Core Key": 1,
+    "Mystery Key": 1,
+    "Jump": 1,
+    "1000G": 2,
 }
 
 junk_weights_all = {
@@ -181,6 +189,15 @@ junk_weights_all = {
     "Monster Candy": 6,
     "100G": 6,
     "500G": 3,
+}
+
+junk_weights_cut_items = {
+    "Puppydough Icecream": 8,
+    "Pumpkin Rings": 12,
+    "Croquet Roll": 10,
+    "Ghost Fruit": 10,
+    "Stoic Onion": 8,
+    "Rock Candy": 6,
 }
 
 junk_weights_neutral = {

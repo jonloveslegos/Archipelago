@@ -12,14 +12,21 @@ class RouteRequired(Choice):
     default = 0
 
 
+class RandomizeJump(Toggle):
+    """Adds the ability to jump with the blue soul to the item pool."""
+    display_name = "Randomize Blue Soul jump"
+    default = 0
+
+
 class StartingArea(Choice):
-    """Which area to start with access to."""
+    """Which area to start with access to. (Ignored with entrance rando enabled)"""
     display_name = "Starting Area"
     option_ruins = 0
     option_snowdin = 1
     option_waterfall = 2
     option_hotland = 3
-    option_core = 4
+    option_all = 4
+    option_none = 5
     default = 0
 
 
@@ -86,17 +93,86 @@ class RandoBattleOptions(Toggle):
     default = 0
 
 
+class KillSanity(Toggle):
+    """Makes every random encounter an item you need to receive to allow it to happen, also makes every kill from a random encounter a check. Only matters if your goal includes Genocide route"""
+    display_name = "Kill Sanity"
+    default = 0
+
+
+class KillSanityPackSize(Range):
+    """How many encounters do you unlock per item in Kill Sanity. Only matters if your goal includes Genocide route, and has Kill Sanity enabled
+    Rounds down when you get a pack with more encounters than there are left to unlock in the area"""
+    display_name = "Kill Sanity Pack Size"
+    default = 5
+    range_start = 1
+    range_end = 40
+
+
+class CutItems(Toggle):
+    """Adds a chance of having cut items in the pool. (Rock Candy, Puppydough Icecream, etc)"""
+    display_name = "Cut Items"
+    default = 0
+
+
+class IceTraps(Range):
+    """Adds this many Ice Traps to the pool"""
+    display_name = "Ice Trap Count"
+    default = 0
+    range_start = 0
+    range_end = 10
+
+
+class SpareSanity(Toggle):
+    """Makes every spare from a random encounter a check, up to how many spare items you have for that area. Only matters if your goal includes the Pacifist or Neutral route"""
+    display_name = "Spare Sanity"
+    default = 0
+
+
+class SpareSanityMaxSpares(Range):
+    """How many spares you want to be checks in each area. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled
+    Warning: It is not recommended to set this to above 25, because there will be this many, times 4, locations that
+    will be tedious to obtain. At maximum, that is 400 locations
+    that are just for sparing."""
+    display_name = "Spare Sanity Max Spares"
+    default = 10
+    range_start = 1
+    range_end = 100
+
+
+class SpareSanityPackSize(Range):
+    """How many spare checks you want to unlock per item. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled
+    Rounds down when you get a pack with more spares than there are left to unlock in the area"""
+    display_name = "Spare Sanity Pack Size"
+    default = 2
+    range_start = 2
+    range_end = 100
+
+
+class EntranceRando(Toggle):
+    """Randomize the connections between scenes. You also will not start with any keys."""
+    display_name = "Entrance Rando"
+
+
 @dataclass
 class UndertaleOptions(PerGameCommonOptions):
     route_required:                           RouteRequired
     starting_area:                            StartingArea
     key_hunt:                                 KeyHunt
     key_pieces:                               KeyPieces
+    rando_item_button:                        RandoBattleOptions
+    rando_jump:                               RandomizeJump
     rando_love:                               RandomizeLove
     rando_stats:                              RandomizeStats
+    spare_sanity:                             SpareSanity
+    spare_sanity_max:                         SpareSanityMaxSpares
+    spare_sanity_pack_size:                   SpareSanityPackSize
+    kill_sanity:                              KillSanity
+    kill_sanity_pack_size:                    KillSanityPackSize
     temy_include:                             IncludeTemy
-    no_equips:                                NoEquips
-    only_flakes:                              OnlyFlakes
+    cut_items:                                CutItems
+    ice_traps:                                IceTraps
     prog_armor:                               ProgressiveArmor
     prog_weapons:                             ProgressiveWeapons
-    rando_item_button:                        RandoBattleOptions
+    no_equips:                                NoEquips
+    only_flakes:                              OnlyFlakes
+    entrance_rando:                           EntranceRando
