@@ -124,12 +124,37 @@ async def process_ffps_cmd(ctx: FFPSContext, cmd: str, args: dict):
         ctx.difficulty = args["slot_data"]["night_difficulty"]
         ctx.wallet_money = False
         ctx.night_select = args["slot_data"]["day_sanity"]
+        if ctx.night_select:
+            ctx.night_select = 1
+        else:
+            ctx.night_select = 0
         ctx.skipable_night = args["slot_data"]["skipable_night"]
+        if ctx.skipable_night:
+            ctx.skipable_night = 1
+        else:
+            ctx.skipable_night = 0
         ctx.easier_money_grinding = args["slot_data"]["easier_money_grinding"]
         if args["slot_data"]["wallet_sanity"]:
             ctx.maxm = 25
         if args["slot_data"]["full_wallet"]:
             ctx.wallet_money = True
+        path = os.path.expandvars("%appdata%/MMFApplications/FNAF6BOUGHT")
+        if not os.path.exists(path):
+            with open(path, "w") as f:
+                f.write("[FNAF6]\n")
+        else:
+            with open(path, "r") as f:
+                lines = f.read()
+                f.close()
+            while True:
+                try:
+                    with open(path, "w") as f:
+                        if not lines.__contains__("[FNAF6]"):
+                            f.write("[FNAF6]\n")
+                        f.write(lines)
+                    break
+                except PermissionError:
+                    continue
         path = os.path.expandvars("%appdata%/MMFApplications/FNAF6")
         if not os.path.exists(path):
             with open(path, "w") as f:
@@ -277,6 +302,8 @@ async def process_ffps_cmd(ctx: FFPSContext, cmd: str, args: dict):
                                     temp_lines.append(ln + "\n")
                         anim_count = 0
                         anim_gotten = []
+                        for item in args['items']:
+                            ctx.items_received.append(NetworkItem(*item))
                         for itm in ctx.items_received:
                             if ffps.item_table[ffps.FFPSWorld.item_id_to_name[itm.item]].setId not in anim_gotten and \
                                     (ffps.item_table[ffps.FFPSWorld.item_id_to_name[itm.item]].setId == "m2" or
@@ -296,8 +323,6 @@ async def process_ffps_cmd(ctx: FFPSContext, cmd: str, args: dict):
                                 break
                             except PermissionError:
                                 continue
-                        for item in args['items']:
-                            ctx.items_received.append(NetworkItem(*item))
                         break
                     except PermissionError:
                         continue
@@ -495,6 +520,7 @@ async def game_watcher(ctx: FFPSContext):
                 except PermissionError:
                     continue
         path = os.path.expandvars("%appdata%/MMFApplications/VICTORYFFPS")
+        victory = False
         if os.path.exists(path):
             while True:
                 try:

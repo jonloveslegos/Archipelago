@@ -262,11 +262,11 @@ def set_rules(myWorld: "FFPSWorld", player: int):
     set_rule(world.get_location("Salvage Molten Freddy", player),
              lambda state: True)
     set_rule(world.get_location("Salvage ScrapTrap", player),
-             lambda state: state.has("Tuesday Unlock", player))
+             lambda state: state.has("Tuesday Unlock", player) or not myWorld.options.day_sanity)
     set_rule(world.get_location("Salvage Scrap Baby", player),
-             lambda state: state.has("Wednesday Unlock", player))
+             lambda state: state.has("Wednesday Unlock", player) or not myWorld.options.day_sanity)
     set_rule(world.get_location("Salvage Lefty", player),
-             lambda state: state.has("Thursday Unlock", player))
+             lambda state: state.has("Thursday Unlock", player) or not myWorld.options.day_sanity)
     set_rule(world.get_location("Bought Printer Upgrade", player),
              lambda state: _ffps_has_money(state, myWorld, 500, player))
     set_rule(world.get_location("Bought Handyman Upgrade", player),
@@ -278,11 +278,12 @@ def set_rules(myWorld: "FFPSWorld", player: int):
 
 
 # Sets rules on completion condition
-def set_completion_rules(world: MultiWorld, player: int):
+def set_completion_rules(myWorld: "FFPSWorld", player: int):
+    world = myWorld.multiworld
     completion_requirements = lambda state: \
         state.has("ScrapTrap", player) and \
         state.has("Scrap Baby", player) and \
         state.has("Lefty", player) and \
         state.has("Molten Freddy", player) and \
-        state.has("Saturday Unlock", player)
+        (state.has("Saturday Unlock", player) or not myWorld.options.day_sanity)
     world.completion_condition[player] = lambda state: completion_requirements(state)
