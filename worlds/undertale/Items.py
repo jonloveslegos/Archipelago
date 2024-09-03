@@ -12,7 +12,7 @@ class UndertaleItem(Item):
 
 
 item_table = {
-    "Progressive Plot": ItemData(77700, ItemClassification.progression),
+    # "Progressive Plot": ItemData(77700, ItemClassification.progression),
     "Progressive Weapons": ItemData(77701, ItemClassification.useful),
     "Progressive Armor": ItemData(77702, ItemClassification.useful),
     "Monster Candy": ItemData(77001, ItemClassification.filler),
@@ -77,7 +77,7 @@ item_table = {
     "Complete Skeleton": ItemData(77779, ItemClassification.progression),
     "Fish": ItemData(77780, ItemClassification.progression),
     "DT Extractor": ItemData(77782, ItemClassification.progression),
-    "Mettaton Plush": ItemData(77786, ItemClassification.progression),
+    # "Mettaton Plush": ItemData(77786, ItemClassification.progression),
     "Left Home Key": ItemData(77787, ItemClassification.progression),
     "LOVE": ItemData(77788, ItemClassification.useful),
     "Right Home Key": ItemData(77789, ItemClassification.progression),
@@ -85,14 +85,14 @@ item_table = {
     "100G": ItemData(77999, ItemClassification.useful),
     "500G": ItemData(77998, ItemClassification.useful),
     "1000G": ItemData(77997, ItemClassification.progression),
-    "Generated Weapon": ItemData(77996, ItemClassification.useful),
-    "Generated Armor": ItemData(77995, ItemClassification.useful),
+    # "Generated Weapon": ItemData(77996, ItemClassification.useful),
+    # "Generated Armor": ItemData(77995, ItemClassification.useful),
     "ATK Up": ItemData(77065, ItemClassification.useful),
     "DEF Up": ItemData(77066, ItemClassification.useful),
     "HP Up": ItemData(77067, ItemClassification.useful),
     "FIGHT": ItemData(77077, ItemClassification.useful),
     "ACT": ItemData(77078, ItemClassification.useful),
-    "ITEM": ItemData(77079, ItemClassification.useful),
+    "ITEM": ItemData(77079, ItemClassification.progression),
     "MERCY": ItemData(77080, ItemClassification.useful),
     "Ruins Key": ItemData(77081, ItemClassification.progression),
     "Snowdin Key": ItemData(77082, ItemClassification.progression),
@@ -112,14 +112,9 @@ item_table = {
 
 non_key_items = {
     "Butterscotch Pie": 1,
-    "500G": 2,
-    "Face Steak": 1,
     "Snowman Piece": 1,
     "Instant Noodles": 1,
-    "Astronaut Food": 2,
-    "Hot Cat": 1,
     "Abandoned Quiche": 1,
-    "Hush Puppy": 1,
 }
 
 required_armor = {
@@ -145,16 +140,14 @@ required_weapons = {
 plot_items = {
     "Complete Skeleton": 1,
     "Fish": 1,
-    "Mettaton Plush": 1,
     "DT Extractor": 1,
 }
 
 key_items = {
     "Complete Skeleton": 1,
     "Fish": 1,
-    "1000G": 2,
+    "1000G": 1,
     "DT Extractor": 1,
-    "Mettaton Plush": 1,
     "Punch Card": 3,
     "Hot Dog...?": 1,
     "ATK Up": 19,
@@ -167,7 +160,6 @@ key_items = {
     "Hotland Key": 1,
     "Mystery Key": 1,
     "Jump": 1,
-    "1000G": 2,
 }
 
 junk_weights_all = {
@@ -187,8 +179,12 @@ junk_weights_all = {
     "Starfait": 12,
     "Punch Card": 8,
     "Monster Candy": 6,
+    "Face Steak": 3,
+    "Astronaut Food": 5,
+    "Hot Cat": 8,
+    "Hush Puppy": 4,
     "100G": 6,
-    "500G": 3,
+    "500G": 4,
 }
 
 junk_weights_cut_items = {
@@ -215,8 +211,10 @@ junk_weights_neutral = {
     "Starfait": 12,
     "Punch Card": 8,
     "Monster Candy": 6,
+    "Face Steak": 3,
+    "Astronaut Food": 5,
     "100G": 6,
-    "500G": 3,
+    "500G": 4,
 }
 
 junk_weights_pacifist = {
@@ -236,8 +234,12 @@ junk_weights_pacifist = {
     "Starfait": 12,
     "Punch Card": 8,
     "Monster Candy": 6,
+    "Face Steak": 3,
+    "Astronaut Food": 5,
+    "Hot Cat": 8,
+    "Hush Puppy": 4,
     "100G": 6,
-    "500G": 3,
+    "500G": 4,
 }
 
 junk_weights_genocide = {
@@ -253,6 +255,8 @@ junk_weights_genocide = {
     "Cinnamon Bun": 10,
     "Starfait": 12,
     "Monster Candy": 6,
+    "Face Steak": 3,
+    "Astronaut Food": 5,
     "100G": 6,
-    "500G": 3,
+    "500G": 4,
 }

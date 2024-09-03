@@ -19,7 +19,7 @@ class RandomizeJump(Toggle):
 
 
 class StartingArea(Choice):
-    """Which area to start with access to. (Ignored with entrance rando enabled)"""
+    """Which area to start with access to. (You will always have access to New Home.)"""
     display_name = "Starting Area"
     option_ruins = 0
     option_snowdin = 1
@@ -30,6 +30,12 @@ class StartingArea(Choice):
     default = 0
 
 
+class AllBosses(Toggle):
+    """Requires beating all bosses to goal."""
+    display_name = "Require All Bosses"
+    default = 1
+
+
 class IncludeTemy(Toggle):
     """Adds Temmy Armor to the item pool."""
     display_name = "Include Temy Armor"
@@ -37,15 +43,23 @@ class IncludeTemy(Toggle):
 
 
 class KeyPieces(Range):
-    """How many Key Pieces are added to the pool, only matters with Key Piece Hunt enabled."""
+    """How many required Key Pieces are added to the pool, only matters with Key Piece Hunt enabled."""
     display_name = "Key Piece Amount"
     default = 5
     range_start = 1
     range_end = 10
 
 
+class ExtraKeyPieces(Range):
+    """How many extra Key Pieces are added to the pool, only matters with Key Piece Hunt enabled."""
+    display_name = "Extra Key Piece Amount"
+    default = 0
+    range_start = 0
+    range_end = 10
+
+
 class KeyHunt(Toggle):
-    """Adds Key Pieces to the item pool, you need all of them to enter the last corridor."""
+    """Adds Key Pieces to the item pool, you need a specified amount of them to enter the last corridor."""
     display_name = "Key Piece Hunt"
     default = 0
 
@@ -149,8 +163,14 @@ class SpareSanityPackSize(Range):
 
 
 class EntranceRando(Toggle):
-    """Randomize the connections between scenes. You also will not start with any keys."""
+    """Randomize the connections between scenes."""
     display_name = "Entrance Rando"
+
+
+class Gifting(Toggle):
+    """Allows gifting items to other players."""
+    display_name = "Gifting"
+    default = 0
 
 
 @dataclass
@@ -159,6 +179,7 @@ class UndertaleOptions(PerGameCommonOptions):
     starting_area:                            StartingArea
     key_hunt:                                 KeyHunt
     key_pieces:                               KeyPieces
+    extra_key_pieces:                         ExtraKeyPieces
     rando_item_button:                        RandoBattleOptions
     rando_jump:                               RandomizeJump
     rando_love:                               RandomizeLove
@@ -175,4 +196,5 @@ class UndertaleOptions(PerGameCommonOptions):
     prog_weapons:                             ProgressiveWeapons
     no_equips:                                NoEquips
     only_flakes:                              OnlyFlakes
+    gifting:                                  Gifting
     entrance_rando:                           EntranceRando

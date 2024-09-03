@@ -61,6 +61,7 @@ class UndertaleWorld(World):
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.id for name, data in advancement_table.items()}
 
+    data_version = 7
     er_portal_hints: Dict[int, str]
 
     def __init__(self, multiworld: "MultiWorld", player: int):
@@ -81,6 +82,7 @@ class UndertaleWorld(World):
             "no_equips": bool(self.options.no_equips.value),
             "key_hunt": bool(self.options.key_hunt.value),
             "key_pieces": self.options.key_pieces.value,
+            "extra_key_pieces": self.options.extra_key_pieces.value,
             "rando_love": bool(self.options.rando_love.value),
             "rando_stats": bool(self.options.rando_stats.value),
             "prog_armor": bool(self.options.prog_armor.value),
@@ -92,48 +94,15 @@ class UndertaleWorld(World):
             "kill_sanity_pack_size": self.options.kill_sanity_pack_size.value,
             "ice_traps": self.options.ice_traps.value,
             "spare_sanity": bool(self.options.spare_sanity.value),
+            # "gifting": False,
+            "gifting": bool(self.options.gifting.value),
             "entrance_rando": bool(self.options.entrance_rando.value),
             "Entrance Rando": self.undertale_portal_pairs,
             "spare_sanity_max": self.options.spare_sanity_max.value,
             "spare_sanity_pack_size": self.options.spare_sanity_pack_size.value
-            "route": self.options.route_required.current_key,
-            "starting_area": self.options.starting_area.current_key,
-            "temy_armor_include": bool(self.options.temy_include.value),
-            "only_flakes": bool(self.options.only_flakes.value),
-            "no_equips": bool(self.options.no_equips.value),
-            "key_hunt": bool(self.options.key_hunt.value),
-            "key_pieces": int(self.options.key_pieces.value),
-            "rando_love": bool(self.options.rando_love and (self.options.route_required == "genocide" or self.options.route_required == "all_routes")),
-            "rando_stats": bool(self.options.rando_stats and (self.options.route_required == "genocide" or self.options.route_required == "all_routes")),
-            "prog_armor": bool(self.options.prog_armor.value),
-            "prog_weapons": bool(self.options.prog_weapons.value),
-            "rando_item_button": bool(self.options.rando_item_button.value),
-            "route_required": int(self.options.route_required.value),
-            "temy_include": int(self.options.temy_include.value)
         }
 
     def get_filler_item_name(self):
-        if self.options.route_required == "all_routes":
-            junk_pool = junk_weights_all
-        elif self.options.route_required == "genocide":
-            junk_pool = junk_weights_genocide
-        elif self.options.route_required == "neutral":
-            junk_pool = junk_weights_neutral
-        elif self.options.route_required == "pacifist":
-            junk_pool = junk_weights_pacifist
-        else:
-            junk_pool = junk_weights_all
-        if not self.options.only_flakes:
-            return self.random.choices(list(junk_pool.keys()), weights=list(junk_pool.values()))[0]
-        else:
-            return "Temmie Flakes"
-
-    def create_items(self):
-        self.multiworld.get_location("Undyne Date", self.player).place_locked_item(self.create_item("Undyne Date"))
-        self.multiworld.get_location("Alphys Date", self.player).place_locked_item(self.create_item("Alphys Date"))
-        self.multiworld.get_location("Papyrus Date", self.player).place_locked_item(self.create_item("Papyrus Date"))
-        # Generate item pool
-        itempool = []
         if self.options.route_required == "all_routes":
             junk_pool = junk_weights_all.copy()
         elif self.options.route_required == "genocide":
@@ -192,20 +161,18 @@ class UndertaleWorld(World):
         self.multiworld.push_precollected(self.create_item("ACT"))
         self.multiworld.push_precollected(self.create_item("MERCY"))
         if self.options.route_required == "genocide":
-            itempool = [item for item in itempool if item != "Popato Chisps" and item != "Stained Apron" and
-                        item != "Nice Cream" and item != "Hot Cat" and item != "Hot Dog...?" and item != "Punch Card"]
+            itempool = [item for item in itempool if item != "Stained Apron"
+                        and item != "Hot Dog...?" and item != "Punch Card"]
         elif self.options.route_required == "neutral":
-            itempool = [item for item in itempool if item != "Popato Chisps" and item != "Hot Cat" and
-                        item != "Hot Dog...?"]
+            itempool = [item for item in itempool if item != "Hot Dog...?"]
         if self.options.route_required == "pacifist" or self.options.route_required == "all_routes":
             itempool += ["Undyne Letter EX"]
         else:
             itempool.remove("Complete Skeleton")
             itempool.remove("Fish")
             itempool.remove("DT Extractor")
-            itempool.remove("Hush Puppy")
         if self.options.key_hunt:
-            itempool += ["Key Piece"] * self.options.key_pieces.value
+            itempool += ["Key Piece"] * (self.options.key_pieces.value + self.options.extra_key_pieces.value)
         else:
             itempool += ["Left Home Key"]
             itempool += ["Right Home Key"]
@@ -285,7 +252,7 @@ class UndertaleWorld(World):
 
         # Choose locations to automatically exclude based on settings
         exclusion_checks = set()
-        exclusion_checks.update(["Nicecream Punch Card Trade", "Hotel Door Hush Puppy"])
+        exclusion_checks.update(["Free Nicecream", "Hotel Door Hush Puppy"])
         exclusion_rules(self.multiworld, self.player, exclusion_checks)
 
         # Convert itempool into real items

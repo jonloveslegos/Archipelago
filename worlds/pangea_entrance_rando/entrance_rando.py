@@ -221,7 +221,7 @@ def get_all_state(self: MultiWorld, use_cache: bool, allow_partial_entrances: bo
         subworld = self.worlds[player]
         for item in subworld.get_pre_fill_items():
             subworld.collect(ret, item)
-    ret.sweep_for_events()
+    ret.sweep_for_advancements()
 
     if use_cache:
         self._all_state = ret
