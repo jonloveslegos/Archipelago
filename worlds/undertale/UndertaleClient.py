@@ -19,7 +19,7 @@ from CommonClient import CommonContext, server_loop, \
 from Utils import async_start
 
 undertale_gifting_options = {
-    "AcceptsAnyGift": True,
+    "AcceptsAnyGift": False,
     "DesiredTraits": [
         "Trap", "Heal", "Speed", "Consumable", "Food", "Heal", "Health"
     ],
@@ -606,7 +606,7 @@ async def pick_gift_recipient(ctx, gift):
         if int(slot) == chosen_slot:
             found_giftee = True
             desire = len(set(info["DesiredTraits"]).intersection([trait["Trait"] for trait in gift_base["Traits"]]))
-            if desire <= 0 and not info["AcceptsAnyGift"]:
+            if not info["IsOpen"] or (desire <= 0 and not info["AcceptsAnyGift"]):
                 chosen_slot = ctx.slot
     if not found_giftee:
         chosen_slot = ctx.slot
@@ -622,9 +622,15 @@ async def pick_gift_recipient(ctx, gift):
     }
     # print(item)
     print(str(gift.split("]:::[", maxsplit=1)[0]))
-    await update_object(ctx, f"Giftbox;{ctx.team};{chosen_slot}", {
-        item_uuid: item,
-    })
+    if chosen_slot == ctx.slot:
+        filename = f"fail.gift"
+        with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
+            f.write(gift.split("]:::[", maxsplit=1)[0]+"\n")
+            f.close()
+    else:
+        await update_object(ctx, f"Giftbox;{ctx.team};{chosen_slot}", {
+            item_uuid: item,
+        })
 
 
 async def pop_gift(ctx):
@@ -946,6 +952,15 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                                                            str(ctx.slot) + " RoutesDone genocide"]}])
         if args["slot_data"]["only_flakes"]:
             with open(os.path.join(ctx.save_game_folder, "genonochest.flag"), "w") as f:
+                f.close()
+        if args["slot_data"]["spare_sanity"]:
+            with open(os.path.join(ctx.save_game_folder, "spare_sanity.flag"), "w") as f:
+                f.close()
+        if args["slot_data"]["key_hunt"]:
+            with open(os.path.join(ctx.save_game_folder, "key_hunt.flag"), "w") as f:
+                f.close()
+        if args["slot_data"]["kill_sanity"]:
+            with open(os.path.join(ctx.save_game_folder, "kill_sanity.flag"), "w") as f:
                 f.close()
         if args["slot_data"]["entrance_rando"]:
             ctx.entrances = args["slot_data"]["Entrance Rando"]

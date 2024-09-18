@@ -26,7 +26,9 @@ def create_er_regions_vanilla(world: "UndertaleWorld"):
     regions: Dict[str, Region] = {}
 
     for region_name, region_data in undertale_er_regions.items():
-        regions[region_name] = Region(region_name, world.player, world.multiworld)
+        if region_name != "room_fire_labelevator" or world.options.route_required == "all_routes" \
+                or world.options.route_required == "pacifist":
+            regions[region_name] = Region(region_name, world.player, world.multiworld)
 
     for location_name, location_id in location_table.items():
         if regions.__contains__(location_table[location_name].er_region) and (
