@@ -1,0 +1,12 @@
+normal_location_prefix = "NormLoc"
+normal_item_prefix = "NormItem"
+progression_item_prefix = "ProgItem"
+arnf_locations_start_id = 73310000
+normal_total_locations = 38
+normal_locations_region_one = 14
+normal_locations_region_two = 20
+normal_locations_region_three = 4
+classic_boss_rush_offset = 50
+classic_boss_rush_total_locations = 13
+exterminator_offset = 100
+exterminator_total_locations = 47
