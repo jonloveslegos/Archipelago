@@ -8,7 +8,7 @@ from BaseClasses import Region, Entrance, Item, ItemClassification, MultiWorld, 
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import set_rule
 from .Items import ARNFItem, item_table, item_data_table
-from .Locations import ARNFLocation, location_data_table, location_table, locked_locations
+from .Locations import ARNFLocation, location_data_table, location_table, locked_locations, ARNFLocationData
 from .Constants import normal_item_prefix, progression_item_prefix, normal_total_locations
 from .Options import ARNFOptions
 from .Regions import region_data_table
@@ -67,7 +67,8 @@ class ARNFWorld(World):
                 # or
                 # (name.startswith(classic_boss_rush_item_prefix) and self.options.game_mode.value == 2) or 
                 # (name.startswith(exterminator_item_prefix) and self.options.game_mode.value == 4)):
-                item_pool.append(self.create_item(name))
+                if item.amount_in_pool > 0:
+                    item_pool += [self.create_item(name)] * item.amount_in_pool
         
         self.multiworld.itempool += item_pool
 
@@ -76,29 +77,25 @@ class ARNFWorld(World):
         return "FillerItem"
 
 
-    def create_junk_pool(self) -> Dict:
-        pool_option = self.options.item_weights.value
-        junk_pool: Dict[str, int] = {}
-        junk_pool = item_pool_weights[pool_option].copy()
-        return junk_pool
-
-
     def create_regions(self) -> None:
         logger = logging.getLogger()
         
         # Create regions.
-        for region_name in region_data_table.keys():
+        for region_name, region_data in region_data_table.items():
+            create_region(self.multiworld, self.player, region_name)
             region = Region(region_name, self.player, self.multiworld)
             self.multiworld.regions.append(region)
 
+        # Create connections.
+        for region_name, region_data in region_data_table.items():
+            for reg in region_data.connecting_regions:
+                self.multiworld.get_region(region_name, self.player).connect(self.multiworld.get_region(reg, self.player))
+
         # Create locations.
         for region_name, region_data in region_data_table.items():
-            region = self.multiworld.get_region(region_name, self.player)
-            region.add_locations({
-                location_name: location_data.address for location_name, location_data in location_data_table.items()
-                if location_data.region == region_name and location_data.can_create(self.multiworld, self.player)
-            }, ARNFLocation)
-            region.add_exits(region_data_table[region_name].connecting_regions)
+            for location_name, location_data in location_data_table.items():
+                if location_data.region == region_name:
+                    self.multiworld.get_region(region_name, self.player).locations.append(ARNFLocation(self.player, location_name, location_data.address, self.multiworld.get_region(region_name, self.player)))
 
         # logger.info(f"locked_locations: {locked_locations}")
 
@@ -135,7 +132,7 @@ class ARNFWorld(World):
         # menu.exits.append(connection)
         # connection.connect(planet)
         
-        # create_events(self.multiworld, self.player)
+        create_events(self.multiworld, self.player)
 
 
     def fill_slot_data(self):
@@ -153,16 +150,13 @@ class ARNFWorld(World):
         self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
 
 
-# def create_events(world: MultiWorld, player: int) -> None:
-    # world_region = world.get_region("NormalMode", player)
-    # victory_region = world.get_region("Victory", player)
-    # victory_event = ARNFLocation(player, "Victory", None, victory_region)
-    # victory_event.place_locked_item(ARNFItem("Victory", ItemClassification.progression, None, player))
-    # world_region.locations.append(victory_event)
+def create_events(world: MultiWorld, player: int) -> None:
+    victory_region = world.get_region("Victory", player)
+    victory_event = ARNFLocation(player, "Victory", None, victory_region)
+    victory_event.place_locked_item(ARNFItem("Victory", ItemClassification.progression, None, player))
+    victory_region.locations.append(victory_event)
 
 
-# def create_region(world: MultiWorld, player: int, name: str, locations: Dict[str, int] = {}) -> Region:
-    # ret = Region(name, player, world)
-    # for location_name, location_id in locations.items():
-        # ret.locations.append(ARNFLocation(player, location_name, location_id, ret))
-    # return ret
+def create_region(world: MultiWorld, player: int, name: str) -> Region:
+    ret = Region(name, player, world)
+    return ret
