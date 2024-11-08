@@ -287,12 +287,13 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
     world.get_region("room_sanscorridor").connect(
         connecting_region=world.get_region("room_lastruins_corridor"))
 
-    world.get_region("room_fire_lab1").connect(
-        connecting_region=world.get_region("room_fire_labelevator"),
-        rule=lambda state: (state.has("Alphys Date (Event)", player) and _undertale_has_keys(state, world,
-                                                                                     player) and state.has(
-            "DT Extractor", player)) or _undertale_is_route(world, 2),
-        name="Lab Elevator Entrance")
+    if _undertale_is_route(world, 1):
+        world.get_region("room_fire_lab1").connect(
+            connecting_region=world.get_region("room_fire_labelevator"),
+            rule=lambda state: (state.has("Alphys Date (Event)", player) and _undertale_has_keys(state, world,
+                                                                                         player) and state.has(
+                "DT Extractor", player)) or _undertale_is_route(world, 2),
+            name="Lab Elevator Entrance")
 
     world.get_region("room_sanscorridor").connect(
         connecting_region=world.get_region("room_castle_finalshoehorn"),

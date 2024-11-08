@@ -702,12 +702,6 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
                 }
         }))
 
-    def _cmd_resync(self):
-        """Manually trigger a resync."""
-        if isinstance(self.ctx, UndertaleContext):
-            self.output(f"Syncing items.")
-            self.ctx.syncing = True
-
     def _cmd_patch(self):
         """Patch the game. Only use this command if /auto_patch fails."""
         if isinstance(self.ctx, UndertaleContext):
@@ -827,7 +821,6 @@ class UndertaleContext(CommonContext):
         self.enable_gifting = False
         self.gifting = False
         self.initialize_gifting = False
-        self.syncing = False
         self.deathlink_status = False
         self.tem_armor = False
         self.entrances = []
@@ -1201,16 +1194,6 @@ async def game_watcher(ctx: UndertaleContext):
     while not ctx.exit_event.is_set():
         await ctx.update_death_link(ctx.deathlink_status)
         path = ctx.save_game_folder
-        if ctx.syncing:
-            for root, dirs, files in os.walk(path):
-                for file in files:
-                    if ".item" in file:
-                        os.remove(os.path.join(root, file))
-            sync_msg = [{"cmd": "Sync"}]
-            if ctx.locations_checked:
-                sync_msg.append({"cmd": "LocationChecks", "locations": list(ctx.locations_checked)})
-            await ctx.send_msgs(sync_msg)
-            ctx.syncing = False
         if ctx.got_deathlink:
             ctx.got_deathlink = False
             with open(os.path.join(ctx.save_game_folder, "welcometothedead.youdied"), "w") as f:

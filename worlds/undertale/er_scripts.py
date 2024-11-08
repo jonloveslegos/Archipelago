@@ -93,8 +93,10 @@ def assemble_er(world: "UndertaleWorld") -> List[Tuple[str, str]]:
 
 
 def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[str, Region]):
-    world.multiworld.register_indirect_condition(regions["room_sanscorridor"],
-                                                 world.multiworld.get_entrance("Lab Elevator Entrance", world.player))
+    if world.options.route_required.current_key == "pacifist" or \
+            world.options.route_required.current_key == "all_routes":
+        world.multiworld.register_indirect_condition(regions["room_sanscorridor"],
+                                                    world.multiworld.get_entrance("Lab Elevator Entrance", world.player))
 
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_2"],
                                                  world.multiworld.get_entrance("Fire Door 1 Block", world.player))

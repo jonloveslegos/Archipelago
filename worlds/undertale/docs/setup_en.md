@@ -38,11 +38,11 @@ bottom of the client.
 **Linux Users**: When you start the client, it is likely that the save data path is incorrect, and how the game
 is played depends on where the save data folder is located.
 
-**On Steam (via Proton)**: This assumes the game is in a Steam Library folder.  Right-click Undertale, go to `Manage -> 
+*On Steam (via Proton)*: This assumes the game is in a Steam Library folder.  Right-click Undertale, go to `Manage -> 
 Browse Local Files`. Go up the directories to the `steamapps` folder, open `compatdata/391540` (391540 is the "magic number" for
 Undertale in Steam).  Save data from here is at `/pfx/drive_c/users/steamuser/AppData/Local/UNDERTALE`.
 
-**Through WINE directly**: This depends on the prefix used.  If it is default, then the save data is located at
+*Through WINE directly*: This depends on the prefix used.  If it is default, then the save data is located at
 `/home/USERNAME/.wine/drive_c/users/USERNAME/AppData/Local/UNDERTALE`.
 
 Once the save data folder is located, run the `/savepath` command to redirect the client to the correct save data folder
