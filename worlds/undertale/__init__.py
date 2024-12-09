@@ -271,12 +271,7 @@ class UndertaleWorld(World):
         create_er_regions_vanilla(self)
 
     def fill_slot_data(self):
-        slot_data = self._get_undertale_data()
-        for option_name in self.options.as_dict():
-            option = getattr(self.multiworld, option_name)[self.player]
-            if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
-                slot_data[option_name] = int(option.value)
-        return slot_data
+        return self._get_undertale_data()
 
     def create_item(self, name: str) -> Item:
         from .Items import item_table
