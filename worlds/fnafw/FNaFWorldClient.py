@@ -479,7 +479,7 @@ async def game_watcher(ctx: FNaFWContext):
             lines_to_simplify = temp_lines
             while True:
                 try:
-                    with open(os.path.join(ctx.save_game_folder, "fnafwAP5"), "w") as f:
+                    with open(os.path.join(ctx.save_game_folder, "fnafwAPDEATHREC5"), "w") as f:
                         f.writelines(lines_to_simplify)
                         f.close()
                     break

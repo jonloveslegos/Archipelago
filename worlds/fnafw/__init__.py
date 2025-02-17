@@ -72,15 +72,13 @@ class FNaFWWorld(World):
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.id for name, data in location_table.items()}
 
-    data_version = 4
-
     def _get_FNaFW_data(self):
         return {
-            'world_seed': self.multiworld.per_slot_randoms[self.player].getrandbits(32),
+            'world_seed': self.random.getrandbits(32),
             'seed_name': self.multiworld.seed_name,
             'player_name': self.multiworld.get_player_name(self.player),
             'player_id': self.player,
-            'client_version': client_version,
+            'client_version': self.required_client_version,
             'race': self.multiworld.is_race,
             'vanilla_halloween': bool(self.options.vanilla_halloween.value),
             'initial_characters': self.options.initial_characters.current_key,
@@ -275,10 +273,6 @@ class FNaFWWorld(World):
 
     def fill_slot_data(self):
         slot_data = self._get_FNaFW_data()
-        for option_name in self.options.as_dict():
-            option = getattr(self.multiworld, option_name)[self.player]
-            if slot_data.get(option_name, None) is None and type(option.value) in {str, int}:
-                slot_data[option_name] = int(option.value)
         slot_data["Progressive Animatronics Order"] = self.all_anims
         slot_data["Progressive Chips Order"] = self.all_chips
         slot_data["Progressive Bytes Order"] = self.all_bytes
