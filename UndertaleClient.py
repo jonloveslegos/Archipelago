@@ -765,6 +765,8 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
                     for file_name in os.listdir(os.path.join(os.getcwd(), "Undertale")):
                         if file_name == "steam_api.dll":
                             os.remove(os.path.join(os.getcwd(), "Undertale", file_name))
+                        if file_name == "UNDERTALE.exe":
+                            os.rename(os.path.join(os.getcwd(), "Undertale", file_name), os.path.join(os.getcwd(), "Undertale", "UNDERTALEAP.exe"))
                     self.ctx.patch_game()
                     self.output("Patching successful!")
 
@@ -805,7 +807,7 @@ class UndertaleContext(CommonContext):
     gifting = False
     initialize_gifting = False
     entrances: List[Tuple[str, str]] = None
-    save_game_folder = platformdirs.user_config_dir(appname="UNDERTALE", ensure_exists=True, appauthor=False)
+    save_game_folder = platformdirs.user_config_dir(appname="UNDERTALEAP", ensure_exists=True, appauthor=False)
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -827,7 +829,7 @@ class UndertaleContext(CommonContext):
         self.completed_count = 0
         self.completed_routes = {"pacifist": 0, "genocide": 0, "neutral": 0}
         # self.save_game_folder: files go in this path to pass data between us and the actual game
-        self.save_game_folder = platformdirs.user_config_dir(appname="UNDERTALE", ensure_exists=True, appauthor=False)
+        self.save_game_folder = platformdirs.user_config_dir(appname="UNDERTALEAP", ensure_exists=True, appauthor=False)
         print(self.save_game_folder)
 
     def patch_game(self):

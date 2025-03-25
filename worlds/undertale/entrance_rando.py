@@ -166,7 +166,7 @@ class UndertaleCollectionState(CollectionState):
         reachable_regions = self.reachable_regions[player]
         blocked_connections = self.blocked_connections[player]
         queue = deque(self.blocked_connections[player])
-        start = self.multiworld.get_region("Menu", player)
+        start = self.multiworld.get_region(self.multiworld.worlds[player].origin_region_name, player)
         # init on first call - this can't be done on construction since the regions don't exist yet
         if start not in reachable_regions:
             reachable_regions.add(start)
@@ -221,7 +221,7 @@ def get_all_state(self: MultiWorld, use_cache: bool, allow_partial_entrances: bo
         subworld = self.worlds[player]
         for item in subworld.get_pre_fill_items():
             subworld.collect(ret, item)
-    ret.sweep_for_events()
+    ret.sweep_for_advancements()
 
     if use_cache:
         self._all_state = ret

@@ -23,8 +23,8 @@ def run_client():
     p.start()
 
 
-# components.append(Component("Undertale Client", "UndertaleClient"))
-components.append(Component("Undertale Client", func=run_client))
+components.append(Component("Undertale Client", "UndertaleClient"))
+# components.append(Component("Undertale Client", func=run_client))
 
 
 def data_path(file_name: str):
@@ -158,9 +158,6 @@ class UndertaleWorld(World):
         if not self.options.rando_jump:
             itempool.remove("Jump")
             self.multiworld.push_precollected(self.create_item("Jump"))
-        self.multiworld.push_precollected(self.create_item("FIGHT"))
-        self.multiworld.push_precollected(self.create_item("ACT"))
-        self.multiworld.push_precollected(self.create_item("MERCY"))
         if self.options.route_required == "genocide":
             itempool = [item for item in itempool if item != "Stained Apron"
                         and item != "Hot Dog...?" and item != "Punch Card"]
