@@ -30,6 +30,12 @@ class StartingArea(Choice):
     default = 0
 
 
+class BonusLocations(Toggle):
+    """Choose to have extra locations as chests at various dead ends across the game."""
+    display_name = "Extra locations"
+    default = 1
+
+
 class AllBosses(Toggle):
     """Requires beating all bosses to goal."""
     display_name = "Require All Bosses"
@@ -56,6 +62,22 @@ class ExtraKeyPieces(Range):
     default = 0
     range_start = 0
     range_end = 10
+
+
+class GuaranteedFiller(Range):
+    """Determines how many locations are added to the hub shop to guarantee this amount of filler items"""
+    display_name = "Guaranteed Filler Amount"
+    default = 5
+    range_start = 0
+    range_end = 20
+
+
+class HubShopCost(Range):
+    """How much each location in the hub shop costs"""
+    display_name = "Hub Shop Cost"
+    default = 250
+    range_start = 0
+    range_end = 1000
 
 
 class KeyHunt(Toggle):
@@ -177,6 +199,9 @@ class Gifting(Toggle):
 class UndertaleOptions(PerGameCommonOptions):
     route_required:                           RouteRequired
     starting_area:                            StartingArea
+    bonus_locations:                          BonusLocations
+    guaranteed_filler:                        GuaranteedFiller
+    hub_shop_cost:                            HubShopCost
     key_hunt:                                 KeyHunt
     key_pieces:                               KeyPieces
     extra_key_pieces:                         ExtraKeyPieces
@@ -196,5 +221,5 @@ class UndertaleOptions(PerGameCommonOptions):
     prog_weapons:                             ProgressiveWeapons
     no_equips:                                NoEquips
     only_flakes:                              OnlyFlakes
-    gifting:                                  Gifting
+    # gifting:                                  Gifting
     # entrance_rando:                           EntranceRando

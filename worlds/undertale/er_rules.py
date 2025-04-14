@@ -640,3 +640,13 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
     set_rule(multiworld.get_location("Burgerpants Shop 4", player),
              lambda state: state.can_reach("room_water_piano", "Region", player) and state.can_reach("room_shop5",
                                                                                                      "Region", player))
+    counter = 1
+    all_locs = world.get_locations()
+    loc_names: list[str] = []
+    for a_loc in all_locs:
+        loc_names.append(a_loc.name)
+    while "Hub Shop "+str(counter) in loc_names:
+        set_rule(multiworld.get_location("Hub Shop "+str(counter), player),
+                 lambda state: state.can_reach("room_water_piano", "Region", player) and
+                               state.can_reach("room_shop5", "Region", player))
+        counter += 1

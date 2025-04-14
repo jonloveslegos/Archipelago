@@ -3,7 +3,7 @@ from .Items import UndertaleItem, item_table, required_armor, required_weapons, 
     junk_weights_cut_items
 from .Locations import UndertaleAdvancement, advancement_table, exclusion_table
 from .er_rules import set_er_location_rules
-from .er_scripts import create_er_regions_vanilla, assemble_er
+from .er_scripts import create_er_regions_vanilla, assemble_er, UndertaleERLocation
 from worlds.generic.Rules import exclusion_rules
 from BaseClasses import Tutorial, Item, MultiWorld
 from .Options import UndertaleOptions
@@ -23,8 +23,8 @@ def run_client():
     p.start()
 
 
-components.append(Component("Undertale Client", "UndertaleClient"))
-# components.append(Component("Undertale Client", func=run_client))
+# components.append(Component("Undertale Client", "UndertaleClient"))
+components.append(Component("Undertale Client", func=run_client))
 
 
 def data_path(file_name: str):
@@ -94,13 +94,16 @@ class UndertaleWorld(World):
             "kill_sanity_pack_size": self.options.kill_sanity_pack_size.value,
             "ice_traps": self.options.ice_traps.value,
             "spare_sanity": bool(self.options.spare_sanity.value),
-            # "gifting": False,
-            "gifting": bool(self.options.gifting.value),
+            "gifting": False,
+            # "gifting": bool(self.options.gifting.value),
             "entrance_rando": False,
             # "entrance_rando": bool(self.options.entrance_rando.value),
             "Entrance Rando": self.undertale_portal_pairs,
             "spare_sanity_max": self.options.spare_sanity_max.value,
-            "spare_sanity_pack_size": self.options.spare_sanity_pack_size.value
+            "spare_sanity_pack_size": self.options.spare_sanity_pack_size.value,
+            "bonus_locations": bool(self.options.bonus_locations.value),
+            "guaranteed_filler": self.options.guaranteed_filler.value,
+            "hub_shop_cost": self.options.hub_shop_cost.value
         }
 
     def get_filler_item_name(self):
@@ -256,6 +259,12 @@ class UndertaleWorld(World):
         # Convert itempool into real items
         completed_itempool = [item for item in map(lambda itm_name: self.create_item(itm_name), itempool)]
         # Fill remaining items with randomly generated junk or Temmie Flakes
+        counter = 1
+        while len(completed_itempool)+self.options.guaranteed_filler.value > len(self.multiworld.get_unfilled_locations(self.player)):
+            region = self.get_region("room_area1")
+            location = UndertaleERLocation(self.player, "Hub Shop "+str(counter), counter, region)
+            region.locations.append(location)
+            counter += 1
         while len(completed_itempool) < len(self.multiworld.get_unfilled_locations(self.player)):
             completed_itempool.append(self.create_filler())
 

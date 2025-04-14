@@ -687,20 +687,15 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
     def __init__(self, ctx):
         super().__init__(ctx)
 
-    def _cmd_gift(self):
-        """Toggles gifting for the current game."""
-        if not getattr(self.ctx, "gifting", None):
-            self.ctx.gifting = True
-        else:
-            self.ctx.gifting = not self.ctx.gifting
-        self.output(f"Gifting set to {self.ctx.gifting}")
-        async_start(update_object(self.ctx, f"Giftboxes;{self.ctx.team}", {
-            f"{self.ctx.slot}":
-                {
-                    "IsOpen": self.ctx.gifting,
-                    **undertale_gifting_options
-                }
-        }))
+    # def _cmd_gift(self):
+    #         """Toggles gifting for the current game."""
+    #         if not getattr(self.ctx, "gifting", None):
+    #             self.ctx.gifting = True
+    #         else:
+    #             self.ctx.gifting = not self.ctx.gifting
+    #         self.output(f"Gifting set to {self.ctx.gifting}")
+    #         async_start(update_object(self.ctx, f"Giftboxes;{self.ctx.team}",
+    #                                  {f"{self.ctx.slot}": {"IsOpen": self.ctx.gifting, **undertale_gifting_options}}))
 
     def _cmd_patch(self):
         """Patch the game. Only use this command if /auto_patch fails."""
@@ -790,7 +785,7 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
 
 
 class UndertaleContext(CommonContext):
-    tags = {"AP", "Online", "Minigame"}
+    tags = {"AP", "Online"}
     game = "Undertale"
     command_processor = UndertaleCommandProcessor
     items_handling = 0b111
@@ -870,7 +865,7 @@ class UndertaleContext(CommonContext):
                             "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
                     elif file.endswith(("disconnected", "connected", ".item", ".victory", ".route", ".playerspot", ".mad",
-                                        ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando", ".minigame")):
+                                        ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando", "no_chest", "hub_shop_cost", "hub_shop_count", "allow_gifting")):
                         os.remove(os.path.join(root, file))
                 except Exception as error:
                     print(str(error))
@@ -977,8 +972,23 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
         with open(os.path.join(ctx.save_game_folder, f"allow_gifting"), "w") as f:
             f.write(str(ctx.enable_gifting))
             f.close()
+        with open(os.path.join(ctx.save_game_folder, f"hub_shop_cost"), "w") as f:
+            f.write(str(args["slot_data"]["hub_shop_cost"]))
+            f.close()
+        all_locs = ctx.server_locations
+        counter = 1
+        while counter in all_locs:
+            counter += 1
+        counter -= 1
+        with open(os.path.join(ctx.save_game_folder, f"hub_shop_count"), "w") as f:
+            f.write(str(counter))
+            f.close()
         if args["slot_data"]["rando_stats"]:
             filename = f"statrando.lv"
+            with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+                f.close()
+        if not args["slot_data"]["bonus_locations"]:
+            filename = f"no_chest"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 f.close()
         filename = f"{ctx.route}.route"
@@ -1152,13 +1162,6 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                     f.write(str(data["x"]) + str(data["y"]) + str(data["room"]) + str(
                         data["spr"]) + str(data["frm"]))
                     f.close()
-        elif "Minigame" in tags:
-            data = args.get("data", {})
-            filename = f"game" + str(data["game_id"]) + "player" + str(data["player"]) + ".minigame"
-            with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
-                for itm in data["to_write_lines"]:
-                    f.write(str(itm.rstrip('\n') + "\n"))
-                f.close()
 
 
 async def multi_watcher(ctx: UndertaleContext):
@@ -1166,16 +1169,6 @@ async def multi_watcher(ctx: UndertaleContext):
         path = ctx.save_game_folder
         for root, dirs, files in os.walk(path):
             for file in files:
-                if "myself.minigame" in file:
-                    with open(os.path.join(root, file), "r") as mine:
-                        game_id = mine.readline()
-                        player = mine.readline()
-                        lines = mine.readlines()
-                        mine.close()
-                    message = [{"cmd": "Bounce", "tags": ["Minigame"],
-                                "data": {"player": player.rstrip('\n'), "game_id": game_id.rstrip('\n'), "to_write_lines": lines}}]
-                    os.remove(os.path.join(root, file))
-                    await ctx.send_msgs(message)
                 if "spots.mine" in file and "Online" in ctx.tags:
                     with open(os.path.join(root, file), "r") as mine:
                         this_x = mine.readline()

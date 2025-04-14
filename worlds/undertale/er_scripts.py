@@ -36,6 +36,9 @@ def create_er_regions_vanilla(world: "UndertaleWorld"):
                 world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (
                 location_name not in exclusion_table["NoStats"] or (world.options.rando_stats and (
                 world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (
+                location_name not in exclusion_table["ChestLocations"] or
+                world.options.bonus_locations) and (
+                "Hub Shop " not in location_name) and (
                 location_name not in exclusion_table["NoLove"] or (world.options.rando_love and (
                 world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (
                 location_name not in exclusion_table["NoSpare"]) and \

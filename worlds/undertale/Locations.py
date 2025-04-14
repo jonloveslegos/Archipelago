@@ -255,6 +255,7 @@ advancement_table = {
 }
 
 for i in range(100):
+    advancement_table.__setitem__("Hub Shop " + str(i + 1), AdvData(i + 1, "room_area1"))
     advancement_table.__setitem__("Ruins Spare " + str(i + 1), AdvData(78013+i, "Ruins Grind Rooms"))
     advancement_table.__setitem__("Snowdin Spare " + str(i + 1), AdvData(78113+i, "Snowdin Grind Rooms"))
     advancement_table.__setitem__("Waterfall Spare " + str(i + 1), AdvData(78213+i, "Waterfall Grind Rooms"))
@@ -770,6 +771,22 @@ exclusion_table = {
         "HP 20",
     },
     "all_routes": {
+    },
+    "ChestLocations": {
+        "Ruins Colored Lever Fall Room",
+        "Ruins Toriel's Room",
+        "Ruins Toriel's Kitchen",
+        "Snowdin Forest Fishing Rod",
+        "Snowdin Forest Dog Smell Rating Station",
+        "Snowdin Forest Sliding Puzzle Fall Room",
+        "Snowdin Town Inn",
+        "Snowdin Town Grillby's",
+        "Snowdin Town Librarby",
+        "Waterfall Piano Puzzle",
+        "Waterfall Napstablook's House",
+        "Hotland Upper Lab Room",
+        "Hotland Resort Restaurant",
+        "Snowdin Forest Mysterious Door",
     }
 }
 no_spare = set()
