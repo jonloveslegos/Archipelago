@@ -322,7 +322,7 @@ function processBlock(block)
                 end
             end
         end
-        if #itemsBlock ~= itemIndex then
+        if #itemsBlock > itemIndex then
             wU8(ITEM_INDEX, #itemsBlock)
         end
 
@@ -414,7 +414,7 @@ function receive()
 end
 
 function main()
-    if not checkBizhawkVersion() then
+    if not checkBizHawkVersion() then
         return
     end
     server, error = socket.bind('localhost', 52980)

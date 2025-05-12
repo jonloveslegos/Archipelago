@@ -1,5 +1,5 @@
 
-import random, copy
+import copy
 from ..utils import log
 from ..graph.graph_utils import GraphUtils, vanillaTransitions, vanillaBossesTransitions, escapeSource, escapeTargets, graphAreas, getAccessPoint
 from ..logic.logic import Logic
@@ -11,13 +11,14 @@ from collections import defaultdict
 
 # creates graph and handles randomized escape
 class GraphBuilder(object):
-    def __init__(self, graphSettings):
+    def __init__(self, graphSettings, random):
         self.graphSettings = graphSettings
         self.areaRando = graphSettings.areaRando
         self.bossRando = graphSettings.bossRando
         self.escapeRando = graphSettings.escapeRando
         self.minimizerN = graphSettings.minimizerN
         self.log = log.get('GraphBuilder')
+        self.random = random
 
     # builds everything but escape transitions
     def createGraph(self, maxDiff):
@@ -48,18 +49,18 @@ class GraphBuilder(object):
                             objForced = forcedAreas.intersection(escAreas)
                             escAreasList = sorted(list(escAreas))
                             while len(objForced) < n and len(escAreasList) > 0:
-                                objForced.add(escAreasList.pop(random.randint(0, len(escAreasList)-1)))
+                                objForced.add(escAreasList.pop(self.random.randint(0, len(escAreasList)-1)))
                             forcedAreas = forcedAreas.union(objForced)
-                transitions = GraphUtils.createMinimizerTransitions(self.graphSettings.startAP, self.minimizerN, sorted(list(forcedAreas)))
+                transitions = GraphUtils.createMinimizerTransitions(self.graphSettings.startAP, self.minimizerN, sorted(list(forcedAreas)), random=self.random)
             else:
                 if not self.bossRando:
                     transitions += vanillaBossesTransitions
                 else:
-                    transitions += GraphUtils.createBossesTransitions()
+                    transitions += GraphUtils.createBossesTransitions(self.random)
                 if not self.areaRando:
                     transitions += vanillaTransitions
                 else:
-                    transitions += GraphUtils.createAreaTransitions(self.graphSettings.lightAreaRando)
+                    transitions += GraphUtils.createAreaTransitions(self.graphSettings.lightAreaRando, random=self.random)
         ret = AccessGraph(Logic.accessPoints, transitions, self.graphSettings.dotFile)
         Objectives.objDict[self.graphSettings.player].setGraph(ret, maxDiff)
         return ret
@@ -100,7 +101,7 @@ class GraphBuilder(object):
         self.escapeTimer(graph, paths, self.areaRando or escapeTrigger is not None)
         self.log.debug("escapeGraph: ({}, {}) timer: {}".format(escapeSource, dst, graph.EscapeAttributes['Timer']))
         # animals
-        GraphUtils.escapeAnimalsTransitions(graph, possibleTargets, dst)
+        GraphUtils.escapeAnimalsTransitions(graph, possibleTargets, dst, self.random)
         return True
 
     def _getTargets(self, sm, graph, maxDiff):
@@ -110,7 +111,7 @@ class GraphBuilder(object):
         if len(possibleTargets) == 0:
             self.log.debug("Can't randomize escape, fallback to vanilla")
             possibleTargets.append('Climb Bottom Left')
-        random.shuffle(possibleTargets)
+        self.random.shuffle(possibleTargets)
         return possibleTargets
 
     def getPossibleEscapeTargets(self, emptyContainer, graph, maxDiff):
@@ -150,7 +151,6 @@ class GraphBuilder(object):
         # update item% objectives
         accessibleItems = [il.Item for il in allItemLocs if ilCheck(il)]
         majorUpgrades = [item.Type for item in accessibleItems if item.BeamBits != 0 or item.ItemBits != 0]
-        sm.objectives.setItemPercentFuncs(len(accessibleItems), majorUpgrades)
         if split == "Scavenger":
             # update escape access for scav with last scav loc
             lastScavItemLoc = progItemLocs[-1]
@@ -163,6 +163,7 @@ class GraphBuilder(object):
                 if ilCheck(itemLoc) and (split.startswith("Full") or itemLoc.Location.isClass(split)):
                     availLocsByArea[itemLoc.Location.GraphArea].append(itemLoc.Location.Name)
             self.log.debug("escapeTrigger. availLocsByArea="+str(availLocsByArea))
+            sm.objectives.setItemPercentFuncs(len(accessibleItems), majorUpgrades, container)
             sm.objectives.setAreaFuncs({area:lambda sm,ap:SMBool(len(container.getLocs(lambda loc: loc.Name in availLocsByArea[area]))==0) for area in availLocsByArea})
         self.log.debug("escapeTrigger. collect locs until G4 access")
         # collect all item/locations up until we can pass G4 (the escape triggers)
@@ -170,7 +171,8 @@ class GraphBuilder(object):
         ap = "Landing Site" # dummy value it'll be overwritten at first collection
         while len(itemLocs) > 0 and not (sm.canPassG4() and graph.canAccess(sm, ap, "Landing Site", maxDiff)):
             il = itemLocs.pop(0)
-            if il.Location.restricted or il.Item.Type == "ArchipelagoItem":
+            # can happen with item links replacement items that its not in the container's itemPool
+            if il.Location.restricted or il.Item.Type == "ArchipelagoItem" or il.Item not in container.itemPool:
                 continue
             self.log.debug("collecting " + getItemLocStr(il))
             container.collect(il)

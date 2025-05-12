@@ -136,15 +136,17 @@ class GanonsTower(Z3Region):
     def CanEnter(self, items: Progression):
         return items.MoonPearl and self.world.CanEnter("Dark World Death Mountain East", items) and \
             self.world.CanAcquireAtLeast(self.world.TowerCrystals, items, RewardType.AnyCrystal) and \
-            self.world.CanAcquireAtLeast(self.world.TourianBossTokens * (self.world.TowerCrystals / 7), items, RewardType.AnyBossToken)
+            self.world.CanAcquireAtLeast((self.world.TourianBossTokens * self.world.TowerCrystals) / 7, items, RewardType.AnyBossToken)
 
     # added for AP completion_condition when TowerCrystals is lower than GanonCrystals
     def CanComplete(self, items: Progression):
-        return self.world.CanAcquireAtLeast(self.world.GanonCrystals, items, RewardType.AnyCrystal)
+        return self.world.CanAcquireAtLeast(self.world.GanonCrystals, items, RewardType.AnyCrystal) and \
+            self.world.CanAcquireAtLeast(self.world.TourianBossTokens, items, RewardType.AnyBossToken)
 
     def CanFill(self, item: Item):
         if (self.Config.Multiworld):
-            if (item.World != self.world or item.Progression):
+            # item.World will be None for item created by create_item for item links
+            if (item.World is not None and (item.World != self.world or item.Progression)):
                 return False
             if (self.Config.Keysanity and not ((item.Type == ItemType.BigKeyGT or item.Type == ItemType.KeyGT) and item.World == self.world) and (item.IsKey() or item.IsBigKey() or item.IsKeycard())):
                 return False

@@ -35,7 +35,7 @@ flowchart LR
     subgraph Final Fantasy 1
         FF1[FF1Client]
         FFLUA[Lua Connector]
-        BZFF[BizHawk with Final Fantasy Loaded]
+        BZFF[EmuHawk with Final Fantasy Loaded]
         FF1 <-- LuaSockets --> FFLUA
         FFLUA <--> BZFF
     end
@@ -45,7 +45,7 @@ flowchart LR
     subgraph Ocarina of Time
         OC[OoTClient] 
         LC[Lua Connector]
-        OCB[BizHawk with Ocarina of Time Loaded]
+        OCB[EmuHawk with Ocarina of Time Loaded]
         OC <-- LuaSockets --> LC
         LC <--> OCB
     end
@@ -117,8 +117,6 @@ flowchart LR
     %% Java Based Games
     subgraph Java
         JM[Mod with Archipelago.MultiClient.Java]
-        STS[Slay the Spire]
-        JM <-- Mod the Spire --> STS
         subgraph Minecraft
             MCS[Minecraft Forge Server]
             JMC[Any Java Minecraft Clients]

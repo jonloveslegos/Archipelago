@@ -1,12 +1,11 @@
-from BaseClasses import Region, Entrance, Location
-from worlds.AutoWorld import LogicMixin
-
+from BaseClasses import Region, Entrance, Location, CollectionState
+import typing
 
 from .LADXR.checkMetadata import checkMetadataTable
 from .Common import *
 from worlds.generic.Rules import add_item_rule
-from .Items import ladxr_item_to_la_item_name, ItemName, LinksAwakeningItem
-from .LADXR.locations.tradeSequence import TradeRequirements, TradeSequenceItem
+from .Items import ladxr_item_to_la_item_name
+
 
 prefilled_events = ["ANGLER_KEYHOLE", "RAFT", "MEDICINE2", "CASTLE_BUTTON"]
 
@@ -26,6 +25,39 @@ links_awakening_dungeon_names = [
 def meta_to_name(meta):
     return f"{meta.name} ({meta.area})"
 
+def get_location_name_groups() -> typing.Dict[str, typing.Set[str]]:
+    groups = {
+        "Instrument Pedestals": {
+            "Full Moon Cello (Tail Cave)",
+            "Conch Horn (Bottle Grotto)",
+            "Sea Lily's Bell (Key Cavern)",
+            "Surf Harp (Angler's Tunnel)",
+            "Wind Marimba (Catfish's Maw)",
+            "Coral Triangle (Face Shrine)",
+            "Organ of Evening Calm (Eagle's Tower)",
+            "Thunder Drum (Turtle Rock)",
+        },
+        "Boss Rewards": {
+            "Moldorm Heart Container (Tail Cave)",
+            "Genie Heart Container (Bottle Grotto)",
+            "Slime Eye Heart Container (Key Cavern)",
+            "Angler Fish Heart Container (Angler's Tunnel)",
+            "Slime Eel Heart Container (Catfish's Maw)",
+            "Facade Heart Container (Face Shrine)",
+            "Evil Eagle Heart Container (Eagle's Tower)",
+            "Hot Head Heart Container (Turtle Rock)",
+            "Tunic Fairy Item 1 (Color Dungeon)",
+            "Tunic Fairy Item 2 (Color Dungeon)",
+        },
+    }
+    # Add region groups
+    for s, v in checkMetadataTable.items():
+        if s == "None":
+            continue
+        groups.setdefault(v.area, set()).add(meta_to_name(v))
+    return groups
+
+links_awakening_location_name_groups = get_location_name_groups()
 
 def get_locations_to_id():
     ret = {
@@ -61,13 +93,11 @@ class LinksAwakeningLocation(Location):
 
     def __init__(self, player: int, region, ladxr_item):
         name = meta_to_name(ladxr_item.metadata)
-
-        self.event = ladxr_item.event is not None
-        if self.event:
-            name = ladxr_item.event
-
         address = None
-        if not self.event:
+
+        if ladxr_item.event is not None:
+            name = ladxr_item.event
+        else:
             address = locations_to_id[name]
         super().__init__(player, name, address)
         self.parent_region = region
@@ -78,29 +108,6 @@ class LinksAwakeningLocation(Location):
                 return False
             return True
         add_item_rule(self, filter_item)
-
-
-def has_free_weapon(state: "CollectionState", player: int) -> bool:
-    return state.has("Progressive Sword", player) or state.has("Magic Rod", player) or state.has("Boomerang", player) or state.has("Hookshot", player)
-
-# If the player has access to farm enough rupees to afford a game, we assume that they can keep beating the game
-def can_farm_rupees(state: "CollectionState", player: int) -> bool:
-    return has_free_weapon(state, player) and (state.has("Can Play Trendy Game", player=player) or state.has("RAFT", player=player))
-
-
-class LinksAwakeningLogic(LogicMixin):
-    rupees = {
-        ItemName.RUPEES_20: 0,
-        ItemName.RUPEES_50: 0,
-        ItemName.RUPEES_100: 100,
-        ItemName.RUPEES_200: 200,
-        ItemName.RUPEES_500: 500,
-    }
-
-    def get_credits(self, player: int):
-        if can_farm_rupees(self, player):
-            return 999999999
-        return sum(self.count(item_name, player) * amount for item_name, amount in self.rupees.items())
 
 
 class LinksAwakeningRegion(Region):
@@ -136,13 +143,14 @@ class GameStateAdapater:
         return self.state.has(item, self.player)
 
     def get(self, item, default):
+        # Don't allow any money usage if you can't get back wasted rupees
         if item == "RUPEES":
-            return self.state.get_credits(self.player)
+            return self.state.prog_items[self.player]["RUPEES"]
         elif item.endswith("_USED"):
             return 0
         else:
             item = ladxr_item_to_la_item_name[item]
-        return self.state.prog_items.get((item, self.player), default)
+        return self.state.prog_items[self.player].get(item, default)
 
 
 class LinksAwakeningEntrance(Entrance):
@@ -231,7 +239,7 @@ def create_regions_from_ladxr(player, multiworld, logic):
 
         r = LinksAwakeningRegion(
             name=name, ladxr_region=l, hint="", player=player, world=multiworld)
-        r.locations = [LinksAwakeningLocation(player, r, i) for i in l.items]
+        r.locations += [LinksAwakeningLocation(player, r, i) for i in l.items]
         regions[l] = r
 
     for ladxr_location in logic.location_list:

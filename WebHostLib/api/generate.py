@@ -2,7 +2,8 @@ import json
 import pickle
 from uuid import UUID
 
-from flask import request, session, url_for, Markup
+from flask import request, session, url_for
+from markupsafe import Markup
 from pony.orm import commit
 
 from WebHostLib import app
@@ -19,8 +20,8 @@ def generate_api():
         race = False
         meta_options_source = {}
         if 'file' in request.files:
-            file = request.files['file']
-            options = get_yaml_data(file)
+            files = request.files.getlist('file')
+            options = get_yaml_data(files)
             if isinstance(options, Markup):
                 return {"text": options.striptags()}, 400
             if isinstance(options, str):

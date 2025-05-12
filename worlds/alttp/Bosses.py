@@ -6,7 +6,7 @@ from typing import Optional, Union, List, Tuple, Callable, Dict, TYPE_CHECKING
 from Fill import FillError
 from .Options import LTTPBosses as Bosses
 from .StateHelpers import can_shoot_arrows, can_extend_magic, can_get_good_bee, has_sword, has_beam_sword, \
-    has_melee_weapon, has_fire_source
+    has_melee_weapon, has_fire_source, can_use_bombs
 
 if TYPE_CHECKING:
     from . import ALTTPWorld
@@ -62,7 +62,8 @@ def MoldormDefeatRule(state, player: int) -> bool:
 
 def HelmasaurKingDefeatRule(state, player: int) -> bool:
     # TODO: technically possible with the hammer
-    return has_sword(state, player) or can_shoot_arrows(state, player)
+    return (can_use_bombs(state, player, 5) or state.has("Hammer", player)) and (has_sword(state, player)
+                                                                                 or can_shoot_arrows(state, player))
 
 
 def ArrghusDefeatRule(state, player: int) -> bool:
@@ -101,7 +102,7 @@ def KholdstareDefeatRule(state, player: int) -> bool:
                     state.has('Fire Rod', player) or
                     (
                             state.has('Bombos', player) and
-                            (has_sword(state, player) or state.multiworld.swordless[player])
+                            (has_sword(state, player) or state.multiworld.worlds[player].options.swordless)
                     )
             ) and
             (
@@ -110,7 +111,7 @@ def KholdstareDefeatRule(state, player: int) -> bool:
                     (
                             state.has('Fire Rod', player) and
                             state.has('Bombos', player) and
-                            state.multiworld.swordless[player] and
+                            state.multiworld.worlds[player].options.swordless and
                             can_extend_magic(state, player, 16)
                     )
             )
@@ -118,7 +119,9 @@ def KholdstareDefeatRule(state, player: int) -> bool:
 
 
 def VitreousDefeatRule(state, player: int) -> bool:
-    return can_shoot_arrows(state, player) or has_melee_weapon(state, player)
+    return ((can_shoot_arrows(state, player) and can_use_bombs(state, player, 10))
+            or can_shoot_arrows(state, player, 35) or state.has("Silver Bow", player)
+            or has_melee_weapon(state, player))
 
 
 def TrinexxDefeatRule(state, player: int) -> bool:
@@ -134,7 +137,7 @@ def AgahnimDefeatRule(state, player: int) -> bool:
 
 
 def GanonDefeatRule(state, player: int) -> bool:
-    if state.multiworld.swordless[player]:
+    if state.multiworld.worlds[player].options.swordless:
         return state.has('Hammer', player) and \
                has_fire_source(state, player) and \
                state.has('Silver Bow', player) and \
@@ -143,7 +146,7 @@ def GanonDefeatRule(state, player: int) -> bool:
     can_hurt = has_beam_sword(state, player)
     common = can_hurt and has_fire_source(state, player)
     # silverless ganon may be needed in anything higher than no glitches
-    if state.multiworld.logic[player] != 'noglitches':
+    if state.multiworld.worlds[player].options.glitches_required != 'no_glitches':
         # need to light torch a sufficient amount of times
         return common and (state.has('Tempered Sword', player) or state.has('Golden Sword', player) or (
                 state.has('Silver Bow', player) and can_shoot_arrows(state, player)) or
@@ -245,7 +248,7 @@ for location in boss_location_table:
 
 def place_boss(world: "ALTTPWorld", boss: str, location: str, level: Optional[str]) -> None:
     player = world.player
-    if location == 'Ganons Tower' and world.multiworld.mode[player] == 'inverted':
+    if location == 'Ganons Tower' and world.options.mode == 'inverted':
         location = 'Inverted Ganons Tower'
     logging.debug('Placing boss %s at %s', boss, location + (' (' + level + ')' if level else ''))
     world.dungeons[location].bosses[level] = BossFactory(boss, player)
@@ -257,9 +260,8 @@ def format_boss_location(location_name: str, level: str) -> str:
 
 def place_bosses(world: "ALTTPWorld") -> None:
     multiworld = world.multiworld
-    player = world.player
     # will either be an int or a lower case string with ';' between options
-    boss_shuffle: Union[str, int] = multiworld.boss_shuffle[player].value
+    boss_shuffle: Union[str, int] = world.options.boss_shuffle.value
     already_placed_bosses: List[str] = []
     remaining_locations: List[Tuple[str, str]] = []
     # handle plando

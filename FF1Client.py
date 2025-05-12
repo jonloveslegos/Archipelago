@@ -33,7 +33,7 @@ class FF1CommandProcessor(ClientCommandProcessor):
             logger.info(f"NES Status: {self.ctx.nes_status}")
 
     def _cmd_toggle_msgs(self):
-        """Toggle displaying messages in bizhawk"""
+        """Toggle displaying messages in EmuHawk"""
         global DISPLAY_MSGS
         DISPLAY_MSGS = not DISPLAY_MSGS
         logger.info(f"Messages are now {'enabled' if DISPLAY_MSGS  else 'disabled'}")
@@ -261,7 +261,7 @@ if __name__ == '__main__':
 
     parser = get_base_parser()
     args = parser.parse_args()
-    colorama.init()
+    colorama.just_fix_windows_console()
 
     asyncio.run(main(args))
     colorama.deinit()
