@@ -1,6 +1,4 @@
-import worlds.generic.Rules
 from ..generic.Rules import set_rule, add_rule
-from BaseClasses import MultiWorld
 from ..AutoWorld import LogicMixin
 from .Locations import advancement_table
 
@@ -204,5 +202,5 @@ def set_rules(self) -> None:
     set_rule(self.multiworld.get_location("Ability 17", self.player), lambda state: state.has("Fire Projectile", self.player) and state.has("Boost Jump", self.player) and state.has("Lightning Projectile", self.player) and state.has("Double Jump", self.player) and state.has("Iron Grip", self.player) and state.has("RedKey", self.player))
     for adv in advancement_table:
         if adv.__contains__("Chest"):
-            add_rule(self.multiworld.get_location(adv, self.player), lambda state, multiworld=self.multiworld: state.can_reach(multiworld.get_region("The Glade P2", self.player), player=self.player))
+            add_rule(self.multiworld.get_location(adv, self.player), lambda state, multiworld=self.multiworld: state.can_reach(multiworld.get_region("The Glade P2", self.player), player=self.player) and state.has("TreasureKey", self.player, 4))
 

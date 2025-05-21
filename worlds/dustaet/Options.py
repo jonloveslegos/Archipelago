@@ -1,5 +1,5 @@
-import typing
-from Options import Option, Toggle
+from Options import Toggle, PerGameCommonOptions
+from dataclasses import dataclass
 
 
 class RandomizeStartingAbilities(Toggle):
@@ -12,7 +12,14 @@ class RandomizeFidget(Toggle):
     display_name = "Randomize Fidget"
 
 
-dustaet_options: typing.Dict[str, type(Option)] = {
-    "randomize_starting_abilities":         RandomizeStartingAbilities,
-    "randomize_fidget":                     RandomizeFidget,
-}
+class RandomizeSkillGems(Toggle):
+    """Randomizes the skill gems you get each level."""
+    display_name = "Randomize Skill Gems"
+
+
+@dataclass
+class DustAETOptions(PerGameCommonOptions):
+    randomize_starting_abilities:         RandomizeStartingAbilities
+    randomize_fidget:                     RandomizeFidget
+    randomize_skill_gems:                 RandomizeSkillGems
+
