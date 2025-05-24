@@ -27,7 +27,7 @@ item_table = {
     "Double Jump": ItemData(415, "~15", True),
     "Iron Grip": ItemData(416, "~16", True),
     "Boost Jump": ItemData(417, "~17", True),
-    "FeebleFruit": ItemData(0, "0", False),
+    "FeebleFruit": ItemData(700, "0", False),
     "LoutaNut": ItemData(1, "1", False),
     "CupCake": ItemData(2, "2", False),
     "Mushroom": ItemData(3, "3", False),
