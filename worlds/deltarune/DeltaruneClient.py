@@ -64,7 +64,7 @@ class DeltaruneContext(CommonContext):
     items_handling = 0b111
     chapters = None
     goal_macguffin_amount = 1
-    save_game_folder = os.path.expandvars(r"%localappdata%/DELTARUNE")
+    save_game_folder = os.path.expandvars(r"%localappdata%/DELTARUNEAP")
 
     def __init__(self, server_address, password):
         super().__init__(server_address, password)
@@ -73,7 +73,7 @@ class DeltaruneContext(CommonContext):
         self.chapters = []
         self.goal_macguffin_amount = 1
         # self.save_game_folder: files go in this path to pass data between us and the actual game
-        self.save_game_folder = os.path.expandvars(r"%localappdata%/DELTARUNE")
+        self.save_game_folder = os.path.expandvars(r"%localappdata%/DELTARUNEAP")
 
     def patch_game(self):
         with open(Utils.user_path("Deltarune", "chapter1_windows", "data.win"), "rb") as f:
