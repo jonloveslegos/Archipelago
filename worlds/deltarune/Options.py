@@ -25,6 +25,18 @@ class RandomizeWarpDoors(Toggle):
     default = 0
 
 
+class IncludeChapter1(Toggle):
+    """Do you want to play Chapter 1?"""
+    display_name = "Include Chapter 1"
+    default = 1
+
+
+class IncludeChapter2(Toggle):
+    """Do you want to play Chapter 2?"""
+    display_name = "Include Chapter 2"
+    default = 0
+
+
 class GoalMacGuffinAmount(Range):
     """How many MacGuffin items are needed for the goal.
     (Chapter 1: King-Shaped Key Piece)"""
@@ -37,6 +49,8 @@ class GoalMacGuffinAmount(Range):
 @dataclass
 class DeltaruneOptions(PerGameCommonOptions):
     notice_read_option_info:                          Notice
+    include_chapter_1:                                IncludeChapter1
+    include_chapter_2:                                IncludeChapter2
     goal_macguffin_amount:                            GoalMacGuffinAmount
     randomize_warp_doors:                             RandomizeWarpDoors
     randomize_super_bosses:                           RandomizeSuperBosses

@@ -135,7 +135,7 @@ async def process_deltarune_cmd(ctx: DeltaruneContext, cmd: str, args: dict):
     if cmd == "Connected":
         if not os.path.exists(ctx.save_game_folder):
             os.mkdir(os.path.join(ctx.save_game_folder))
-        # ctx.chapters = args["slot_data"]["chapters"]
+        ctx.chapters = args["slot_data"]["chapters"]
         # for itm in ctx.chapters:
         #     filename = f"{itm}.route"
         #     with open(os.path.join(ctx.save_game_folder, filename), "w") as f:

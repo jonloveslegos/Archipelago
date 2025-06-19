@@ -23,6 +23,21 @@ item_table = {
     "HeartsDonut": ItemData(12, ItemClassification.filler),
     "ChocDiamond": ItemData(13, ItemClassification.filler),
     "RouxlsRoux": ItemData(15, ItemClassification.filler),
+    "CD Bagel": ItemData(16, ItemClassification.filler),
+    "Kris Tea": ItemData(18, ItemClassification.filler),
+    "Noelle Tea": ItemData(19, ItemClassification.filler),
+    "Ralsei Tea": ItemData(20, ItemClassification.filler),
+    "Susie Tea": ItemData(21, ItemClassification.filler),
+    "DD-Burger": ItemData(22, ItemClassification.filler),
+    "LightCandy": ItemData(23, ItemClassification.filler),
+    "ButJuice": ItemData(24, ItemClassification.filler),
+    "SpagettiCode": ItemData(25, ItemClassification.filler),
+    "TensionBit": ItemData(27, ItemClassification.filler),
+    "TensionGem": ItemData(28, ItemClassification.filler),
+    "TensionMax": ItemData(29, ItemClassification.filler),
+    "ReviveDust": ItemData(30, ItemClassification.filler),
+    "S.POISON": ItemData(32, ItemClassification.filler),
+    "DogDollar": ItemData(33, ItemClassification.filler),
     "Egg": ItemData(10002, ItemClassification.filler),
     "BrokenCake": ItemData(10003, ItemClassification.progression),
     "Broken Key A": ItemData(10004, ItemClassification.progression),
@@ -53,7 +68,7 @@ item_table = {
     "King-Shaped Key Piece": ItemData(70000, ItemClassification.progression),
 }
 
-non_key_items = {
+non_key_items_ch1 = {
     "Glowshard": 1,
     "Spincake": 1,
     "White Ribbon": 1,
@@ -75,20 +90,7 @@ non_key_items = {
 
 }
 
-warp_doors = [
-    "Fields Warp",
-    "Forest Warp",
-    "Bake Sale Warp",
-    "Castle Warp",
-]
-
-super_boss_rewards = [
-    "JevilsTail",
-    "DevilsKnife",
-    "ShadowCrystal",
-]
-
-key_items = {
+key_items_ch1 = {
     "Top Cake": 1,
     "Manual": 1,
     "Broken Key C": 1,
@@ -104,15 +106,45 @@ key_items = {
     "Bake Sale Key": 1,
     "Forest Key": 1,
     "Castle Key": 1,
+}
+
+junk_weights_ch1 = {
+    "Dark Candy": 500-40,
+    "Darkburger": 500-70,
+    "LancerCookie": 500-50,
+    "HeartsDonut": 500-60,
+    "ChocDiamond": 500-60,
+    "RouxlsRoux": 500-60,
+}
+
+non_key_items_ch2 = {
+    "Noelle Tea": 1,
+    "Kris Tea": 1,
+    "Susie Tea": 1,
+    "Ralsei Tea": 1,
+    "Spincake": 1,
+    "CD Bagel": 1,
+    "LightCandy": 1,
+    "DogDollar": 1,
+}
+
+key_items_ch2 = {
 
 }
 
-junk_weights_all = {
-    "Dark Candy": 40,
-    "Darkburger": 70,
-    "LancerCookie": 50,
-    "HeartsDonut": 60,
-    "ChocDiamond": 60,
-    "RouxlsRoux": 60,
+junk_weights_ch2 = {
+
 }
-junk_weights_all = {item: 500-weight for item, weight in junk_weights_all.items()}
+
+warp_doors = [
+    "Fields Warp",
+    "Forest Warp",
+    "Bake Sale Warp",
+    "Castle Warp",
+]
+
+super_boss_rewards = [
+    "JevilsTail",
+    "DevilsKnife",
+    "ShadowCrystal",
+]

@@ -17,7 +17,9 @@ deltarune_regions = [
     ("CH1: Bake Sale", ["CH1: Card Castle Entrance", "CH1: Bake Sale Warp", "CH1: Castle Warp"]),
     ("CH1: Card Castle", []),
     ("CH1: Warp Hub", ["CH1: Fields Warp Hub", "CH1: Forest Warp Hub", "CH1: Bake Sale Warp Hub", "CH1: Castle Warp Hub"]),
-    ("Chapter 2", []),
+    ("Chapter 2", ["CH2: City Entrance", "CH2: Castle Town Entrance"]),
+    ("CH2: City", []),
+    ("CH2: Castle Town", []),
     ("Chapter 3", []),
     ("Chapter 4", []),
 ]
@@ -42,4 +44,6 @@ mandatory_connections = [
     ("CH1: Fields Warp Hub", "CH1: Fields"),
     ("CH1: Forest Warp Hub", "CH1: Forest"),
     ("CH1: Bake Sale Warp Hub", "CH1: Bake Sale"),
+    ("CH2: City Entrance", "CH2: City"),
+    ("CH2: Castle Town Entrance", "CH2: Castle Town"),
 ]

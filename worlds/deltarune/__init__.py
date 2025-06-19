@@ -1,5 +1,5 @@
-from .Items import DeltaruneItem, item_table, non_key_items, key_items, \
-    junk_weights_all, warp_doors, super_boss_rewards
+from .Items import DeltaruneItem, item_table, non_key_items_ch1, non_key_items_ch2, key_items_ch1, \
+    junk_weights_ch1, warp_doors, super_boss_rewards, key_items_ch2, junk_weights_ch2
 from .Locations import DeltaruneAdvancement, advancement_table, exclusion_table
 from .Regions import deltarune_regions, link_deltarune_areas
 from .Rules import set_rules, set_completion_rules
@@ -62,32 +62,48 @@ class DeltaruneWorld(World):
             "randomize_warp_doors": bool(self.options.randomize_warp_doors.value),
             "randomize_super_bosses": bool(self.options.randomize_super_bosses.value),
             "goal_macguffin_amount": int(self.options.goal_macguffin_amount.value),
+            "include_chapter_1": bool(self.options.include_chapter_1.value),
+            "include_chapter_2": bool(self.options.include_chapter_2.value),
+            "chapters": [bool(self.options.include_chapter_1.value), bool(self.options.include_chapter_2.value)],
         }
 
     def get_filler_item_name(self):
-        junk_pool = junk_weights_all
+        junk_pool: dict[str, int] = dict()
+        if self.options.include_chapter_1:
+            junk_pool += junk_weights_ch1
+        if self.options.include_chapter_2:
+            junk_pool += junk_weights_ch2
         return self.random.choices(list(junk_pool.keys()), weights=list(junk_pool.values()))[0]
 
     def create_items(self):
         # Generate item pool
         itempool: list[str] = []
         # Add all required progression items
-        itempool += ["King-Shaped Key Piece"] * self.options.goal_macguffin_amount
-        for name, num in key_items.items():
-            itempool += [name] * num
-        for name, num in non_key_items.items():
-            itempool += [name] * num
+        if self.options.include_chapter_1:
+            itempool += ["King-Shaped Key Piece"] * self.options.goal_macguffin_amount
+            for name, num in key_items_ch1.items():
+                itempool += [name] * num
+            for name, num in non_key_items_ch1.items():
+                itempool += [name] * num
+        if self.options.include_chapter_2:
+            itempool += ["Queen-Shaped Key Piece"] * self.options.goal_macguffin_amount
+            for name, num in key_items_ch2.items():
+                itempool += [name] * num
+            for name, num in non_key_items_ch2.items():
+                itempool += [name] * num
         if not self.options.randomize_warp_doors:
             itempool = [item for item in itempool if item not in warp_doors]
-            self.multiworld.get_location("CH1: Fields Warp Door", self.player).place_locked_item(self.create_item("Fields Warp"))
-            self.multiworld.get_location("CH1: Forest Warp Door", self.player).place_locked_item(self.create_item("Forest Warp"))
-            self.multiworld.get_location("CH1: Bake Sale Warp Door", self.player).place_locked_item(self.create_item("Bake Sale Warp"))
-            self.multiworld.get_location("CH1: Castle Warp Door", self.player).place_locked_item(self.create_item("Castle Warp"))
+            if self.options.include_chapter_1:
+                self.multiworld.get_location("CH1: Fields Warp Door", self.player).place_locked_item(self.create_item("Fields Warp"))
+                self.multiworld.get_location("CH1: Forest Warp Door", self.player).place_locked_item(self.create_item("Forest Warp"))
+                self.multiworld.get_location("CH1: Bake Sale Warp Door", self.player).place_locked_item(self.create_item("Bake Sale Warp"))
+                self.multiworld.get_location("CH1: Castle Warp Door", self.player).place_locked_item(self.create_item("Castle Warp"))
         if not self.options.randomize_super_bosses:
             itempool = [item for item in itempool if item not in super_boss_rewards]
-            self.multiworld.get_location("CH1: JevilsTail", self.player).place_locked_item(self.create_item("JevilsTail"))
-            self.multiworld.get_location("CH1: ShadowCrystal", self.player).place_locked_item(self.create_item("ShadowCrystal"))
-            self.multiworld.get_location("CH1: DevilsKnife", self.player).place_locked_item(self.create_item("DevilsKnife"))
+            if self.options.include_chapter_1:
+                self.multiworld.get_location("CH1: JevilsTail", self.player).place_locked_item(self.create_item("JevilsTail"))
+                self.multiworld.get_location("CH1: ShadowCrystal", self.player).place_locked_item(self.create_item("ShadowCrystal"))
+                self.multiworld.get_location("CH1: DevilsKnife", self.player).place_locked_item(self.create_item("DevilsKnife"))
 
         # Choose locations to automatically exclude based on settings
         exclusion_checks = set()
@@ -117,7 +133,12 @@ class DeltaruneWorld(World):
             ret = Region(region_name, self.player, self.multiworld)
             ret.locations += [DeltaruneAdvancement(self.player, loc_name, loc_data.id, ret)
                               for loc_name, loc_data in advancement_table.items()
-                              if loc_data.region == region_name]
+                              if loc_data.region == region_name and (
+                              (self.options.include_chapter_1 and loc_name.startswith("CH1: ")) or
+                              (self.options.include_chapter_2 and loc_name.startswith("CH2: ")) or
+                              not (loc_name.startswith("CH1: ") or loc_name.startswith("CH2: ")
+                                   or loc_name.startswith("CH3: ") or loc_name.startswith("CH4: "))
+                              )]
             for exit in exits:
                 ret.exits.append(Entrance(self.player, exit, ret))
             return ret
