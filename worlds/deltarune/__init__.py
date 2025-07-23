@@ -70,9 +70,9 @@ class DeltaruneWorld(World):
     def get_filler_item_name(self):
         junk_pool: dict[str, int] = dict()
         if self.options.include_chapter_1:
-            junk_pool += junk_weights_ch1
+            junk_pool.update(junk_weights_ch1)
         if self.options.include_chapter_2:
-            junk_pool += junk_weights_ch2
+            junk_pool.update(junk_weights_ch2)
         return self.random.choices(list(junk_pool.keys()), weights=list(junk_pool.values()))[0]
 
     def create_items(self):
