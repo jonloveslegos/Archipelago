@@ -25,7 +25,7 @@ advancement_table = {
     "Ability 14": AdvData(0, "Ability 14", "~14", 'Cirromon Caverns P1'),
     "Ability 15": AdvData(0, "Ability 15", "~15", 'Blackmoor Mountains'),
     "Ability 16": AdvData(0, "Ability 16", "~16", 'The Sorrowing Meadow'),
-    "Ability 17": AdvData(0, "Ability 16", "~17", 'Blackmoor Mountains'),
+    "Ability 17": AdvData(0, "Ability 17", "~17", 'Blackmoor Mountains'),
     "Blue Resonance Gem": AdvData(0, "Blue Resonance Gem", "321", 'Aurora Village'),
     "Red Resonance Gem": AdvData(0, "Red Resonance Gem", "322", 'Aurora Village'),
     "Green Resonance Gem": AdvData(0, "Green Resonance Gem", "323", 'The Sorrowing Meadow'),
