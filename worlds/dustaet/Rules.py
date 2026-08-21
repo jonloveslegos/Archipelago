@@ -103,7 +103,7 @@ def set_rules(self) -> None:
     set_rule(self.multiworld.get_location("Village Key Gift 1", self.player), lambda state: state.has("GeehanWatch", self.player))
     set_rule(self.multiworld.get_location("Village Key Gift 2", self.player), lambda state: state.has("GeehanWatch", self.player))
     set_rule(self.multiworld.get_location("Village Key Gift 3", self.player), lambda state: state.has("GeehanWatch", self.player))
-    set_rule(self.multiworld.get_location("Sanctuary Standing Item", self.player), lambda state: state.has("TreasureKey", self.player, 4))
+    set_rule(self.multiworld.get_location("Sanctuary Standing Item", self.player), lambda state: state.has("TreasureKey", self.player, 116))
     set_rule(self.multiworld.get_location("Cave Red Orb", self.player), lambda state: state.has("RedKey", self.player) and state.has("Iron Grip", self.player))
     set_rule(self.multiworld.get_location("Farm Wall 1", self.player), lambda state: state.has("Double Jump", self.player) or state.has("Aerial Dust Storm", self.player))
     set_rule(self.multiworld.get_location("Farm Wall 2", self.player), lambda state: state.has("Double Jump", self.player) or state.has("Aerial Dust Storm", self.player))
@@ -202,5 +202,5 @@ def set_rules(self) -> None:
     set_rule(self.multiworld.get_location("Ability 17", self.player), lambda state: state.has("Fire Projectile", self.player) and state.has("Boost Jump", self.player) and state.has("Lightning Projectile", self.player) and state.has("Double Jump", self.player) and state.has("Iron Grip", self.player) and state.has("RedKey", self.player))
     for adv in advancement_table:
         if adv.__contains__("Chest"):
-            add_rule(self.multiworld.get_location(adv, self.player), lambda state, multiworld=self.multiworld: state.can_reach(multiworld.get_region("The Glade P2", self.player), player=self.player) and state.has("TreasureKey", self.player, 4))
+            add_rule(self.multiworld.get_location(adv, self.player), lambda state, multiworld=self.multiworld: state.can_reach(multiworld.get_region("The Glade P2", self.player), player=self.player) and state.has("TreasureKey", self.player, 116))
 
