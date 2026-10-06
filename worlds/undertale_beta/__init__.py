@@ -11,7 +11,7 @@ from .Options import UndertaleOptions
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components
 from multiprocessing import Process
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 import Utils
 import math
 import typing
@@ -65,6 +65,11 @@ class UndertaleWorld(World):
     er_portal_hints: Dict[int, str]
     
     all_door_locks: List[str] = []
+
+    def interpret_slot_data(self, slot_data: dict[str, Any]) -> None:
+        if "Locked Doors" in slot_data:
+            self.all_door_locks = slot_data["Locked Doors"]
+            return slot_data
 
     def __init__(self, multiworld: "MultiWorld", player: int):
         super().__init__(multiworld, player)
@@ -141,8 +146,13 @@ class UndertaleWorld(World):
             self.options.spare_sanity.value = 0
         if not bool(self.options.kill_sanity.value):
             self.options.kill_sanity_pack_size.value = 40
-
-        if self.options.door_locks.value > 0:
+            
+        re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
+        if re_gen_passthrough and self.game in re_gen_passthrough:
+            slot_data: dict[str, Any] = re_gen_passthrough[self.game]
+            if "Locked Doors" in slot_data:
+                self.all_door_locks = slot_data["Locked Doors"]
+        elif self.options.door_locks.value > 0:
             rand_door_list = door_name_list.copy()
             if self.options.route_required.current_key == "genocide":
                 for do in genocide_missing_rooms:
