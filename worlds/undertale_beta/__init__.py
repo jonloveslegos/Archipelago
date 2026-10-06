@@ -1,19 +1,20 @@
 from .Items import UndertaleItem, item_table, required_armor, required_weapons, non_key_items, key_items, \
     junk_weights_all, plot_items, junk_weights_neutral, junk_weights_pacifist, junk_weights_genocide, \
-    junk_weights_cut_items, spells_attack, spells_heal, spells_gimmicks
+    junk_weights_cut_items, spells_attack, spells_heal, spells_gimmicks, spells_pacifist, spells_violent
 from .Locations import UndertaleAdvancement, advancement_table, exclusion_table
 from .er_rules import set_er_location_rules
-from .er_scripts import create_er_regions_vanilla, assemble_er, UndertaleERLocation
+from .er_scripts import create_er_regions_vanilla, UndertaleERLocation
+from .er_data import door_name_list, genocide_missing_rooms
 from worlds.generic.Rules import exclusion_rules
 from BaseClasses import Tutorial, Item, MultiWorld
 from .Options import UndertaleOptions
-from .entrance_rando import ERPlacementState
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components
 from multiprocessing import Process
 from typing import Dict, List, Tuple
 import Utils
 import math
+import typing
 
 
 def run_client():
@@ -54,7 +55,6 @@ class UndertaleWorld(World):
     options_dataclass = UndertaleOptions
     options: UndertaleOptions
     web = UndertaleWeb()
-    undertale_portal_pairs: List[Tuple[str, str]]
 
     topology_present = True
 
@@ -63,6 +63,8 @@ class UndertaleWorld(World):
 
     data_version = 7
     er_portal_hints: Dict[int, str]
+    
+    all_door_locks: List[str] = []
 
     def __init__(self, multiworld: "MultiWorld", player: int):
         super().__init__(multiworld, player)
@@ -98,13 +100,13 @@ class UndertaleWorld(World):
             # "gifting": bool(self.options.gifting.value),
             "entrance_rando": False,
             # "entrance_rando": bool(self.options.entrance_rando.value),
-            "Entrance Rando": self.undertale_portal_pairs,
             "spare_sanity_max": self.options.spare_sanity_max.value,
             "spare_sanity_pack_size": self.options.spare_sanity_pack_size.value,
             "bonus_locations": bool(self.options.bonus_locations.value),
             "guaranteed_filler": self.options.guaranteed_filler.value,
             "hub_shop_cost": self.options.hub_shop_cost.value,
-            "enabled_spells": set(self.options.enabled_spells.value)
+            "enabled_spells": set(self.options.enabled_spells.value),
+            "door_locks": self.options.door_locks.value
         }
 
     def get_filler_item_name(self):
@@ -125,11 +127,9 @@ class UndertaleWorld(World):
         else:
             return "Temmie Flakes"
 
-    def pre_fill(self):
         # if self.options.entrance_rando:
             # self.undertale_portal_pairs = assemble_er(self)
         # else:
-            self.undertale_portal_pairs = ERPlacementState(self, True).pairings
 
     def generate_early(self):
         if self.options.route_required.current_key != "genocide" and \
@@ -141,6 +141,18 @@ class UndertaleWorld(World):
             self.options.spare_sanity.value = 0
         if not bool(self.options.kill_sanity.value):
             self.options.kill_sanity_pack_size.value = 40
+
+        if self.options.door_locks.value > 0:
+            rand_door_list = door_name_list.copy()
+            if self.options.route_required.current_key == "genocide":
+                for do in genocide_missing_rooms:
+                    rand_door_list = [item for item in rand_door_list if (do != item.split(" <-> ")[0] and do != item.split(" <-> ")[1])]
+            amount_to_add = min(len(rand_door_list), self.options.door_locks.value)
+            print("actually added = "+str(amount_to_add))
+            print(rand_door_list.__len__())
+            self.random.shuffle(rand_door_list)
+            for i in range(amount_to_add):
+                self.all_door_locks.append(rand_door_list.pop())
 
     def create_items(self):
         exclusion_pool = set()
@@ -155,11 +167,22 @@ class UndertaleWorld(World):
             itempool += [name] * num
         for name, num in non_key_items.items():
             itempool += [name] * num
+            
+        if self.options.door_locks.value > 0:
+            for door in self.all_door_locks:
+                itempool += ["Door Unlock - "+door]
+
         if "attack" in self.options.enabled_spells:
             for name, num in spells_attack.items():
                 itempool += [name] * num
         if "heal" in self.options.enabled_spells:
             for name, num in spells_heal.items():
+                itempool += [name] * num
+        if "pacifist" in self.options.enabled_spells:
+            for name, num in spells_pacifist.items():
+                itempool += [name] * num
+        if "violent" in self.options.enabled_spells:
+            for name, num in spells_violent.items():
                 itempool += [name] * num
         if "gimmick" in self.options.enabled_spells:
             for name, num in spells_gimmicks.items():
@@ -287,10 +310,21 @@ class UndertaleWorld(World):
         create_er_regions_vanilla(self)
 
     def fill_slot_data(self):
-        return self._get_undertale_data()
+        slot_data = self._get_undertale_data()
+        slot_data["Locked Doors"] = self.all_door_locks
+        return slot_data
 
     def create_item(self, name: str) -> Item:
         from .Items import item_table
         item_data = item_table[name]
         item = UndertaleItem(name, item_data.classification, item_data.code, self.player)
         return item
+
+    def write_spoiler(self, spoiler_handle: typing.TextIO) -> None:
+        player_name = self.multiworld.get_player_name(self.player)
+        spoiler_handle.write(f"\n\nLocked Doors ({player_name}): ")
+        list_as_string = ""
+        for item in self.all_door_locks:
+            list_as_string += f"{item}, "
+        list_as_string = list_as_string.removesuffix(", ")
+        spoiler_handle.write(list_as_string)

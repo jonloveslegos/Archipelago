@@ -13,6 +13,7 @@ import Utils
 from typing import List, Tuple
 from NetUtils import NetworkItem, ClientStatus
 from . import data_path
+from .Locations import advancement_table
 from MultiServer import mark_raw
 from CommonClient import CommonContext, server_loop, \
     gui_enabled, ClientCommandProcessor, logger, get_base_parser
@@ -802,6 +803,7 @@ class UndertaleContext(CommonContext):
     gifting = False
     initialize_gifting = False
     entrances: List[Tuple[str, str]] = None
+    locked_doors: List[str] = None
     save_game_folder = platformdirs.user_config_dir(appname="UNDERTALEAP", ensure_exists=True, appauthor=False)
 
     def __init__(self, server_address, password):
@@ -821,6 +823,7 @@ class UndertaleContext(CommonContext):
         self.deathlink_status = False
         self.tem_armor = False
         self.entrances = []
+        self.locked_doors = []
         self.completed_count = 0
         self.completed_routes = {"pacifist": 0, "genocide": 0, "neutral": 0}
         # self.save_game_folder: files go in this path to pass data between us and the actual game
@@ -861,7 +864,7 @@ class UndertaleContext(CommonContext):
         for root, dirs, files in os.walk(path):
             for file in files:
                 try:
-                    if "total_pieces" == file or "add.gift" == file or "remove.gift" == file or "team_players" == file or "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
+                    if "total_pieces" == file or "add.gift" == file or "remove.gift" == file or "doorlock.locked" == file or "team_players" == file or "doorcheck.doorspot" == file or "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
                             "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
                     elif file.endswith(("only_tem", "disconnected", "connected", ".item", ".victory", ".route", ".playerspot", ".mad",
@@ -933,6 +936,12 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
         ctx.spare_pack_size = args["slot_data"]["spare_sanity_pack_size"]
         ctx.spare_max = args["slot_data"]["spare_sanity_max"]
         ctx.tem_armor = args["slot_data"]["temy_include"]
+        ctx.locked_doors = args["slot_data"]["Locked Doors"]
+        if args["slot_data"]["door_locks"] > 0:
+            with open(os.path.join(ctx.save_game_folder, "doorlock.locked"), "w") as f:
+                for item in ctx.locked_doors:
+                    f.write(item + "\n")
+                f.close()
 
         await ctx.send_msgs([{"cmd": "Get", "keys": [str(ctx.slot) + " RoutesDone neutral",
                                                      str(ctx.slot) + " RoutesDone pacifist",
@@ -1032,13 +1041,13 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             f.close()
     elif cmd == "LocationInfo":
         for loc in args["locations"]:
-            locationid = loc.location
+            locationid = NetworkItem(*loc).location
             filename = f"{str(locationid - 12000)}.hint"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 toDraw = ""
                 for i in range(20):
-                    if i < len(str(ctx.item_names[loc.item])):
-                        toDraw += str(ctx.item_names[loc.item])[i]
+                    if i < len(str(ctx.item_names.lookup_in_slot(NetworkItem(*loc).item, NetworkItem(*loc).player))):
+                        toDraw += str(ctx.item_names.lookup_in_slot(NetworkItem(*loc).item, NetworkItem(*loc).player))[i]
                     else:
                         break
                 f.write(toDraw)
@@ -1083,70 +1092,78 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                     itm_id -= 1
                 if NetworkItem(*item).location < 0:
                     counter -= 1
-                filename = f"{str(itm_id)}plr{str(NetworkItem(*item).player)}.item"
-                with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
-                    if NetworkItem(*item).item == 77701:
-                        if placedWeapon == 0:
-                            f.write(str(77013 - 11000))
-                        elif placedWeapon == 1:
-                            f.write(str(77014 - 11000))
-                        elif placedWeapon == 2:
-                            f.write(str(77025 - 11000))
-                        elif placedWeapon == 3:
-                            f.write(str(77045 - 11000))
-                        elif placedWeapon == 4:
-                            f.write(str(77049 - 11000))
-                        elif placedWeapon == 5:
-                            f.write(str(77047 - 11000))
-                        elif placedWeapon == 6:
-                            if str(ctx.route) == "genocide" or str(ctx.route) == "all_routes":
-                                f.write(str(77052 - 11000))
+                if 2000 >= NetworkItem(*item).item >= 1000:
+                    if ctx.item_names.lookup_in_game(NetworkItem(*item).item).removeprefix("Door Unlock - ") in ctx.locked_doors:
+                        ctx.locked_doors.remove(ctx.item_names.lookup_in_game(NetworkItem(*item).item).removeprefix("Door Unlock - "))
+                else:
+                    filename = f"{str(itm_id)}plr{str(NetworkItem(*item).player)}.item"
+                    with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+                        if NetworkItem(*item).item == 77701:
+                            if placedWeapon == 0:
+                                f.write(str(77013))
+                            elif placedWeapon == 1:
+                                f.write(str(77014))
+                            elif placedWeapon == 2:
+                                f.write(str(77025))
+                            elif placedWeapon == 3:
+                                f.write(str(77045))
+                            elif placedWeapon == 4:
+                                f.write(str(77049))
+                            elif placedWeapon == 5:
+                                f.write(str(77047))
+                            elif placedWeapon == 6:
+                                if str(ctx.route) == "genocide" or str(ctx.route) == "all_routes":
+                                    f.write(str(77052))
+                                else:
+                                    f.write(str(77051))
                             else:
-                                f.write(str(77051 - 11000))
+                                f.write(str(77003))
+                            placedWeapon += 1
+                        elif NetworkItem(*item).item == 77702:
+                            if placedArmor == 0:
+                                f.write(str(77012))
+                            elif placedArmor == 1:
+                                f.write(str(77015))
+                            elif placedArmor == 2:
+                                f.write(str(77024))
+                            elif placedArmor == 3:
+                                f.write(str(77044))
+                            elif placedArmor == 4:
+                                f.write(str(77048))
+                            elif placedArmor == 5:
+                                if str(ctx.route) == "genocide":
+                                    f.write(str(77053))
+                                else:
+                                    f.write(str(77046))
+                            elif placedArmor == 6 and ((not str(ctx.route) == "genocide") or ctx.tem_armor):
+                                if str(ctx.route) == "all_routes":
+                                    f.write(str(77053))
+                                elif str(ctx.route) == "genocide":
+                                    f.write(str(77064))
+                                else:
+                                    f.write(str(77050))
+                            elif placedArmor == 7 and ctx.tem_armor and not str(ctx.route) == "genocide":
+                                f.write(str(77064))
+                            else:
+                                f.write(str(77004))
+                            placedArmor += 1
                         else:
-                            f.write(str(77003 - 11000))
-                        placedWeapon += 1
-                    elif NetworkItem(*item).item == 77702:
-                        if placedArmor == 0:
-                            f.write(str(77012 - 11000))
-                        elif placedArmor == 1:
-                            f.write(str(77015 - 11000))
-                        elif placedArmor == 2:
-                            f.write(str(77024 - 11000))
-                        elif placedArmor == 3:
-                            f.write(str(77044 - 11000))
-                        elif placedArmor == 4:
-                            f.write(str(77048 - 11000))
-                        elif placedArmor == 5:
-                            if str(ctx.route) == "genocide":
-                                f.write(str(77053 - 11000))
-                            else:
-                                f.write(str(77046 - 11000))
-                        elif placedArmor == 6 and ((not str(ctx.route) == "genocide") or ctx.tem_armor):
-                            if str(ctx.route) == "all_routes":
-                                f.write(str(77053 - 11000))
-                            elif str(ctx.route) == "genocide":
-                                f.write(str(77064 - 11000))
-                            else:
-                                f.write(str(77050 - 11000))
-                        elif placedArmor == 7 and ctx.tem_armor and not str(ctx.route) == "genocide":
-                            f.write(str(77064 - 11000))
-                        else:
-                            f.write(str(77004 - 11000))
-                        placedArmor += 1
-                    else:
-                        f.write(str(NetworkItem(*item).item - 11000))
-                    f.close()
+                            f.write(str(NetworkItem(*item).item))
+                        f.close()
                 ctx.items_received.append(NetworkItem(*item))
                 if [item.item for item in ctx.items_received].count(77000) >= ctx.pieces_needed > 0:
                     filename = f"{str(-99999)}plr{str(0)}.item"
                     with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
-                        f.write(str(77787 - 11000))
+                        f.write(str(77787))
                         f.close()
                     filename = f"{str(-99998)}plr{str(0)}.item"
                     with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
-                        f.write(str(77789 - 11000))
+                        f.write(str(77789))
                         f.close()
+            with open(os.path.join(ctx.save_game_folder, "doorlock.locked"), "w") as ff:
+                    for item in ctx.locked_doors:
+                        ff.write(item + "\n")
+                    ff.close()
         ctx.watcher_event.set()
 
     elif cmd == "RoomUpdate":
@@ -1237,6 +1254,18 @@ async def game_watcher(ctx: UndertaleContext):
                             lines = f.readlines()
                         for lin in lines:
                             sending = sending + [(int(lin.rstrip('\n'))) + 12000]
+                        message = [{"cmd": "LocationChecks", "locations": sending}]
+                        await ctx.send_msgs(message)
+                    except Exception as error:
+                        print(str(error))
+                if "doorcheck.doorspot" in file:
+                    sending = []
+                    try:
+                        with open(os.path.join(root, file), "r") as f:
+                            lines = f.readlines()
+                        for lin in lines:
+                            if "Approach Door "+(lin.rstrip('\n')) in advancement_table:
+                                sending = sending + [advancement_table["Approach Door "+(lin.rstrip('\n'))].id]
                         message = [{"cmd": "LocationChecks", "locations": sending}]
                         await ctx.send_msgs(message)
                     except Exception as error:

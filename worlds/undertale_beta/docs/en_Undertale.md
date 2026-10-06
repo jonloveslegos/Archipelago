@@ -7,13 +7,12 @@ config file.
 
 ## What is considered a location check in Undertale?
 
-Location checks in Undertale are all the spots in the game where you can get an item. Exceptions are Dog Residue, 
+Location checks in Undertale are all the spots in the game where you can get an item. Exceptions are the Dog Residue, 
 the Nicecream bought in Hotland, and anything you cannot get on your chosen route.
 
 ## When the player receives an item, what happens?
 
-When the player receives an item in Undertale, it will go into their inventory if they have space, otherwise it will 
-wait until they do have space.
+When the player receives an item in Undertale, it will go into their Infinite Box found within the Cell, which they now start with.
 
 ## What is the victory condition?
 
@@ -44,10 +43,12 @@ longer a requirement.
 
 Additionally, custom items are required to hang out with Papyrus, Undyne, and to enter the True Lab. 
 The respective items for each interaction are `Complete Skeleton`, `Fish`, and `DT Extractor`.
+Alongside the `Undyne Letter EX` to date Alphys like vanilla.
+The True Lab also needs you to have the items necessary to unlock the New Home keychain to enter the elevator.
 
 There are also a few **universal** changes, which are always true.
 
-The Riverperson will only take you to locations you have seen them at, meaning they will only take you to
+The Riverperson will only take you to locations you have seen them at. For example, they will only take you to
 Waterfall if you have seen them at Waterfall at least once.
 
 If you press `W` while in the savepoint menu, you will teleport back to the flower room, 
@@ -58,8 +59,8 @@ save)
 
 The following commands are only available when using the UndertaleClient to play with Archipelago.
 
-- `/savepath` Redirect to proper save data folder. This is necessary for Linux users to use before connecting.
+- `/savepath` Redirect to proper save data folder. This is only necessary for Linux users which have to use before connecting.
 - `/auto_patch` Patch the game automatically.
 - `/patch` Patch the game. Only use this command if `/auto_patch` fails.
 - `/online` Toggles seeing other Undertale players.
-- `/deathlink` Toggles deathlink
+- `/deathlink` Toggles deathlink.

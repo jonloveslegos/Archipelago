@@ -1,11 +1,9 @@
 from typing import Dict, NamedTuple, List
-from .entrance_rando import EntranceType
 
 
 class Portal(NamedTuple):
     region: str  # AP region
     destination: str  # vanilla destination scene
-    direction: EntranceType = EntranceType.TWO_WAY
 
     def scene(self) -> str:  # the actual scene name in Undertale
         return undertale_er_regions[self.region].game_scene
@@ -946,5 +944,20 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "Ruins 9 Past Puzzles": RegionInfo("room_ruins9"),
     "Room Water 7 One Way": RegionInfo("room_water7"),
     "???": RegionInfo("???"),
-    "room_fire_labelevator": RegionInfo("room_fire_labelevator"),
 }
+
+genocide_missing_rooms: List[str] = ["room_fire_hotdog", "room_fire_walkandbranch", "room_fire_apron", "room_fire10", "room_fire_rpuzzle", "room_fire_mewmew2", "room_fire_boysnightout", "room_fire_newsreport", "room_fire_coreview2"]
+
+excluded_rooms: List[str] = ["room_area1", "room_ruins15E"]
+
+door_check_list: List[str] = []
+door_id_list: List[str] = []
+door_name_list: List[str] = []
+temp_portal_mapping = portal_mapping.copy()
+while len(temp_portal_mapping) > 0:
+    if ((temp_portal_mapping[0].scene() + ":" + temp_portal_mapping[0].destination_scene()) not in door_check_list) and temp_portal_mapping[0].scene() not in excluded_rooms and temp_portal_mapping[0].destination_scene() not in excluded_rooms:
+        door_check_list.append(temp_portal_mapping[0].scene() + ":" + temp_portal_mapping[0].destination_scene())
+        door_check_list.append(temp_portal_mapping[0].destination_scene() + ":" + temp_portal_mapping[0].scene())
+        door_id_list.append(temp_portal_mapping[0].scene() + ":" + temp_portal_mapping[0].destination_scene())
+        door_name_list.append(temp_portal_mapping[0].scene() + " <-> " + temp_portal_mapping[0].destination_scene())
+    temp_portal_mapping.remove(temp_portal_mapping[0])

@@ -14,8 +14,8 @@ your installation. You can easily find the directory by opening the Undertale di
 Undertale in your library and selecting `Manage -> Browse local files`. Then, on Windows you can see the directory that 
 you need at the top of the window that opens.
 
-After using the `/auto_patch` command, **Archipelago will make an Undertale folder within the Archipelago install 
-location.** That folder contains the version of Undertale you will use for Archipelago. (If you update Archipelago, 
+After using the `/auto_patch` command, **Archipelago will make an Undertale folder within the Archipelago install location.** 
+That folder contains the version of Undertale you will use for Archipelago. (If you update Archipelago, 
 you will need to redo this set-up.)
 
 **Linux Users**: The Linux installation is mostly similar, however, Undertale will be installed on Steam as the Linux 
@@ -34,6 +34,8 @@ In the top text box of the client, type the `IP Address` (or `Hostname`) and `Po
 
 The client will then ask for the slot name, input your slot name chosen during YAML creation in the text box at the 
 bottom of the client.
+
+Windows users are now ready to play!
 
 **Linux Users**: When you start the client, it is likely that the save data path is incorrect, and how the game
 is played depends on where the save data folder is located.
@@ -57,8 +59,8 @@ multi-world game!
 
 Please read this page in its entirety before asking questions! Most importantly, there is a list of 
 gameplay differences at the bottom.
-[Undertale Beta Game Info Page](/games/Undertale%20Beta/info/en)
+[Undertale Game Info Page](/games/Undertale/info/en)
 
 ### Where do I get a YAML file?
 
-You can customize your options by visiting the [Undertale Beta Player Options Page](/games/Undertale%20Beta/player-options)
+You can customize your options by visiting the [Undertale Player Options Page](/games/Undertale/player-options)

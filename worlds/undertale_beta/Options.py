@@ -72,6 +72,18 @@ class GuaranteedFiller(Range):
     range_end = 20
 
 
+class AddDoorLocks(Range):
+    """Amount of random transitions to add locks to that require an item to open.
+    The doors at the hub will never be locked
+    Adds one location at each locked transition as well, approach the transition to obtain the location, can still be obtained even after unlocking it.
+    If the current room has a locked transition, you can press W to warp to the hub, to prevent you from being softlocked inside a one-way room.
+    Genocide route goal lowers the possible maximum to 199."""
+    display_name = "Door Locks Added"
+    default = 0
+    range_start = 0
+    range_end = 210
+
+
 class HubShopCost(Range):
     """How much each location in the Hub shop costs.
     The Hub shop will be given locations only if there are too little locations elsewhere to put everything."""
@@ -199,12 +211,14 @@ class Gifting(Toggle):
 class SpellsEnabled(OptionSet):
     """Adds the selected Spell types to the pool.
     Valid keys: 
-    attack: Spells that deal damage to the opponent. (2 total)
-    heal: Spells that heal the player. (1 total)
+    attack: Spells that deal direct damage to the opponent. (2 total)
+    pacifist: Spells that are only useful for sparing the opponent. (1 total)
+    violent: Spells that are only useful for damaging the opponent, but do not do so directly. (1 total)
+    heal: Spells that heal the player. (3 total)
     gimmick: Spells that don't easily fit into any category, and are usually very different from other spells. (1 total)"""
     display_name = "Spell List"
-    default = ["attack", "heal", "gimmick"]
-    valid_keys = frozenset(["attack", "heal", "gimmick"])
+    default = ["attack", "pacifist", "violent", "heal", "gimmick"]
+    valid_keys = frozenset(["attack", "pacifist", "violent", "heal", "gimmick"])
 
 
 @dataclass
@@ -222,6 +236,7 @@ class UndertaleOptions(PerGameCommonOptions):
     rando_love:                               RandomizeLove
     rando_stats:                              RandomizeStats
     enabled_spells:                           SpellsEnabled
+    door_locks:                               AddDoorLocks
     spare_sanity:                             SpareSanity
     spare_sanity_max:                         SpareSanityMaxSpares
     spare_sanity_pack_size:                   SpareSanityPackSize

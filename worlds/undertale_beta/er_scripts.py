@@ -1,12 +1,14 @@
 import string
-from typing import TYPE_CHECKING
-from BaseClasses import ItemClassification, Item, Location
+from typing import TYPE_CHECKING, List
+from BaseClasses import ItemClassification, Item, Location, Region
 from .Locations import exclusion_table
 from .Locations import advancement_table as location_table
 from .er_data import undertale_er_regions, portal_mapping, Portal
 from .er_rules import set_er_region_rules
+import platformdirs
 import Utils
-from .entrance_rando import *
+import os
+from typing import Dict
 from rule_builder.options import OptionFilter
 from rule_builder.field_resolvers import FromOption
 from rule_builder.rules import Has, HasAll, Rule, CanReachEntrance, CanReachLocation, CanReachRegion, False_, True_
@@ -29,8 +31,6 @@ def create_er_regions_vanilla(world: "UndertaleWorld"):
     regions: Dict[str, Region] = {}
 
     for region_name, region_data in undertale_er_regions.items():
-        if region_name != "room_fire_labelevator" or world.options.route_required == "all_routes" \
-                or world.options.route_required == "pacifist":
             regions[region_name] = Region(region_name, world.player, world.multiworld)
 
     for location_name, location_id in location_table.items():
@@ -46,9 +46,10 @@ def create_er_regions_vanilla(world: "UndertaleWorld"):
                 world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (
                 location_name not in exclusion_table["NoSpare"]) and \
                 location_name not in exclusion_table[world.options.route_required.current_key]:
-            region = regions[location_table[location_name].er_region]
-            location = UndertaleERLocation(world.player, location_name, location_id.id, region)
-            region.locations.append(location)
+            if "Approach Door " not in location_name or (location_name.removeprefix("Approach Door ") in world.all_door_locks):
+                region = regions[location_table[location_name].er_region]
+                location = UndertaleERLocation(world.player, location_name, location_id.id, region)
+                region.locations.append(location)
 
     for region_name, region_data in undertale_er_regions.items():
         if world.options.spare_sanity and world.options.route_required != "genocide":
@@ -76,33 +77,24 @@ def create_er_regions_vanilla(world: "UndertaleWorld"):
         world.multiworld.regions.append(region)
 
     set_er_region_rules(world)
-
+    created_info_dumps: List[str] = []
+    to_path = os.path.join(platformdirs.user_config_dir(appname="UNDERTALEAP", ensure_exists=True, appauthor=False), "room_door_names_list.txt")
+    with open(to_path, "w") as f:
+                f.close()
     while len(temp_portal_mapping) > 0:
         world.get_region(temp_portal_mapping[0].region).add_exits({temp_portal_mapping[0].destination: temp_portal_mapping[0].destination_string()})
+        if ((temp_portal_mapping[0].scene() + ":" + temp_portal_mapping[0].destination_scene()) not in created_info_dumps) and temp_portal_mapping[0].scene() != "room_area1" and temp_portal_mapping[0].destination_scene() != "room_area1":
+            with open(to_path, "a") as f:
+                f.write(temp_portal_mapping[0].scene() + ":" + temp_portal_mapping[0].destination_scene() + "\n")
+                created_info_dumps.append(temp_portal_mapping[0].scene() + ":" + temp_portal_mapping[0].destination_scene())
+                created_info_dumps.append(temp_portal_mapping[0].destination_scene() + ":" + temp_portal_mapping[0].scene())
+                f.close()
         temp_portal_mapping.remove(temp_portal_mapping[0])
 
     undertale_er_add_extra_region_info(world, regions)
 
 
-def assemble_er(world: "UndertaleWorld") -> List[Tuple[str, str]]:
-        for item in portal_mapping:
-            disconnect_entrance_for_randomization(world.get_entrance(item.destination_string()))
-
-        place_state = randomize_entrances(world, True, {0: [0]}).pairings
-
-        # state = world.multiworld.get_all_state(False)
-        # state.update_reachable_regions(world.player)
-        # Utils.visualize_regions(world.multiworld.get_region("Menu", world.player), "undertale_check_player_" +
-        #                         str(world.multiworld.player_name[world.player]) + ".puml", show_entrance_names=True)
-
-        return place_state
-
-
 def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[str, Region]):
-    if world.options.route_required.current_key == "pacifist" or \
-            world.options.route_required.current_key == "all_routes":
-        world.multiworld.register_indirect_condition(regions["room_sanscorridor"],
-                                                    world.multiworld.get_entrance("Lab Elevator Entrance", world.player))
 
     world.multiworld.register_indirect_condition(regions["room_fire_shootguy_2"],
                                                  world.multiworld.get_entrance("Fire Door 1 Block", world.player))
@@ -118,6 +110,6 @@ def undertale_er_add_extra_region_info(world: "UndertaleWorld", regions: Dict[st
         world.set_completion_rule(CanReachRegion("room_castle_throneroom"))
     elif world.options.route_required.current_key == "pacifist" or \
             world.options.route_required.current_key == "all_routes":
-        world.set_completion_rule(CanReachRegion("room_castle_throneroom") & CanReachRegion("room_fire_labelevator"))
+        world.set_completion_rule(CanReachRegion("room_castle_throneroom") & CanReachLocation("Popato Chisps Machine"))
     elif world.options.route_required.current_key == "genocide":
         world.set_completion_rule(CanReachRegion("room_castle_throneroom"))

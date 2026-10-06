@@ -1,5 +1,6 @@
 from BaseClasses import Location
 import typing
+from .er_data import door_name_list
 
 
 class AdvData(typing.NamedTuple):
@@ -45,7 +46,7 @@ advancement_table = {
     "Sans Hot Dog Sale 2": AdvData(79028, "room_fire_hotdog"),
     "Sans Hot Dog Sale 3": AdvData(79029, "room_fire_hotdog"),
     "Sans Hot Dog Sale 4": AdvData(79030, "room_fire_hotdog"),
-    "Popato Chisps Machine": AdvData(79031, "room_fire_labelevator"),
+    "Popato Chisps Machine": AdvData(79031, "room_fire_lab1"),
     "Hotel Door Hush Puppy": AdvData(79032, "room_fire_hoteldoors"),
     "Undyne Letter": AdvData(79033, "room_tundra_town"),
     "Snowdin Shop 1": AdvData(79034, "room_shop1"),
@@ -260,6 +261,11 @@ for i in range(100):
     advancement_table.__setitem__("Snowdin Spare " + str(i + 1), AdvData(78113+i, "Snowdin Grind Rooms"))
     advancement_table.__setitem__("Waterfall Spare " + str(i + 1), AdvData(78213+i, "Waterfall Grind Rooms"))
     advancement_table.__setitem__("Hotland Spare " + str(i + 1), AdvData(78313+i, "???"))
+
+i = 1
+for door in door_name_list:
+    advancement_table.__setitem__("Approach Door "+door, AdvData(1000+i, "???"))
+    i += 1
 
 exclusion_table = {
     "pacifist": {

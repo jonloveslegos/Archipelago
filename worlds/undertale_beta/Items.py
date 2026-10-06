@@ -1,5 +1,6 @@
 from BaseClasses import Item, ItemClassification
 import typing
+from .er_data import door_name_list
 
 
 class ItemData(typing.NamedTuple):
@@ -104,10 +105,42 @@ item_table = {
     "Waterfall Spare": ItemData(77094, ItemClassification.progression),
     "Hotland Spare": ItemData(77095, ItemClassification.progression),
     "Ice Trap": ItemData(77091, ItemClassification.trap),
-    "X-Slash": ItemData(77068, ItemClassification.useful),
-    "RedBuster": ItemData(77069, ItemClassification.useful),
-    "HopefulHeal": ItemData(77070, ItemClassification.useful),
-    "BraveBash": ItemData(77071, ItemClassification.useful),
+    "X-Slash": ItemData(5001, ItemClassification.useful),
+    "RedBuster": ItemData(5002, ItemClassification.useful),
+    "HopefulHeal": ItemData(5003, ItemClassification.useful),
+    "BraveBash": ItemData(5004, ItemClassification.useful),
+    "PatientStand": ItemData(5005, ItemClassification.useful),
+    "Pacify": ItemData(5006, ItemClassification.useful),
+    "DefShatter": ItemData(5007, ItemClassification.useful),
+    "RestfulSleep": ItemData(5008, ItemClassification.useful),
+}
+
+i = 1
+for door in door_name_list:
+    item_table.__setitem__("Door Unlock - "+door, ItemData(1000+i, ItemClassification.progression))
+    i += 1
+
+spells_heal = {
+    "HopefulHeal": 1,
+    "PatientStand": 1,
+    "RestfulSleep": 1,
+}
+
+spells_pacifist = {
+    "Pacify": 1,
+}
+
+spells_violent = {
+    "DefShatter": 1,
+}
+
+spells_attack = {
+    "X-Slash": 1,
+    "RedBuster": 1,
+}
+
+spells_gimmicks = {
+    "BraveBash": 1,
 }
 
 non_key_items = {
@@ -143,23 +176,10 @@ plot_items = {
     "DT Extractor": 1,
 }
 
-spells_heal = {
-    "HopefulHeal": 1,
-}
-
-spells_attack = {
-    "X-Slash": 1,
-    "RedBuster": 1,
-}
-
-spells_gimmicks = {
-    "BraveBash": 1,
-}
-
 key_items = {
     "Complete Skeleton": 1,
     "Fish": 1,
-    "1000G": 1,
+    "1000G": 2,
     "DT Extractor": 1,
     "Punch Card": 3,
     "Hot Dog...?": 1,
