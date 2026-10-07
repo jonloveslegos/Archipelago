@@ -40,16 +40,24 @@ def _undertale_exp_available(state: CollectionState, world: "UndertaleWorld", pl
             exp += 150
     if state.can_reach("Snowdin Grind Rooms", "Region", player):
         exp += (min(15, state.count("Snowdin Population Pack", player) * pack_size) * 1)
-        exp += 170
+        if state.count("Snowdin Population Pack", player) * pack_size >= 16:
+            exp += 22
         if state.can_reach("room_fogroom", "Region", player) and state.count("Snowdin Population Pack", player) * \
                 pack_size >= 16:
-            exp += 222
+            exp += 200
+    if state.can_reach("room_tundra5", "Region", player):
+        exp += 30
+    if state.can_reach("room_tundra_snowpuzz", "Region", player):
+        exp += 60
+    if state.can_reach("room_tundra_poffzone", "Region", player):
+        exp += 80
     if state.can_reach("Waterfall Grind Rooms", "Region", player):
         exp += (min(18, state.count("Waterfall Population Pack", player) * pack_size) * 3)
-        exp += 52
         if state.can_reach("room_water20", "Region", player) and state.has("ITEM", player) and state.count("Waterfall Population Pack", player) * \
                 pack_size >= 18:
             exp += 1500
+    if state.can_reach("room_water14", "Region", player):
+        exp += 52
     if state.can_reach("room_fire_turn", "Region", player):
         exp += 220
     if state.can_reach("room_fire_spider", "Region", player):

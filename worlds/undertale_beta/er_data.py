@@ -946,7 +946,9 @@ undertale_er_regions: Dict[str, RegionInfo] = {
     "???": RegionInfo("???"),
 }
 
-genocide_missing_rooms: List[str] = ["room_fire_hotdog", "room_fire_walkandbranch", "room_fire_apron", "room_fire10", "room_fire_rpuzzle", "room_fire_mewmew2", "room_fire_boysnightout", "room_fire_newsreport", "room_fire_coreview2"]
+genocide_missing_rooms: List[str] = ["room_fire_hotdog", "room_fire_walkandbranch", "room_fire_apron", "room_fire10", 
+                                     "room_fire_rpuzzle", "room_fire_mewmew2", "room_fire_boysnightout", "room_fire_newsreport", 
+                                     "room_fire_coreview2", "room_tundra_sanshouse", "room_tundra_paproom", "room_tundra_sansroom"]
 
 excluded_rooms: List[str] = ["room_area1", "room_ruins15E"]
 

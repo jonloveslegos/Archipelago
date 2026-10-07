@@ -424,6 +424,31 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
 def set_er_location_rules(world: "UndertaleWorld") -> None:
     player = world.player
     multiworld = world.multiworld
+    world.set_rule(multiworld.get_entrance("room_fire_elevator_l1 -> room_fire_prelab", player),
+                     ((CanReachRegion("room_fire_savepoint1", filtered_resolution=False, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")]) | 
+                     CanReachRegion("room_fire_spider", filtered_resolution=False, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in")]))))
+    world.set_rule(multiworld.get_entrance("room_fire_prelab -> room_fire_elevator_l1", player),
+                     ((CanReachRegion("room_fire_savepoint1", filtered_resolution=False, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")]) | 
+                     CanReachRegion("room_fire_spider", filtered_resolution=False, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in")]))))
+    
+    world.set_rule(multiworld.get_entrance("room_fire_core_bridge -> room_fire_core_right", player),
+                     ((CanReachRegion("room_fire_shootguy_5", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")]) | 
+                                                    CanReachRegion("room_fire_core_warrior", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")])
+                     )))
+    world.set_rule(multiworld.get_entrance("room_fire_core_right -> room_fire_core_bridge", player),
+                     ((CanReachRegion("room_fire_shootguy_5", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")]) | 
+                                                    CanReachRegion("room_fire_core_warrior", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")])
+                     )))
+    world.set_rule(multiworld.get_entrance("room_fire_core_premett -> room_fire_core1", player),
+                     ((CanReachRegion("room_fire_shootguy_5", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")]) | 
+                                                    CanReachRegion("room_fire_core_warrior", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")])
+                     )))
+    world.set_rule(multiworld.get_entrance("room_fire_core1 -> room_fire_core_premett", player),
+                     ((CanReachRegion("room_fire_shootguy_5", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")]) | 
+                                                    CanReachRegion("room_fire_core_warrior", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")])
+                     )))
+    world.set_rule(multiworld.get_entrance("room_torhouse1 -> room_basement1", player),
+                     CanReachRegion("room_torhouse2") & CanReachRegion("room_torhouse3"))
     for door in world.all_door_locks:
         if door == "room_fire_prelab <-> room_fire_elevator_l1":
             world.set_rule(multiworld.get_location("Approach Door "+door, player),
@@ -461,6 +486,13 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                      Has("Door Unlock - "+door) & ((CanReachRegion("room_fire_shootguy_5", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")]) | 
                                                     CanReachRegion("room_fire_core_warrior", filtered_resolution=True, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")])
                      )))
+        elif door == "room_torhouse1 <-> room_basement1":
+            world.set_rule(multiworld.get_location("Approach Door "+door, player),
+                    CanReachRegion(door.split(" <-> ")[1]) | CanReachRegion(door.split(" <-> ")[0]))
+            world.set_rule(multiworld.get_entrance(door.split(" <-> ")[0] + " -> " + door.split(" <-> ")[1], player),
+                     Has("Door Unlock - "+door) & CanReachRegion("room_torhouse2") & CanReachRegion("room_torhouse3"))
+            world.set_rule(multiworld.get_entrance(door.split(" <-> ")[1] + " -> " + door.split(" <-> ")[0], player),
+                     Has("Door Unlock - "+door) & CanReachRegion("room_torhouse2") & CanReachRegion("room_torhouse3"))
         else:
             world.set_rule(multiworld.get_location("Approach Door "+door, player),
                     CanReachRegion(door.split(" <-> ")[0]) | CanReachRegion(door.split(" <-> ")[1]))
