@@ -98,6 +98,10 @@ advancement_table = {
     "Hotland Upper Lab Room": AdvData(79087, "room_fire_lab2"),
     "Hotland Resort Restaurant": AdvData(79088, "room_fire_restaurant"),
     "Snowdin Forest Mysterious Door": AdvData(79089, "room_icecave1"),
+    "Core Alphys 'Other Way' Encounter Room": AdvData(79090, "room_fire_core_freebattle"),
+    "Core Room Right Of Elevator": AdvData(79091, "room_fire_core2"),
+    "Ruins Invisible Crack Maze": AdvData(79092, "room_ruins10"),
+    "New Home Asgore's Room": AdvData(79093, "room_asgoreroom"),
     "LOVE 2": AdvData(79902, "???"),
     "LOVE 3": AdvData(79903, "???"),
     "LOVE 4": AdvData(79904, "???"),
@@ -140,6 +144,7 @@ advancement_table = {
     "DEF 9": AdvData(79701, "???"),
     "DEF 13": AdvData(79702, "???"),
     "DEF 17": AdvData(79703, "???"),
+    "DEF 20": AdvData(79704, "???"),
     "HP 2": AdvData(79600, "???"),
     "HP 3": AdvData(79601, "???"),
     "HP 4": AdvData(79602, "???"),
@@ -262,6 +267,9 @@ for i in range(100):
     advancement_table.__setitem__("Waterfall Spare " + str(i + 1), AdvData(78213+i, "Waterfall Grind Rooms"))
     advancement_table.__setitem__("Hotland Spare " + str(i + 1), AdvData(78313+i, "???"))
 
+for i in range(100,500):
+    advancement_table.__setitem__("Hub Shop " + str(i + 1), AdvData(i + 1, "room_area1"))
+
 i = 1
 for door in door_name_list:
     advancement_table.__setitem__("Approach Door "+door, AdvData(1000+i, "???"))
@@ -311,6 +319,7 @@ exclusion_table = {
         "DEF 9",
         "DEF 13",
         "DEF 17",
+        "DEF 20",
         "HP 2",
         "HP 3",
         "HP 4",
@@ -481,6 +490,7 @@ exclusion_table = {
         "DEF 9",
         "DEF 13",
         "DEF 17",
+        "DEF 20",
         "HP 2",
         "HP 3",
         "HP 4",
@@ -756,6 +766,7 @@ exclusion_table = {
         "DEF 9",
         "DEF 13",
         "DEF 17",
+        "DEF 20",
         "HP 2",
         "HP 3",
         "HP 4",
@@ -793,6 +804,10 @@ exclusion_table = {
         "Hotland Upper Lab Room",
         "Hotland Resort Restaurant",
         "Snowdin Forest Mysterious Door",
+        "Core Alphys 'Other Way' Encounter Room",
+        "Core Room Right Of Elevator",
+        "Ruins Invisible Crack Maze",
+        "New Home Asgore's Room",
     }
 }
 no_spare = set()

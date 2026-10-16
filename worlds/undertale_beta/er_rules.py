@@ -205,7 +205,7 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
 
     world.get_region("room_fire_core_metttest").connect(
         connecting_region=world.get_region("room_fire_core_final"),
-        rule=(Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), options=[OptionFilter(KillSanity, KillSanity.option_true), OptionFilter(RouteRequired, RouteRequired.option_genocide)], filtered_resolution=True)))
+        rule=(Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), options=[OptionFilter(KillSanity, KillSanity.option_locked), OptionFilter(RouteRequired, RouteRequired.option_genocide)], filtered_resolution=True)))
 
     world.get_region("Metta Entrance").connect(
         connecting_region=world.get_region("room_fire_core_premett"))
@@ -538,26 +538,26 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
         world.set_rule(multiworld.get_location("Sans Hot Dog Sale 4", player),
                  CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
         world.set_rule(multiworld.get_location("Hotel Door Hush Puppy", player),
-                 Has("Hot Dog...?"))
+                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
         world.set_rule(multiworld.get_location("Undyne Letter", player),
                  CanReachRegion("room_fire_core_final") & CanReachLocation("Undyne Cook-off"))
     if (not _undertale_is_route(world, 2)) or _undertale_is_route(world, 3):
         world.set_rule(multiworld.get_location("Free Nicecream", player),
-                 Has("Punch Card", 3))
+                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
         world.set_rule(multiworld.get_location("Nicecream Snowdin", player),
                  CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
         world.set_rule(multiworld.get_location("Nicecream Waterfall", player),
                  CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
         world.set_rule(multiworld.get_location("Punch Card", player),
                  CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
-    if _undertale_is_route(world, 2) and (not _undertale_is_route(world, 3)) and bool(world.options.kill_sanity.value):
+    if _undertale_is_route(world, 2) and (not _undertale_is_route(world, 3)) and (world.options.kill_sanity.value == 2):
         world.set_rule(multiworld.get_location("Toriel Fight", player),
                  Has("Ruins Population Pack", math.ceil(20 / FromOption(KillSanityPackSize).resolve(world))))
         world.set_rule(multiworld.get_location("Papyrus Fight", player),
                  Has("Snowdin Population Pack", math.ceil(16 / FromOption(KillSanityPackSize).resolve(world))))
         world.set_rule(multiworld.get_location("Undyne Fight", player),
                  Has("ITEM") & Has("Waterfall Population Pack", math.ceil(18 / FromOption(KillSanityPackSize).resolve(world))))
-    if _undertale_is_route(world, 2) and bool(world.options.kill_sanity.value):
+    if _undertale_is_route(world, 2) and (world.options.kill_sanity.value != 0):
         for i in range(0, 16):
             world.set_rule(multiworld.get_location("Ruins Kill " + str(i + 1), player),
                      Has("Ruins Population Pack", math.ceil((i + 1) / FromOption(KillSanityPackSize).resolve(world))) & CanReachRegion("Ruins Grind Rooms"))
@@ -594,7 +594,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                 world.set_rule(multiworld.get_location(("HP " + str(maxlv)), player),
                          lambda state, maxlv=maxlv:
                          _undertale_return_reachable_level(_undertale_exp_available(state, world, player)) >= maxlv)
-                if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17:
+                if maxlv == 5 or maxlv == 9 or maxlv == 13 or maxlv == 17 or maxlv == 20:
                     world.set_rule(multiworld.get_location(("DEF " + str(maxlv)), player),
                              lambda state, maxlv=maxlv:
                              _undertale_return_reachable_level(_undertale_exp_available(state, world, player)) >= maxlv)
@@ -603,7 +603,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                          lambda state, maxlv=maxlv:
                          _undertale_return_reachable_level(_undertale_exp_available(state, world, player)) >= maxlv)
     world.set_rule(multiworld.get_location("Mettaton Fight", player),
-             CanReachRegion("room_fire_core_metttest") & Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), filtered_resolution=True, options=[OptionFilter(KillSanity, KillSanity.option_true), OptionFilter(RouteRequired, RouteRequired.option_genocide)]))
+             CanReachRegion("room_fire_core_metttest") & Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), filtered_resolution=True, options=[OptionFilter(KillSanity, KillSanity.option_locked), OptionFilter(RouteRequired, RouteRequired.option_genocide)]))
     world.set_rule(multiworld.get_location("Snowdin Shop 1", player),
              OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
     world.set_rule(multiworld.get_location("Snowdin Shop 2", player),

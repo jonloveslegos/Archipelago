@@ -61,6 +61,12 @@ Please read this page in its entirety before asking questions! Most importantly,
 gameplay differences at the bottom.
 [Undertale Game Info Page](/games/Undertale/info/en)
 
+### The game opens in widescreen and doesn't go past the titles
+
+The vanilla installation of Undertale was modified before patching, 
+Steam allows you to "Verify integrity of game files" using a button in the game properties, 
+which will fix all file issues.
+
 ### Where do I get a YAML file?
 
 You can customize your options by visiting the [Undertale Player Options Page](/games/Undertale/player-options)

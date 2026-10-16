@@ -937,7 +937,7 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
         ctx.spare_max = args["slot_data"]["spare_sanity_max"]
         ctx.tem_armor = args["slot_data"]["temy_include"]
         ctx.locked_doors = args["slot_data"]["Locked Doors"]
-        if args["slot_data"]["door_locks"] > 0:
+        if len(ctx.locked_doors) > 0:
             with open(os.path.join(ctx.save_game_folder, "doorlock.locked"), "w") as f:
                 for item in ctx.locked_doors:
                     f.write(item + "\n")
@@ -958,7 +958,7 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
         if args["slot_data"]["key_hunt"]:
             with open(os.path.join(ctx.save_game_folder, "key_hunt.flag"), "w") as f:
                 f.close()
-        if args["slot_data"]["kill_sanity"]:
+        if args["slot_data"]["kill_sanity"] != "off":
             with open(os.path.join(ctx.save_game_folder, "kill_sanity.flag"), "w") as f:
                 f.close()
         if args["slot_data"]["entrance_rando"]:

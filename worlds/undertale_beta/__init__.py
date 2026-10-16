@@ -95,7 +95,7 @@ class UndertaleWorld(World):
             "prog_armor": bool(self.options.prog_armor.value),
             "prog_weapons": bool(self.options.prog_weapons.value),
             "rando_item_button": bool(self.options.rando_item_button.value),
-            "kill_sanity": bool(self.options.kill_sanity.value),
+            "kill_sanity": self.options.kill_sanity.current_key,
             "rando_jump": bool(self.options.rando_jump.value),
             "cut_items": bool(self.options.cut_items.value),
             "kill_sanity_pack_size": self.options.kill_sanity_pack_size.value,
@@ -111,7 +111,13 @@ class UndertaleWorld(World):
             "guaranteed_filler": self.options.guaranteed_filler.value,
             "hub_shop_cost": self.options.hub_shop_cost.value,
             "enabled_spells": set(self.options.enabled_spells.value),
-            "door_locks": self.options.door_locks.value
+            "door_locks": self.options.door_locks.value,
+            "mandatory_door_locks": set(self.options.mandatory_door_locks.value),
+            "excluded_door_locks": set(self.options.excluded_door_locks.value),
+            "love_reduction_traps": self.options.love_reduction_traps.value,
+            "max_hp_reduction_traps": self.options.max_hp_reduction_traps.value,
+            "atk_reduction_traps": self.options.atk_reduction_traps.value,
+            "def_reduction_traps": self.options.def_reduction_traps.value
         }
 
     def get_filler_item_name(self):
@@ -144,7 +150,7 @@ class UndertaleWorld(World):
             self.options.rando_stats.value = 0
         if self.options.route_required.current_key == "genocide":
             self.options.spare_sanity.value = 0
-        if not bool(self.options.kill_sanity.value):
+        if self.options.kill_sanity.value != 2:
             self.options.kill_sanity_pack_size.value = 40
             
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
@@ -152,17 +158,20 @@ class UndertaleWorld(World):
             slot_data: dict[str, Any] = re_gen_passthrough[self.game]
             if "Locked Doors" in slot_data:
                 self.all_door_locks = slot_data["Locked Doors"]
-        elif self.options.door_locks.value > 0:
-            rand_door_list = door_name_list.copy()
-            if self.options.route_required.current_key == "genocide":
-                for do in genocide_missing_rooms:
-                    rand_door_list = [item for item in rand_door_list if (do != item.split(" <-> ")[0] and do != item.split(" <-> ")[1])]
-            amount_to_add = min(len(rand_door_list), self.options.door_locks.value)
-            print("actually added = "+str(amount_to_add))
-            print(rand_door_list.__len__())
-            self.random.shuffle(rand_door_list)
-            for i in range(amount_to_add):
-                self.all_door_locks.append(rand_door_list.pop())
+        else:
+            if self.options.door_locks.value > 0:
+                rand_door_list = door_name_list.copy()
+                if self.options.route_required.current_key == "genocide":
+                    rand_door_list = [item for item in rand_door_list if (item.split(" <-> ")[0] not in genocide_missing_rooms and item.split(" <-> ")[1] not in genocide_missing_rooms)]
+                rand_door_list = [item for item in rand_door_list if (item not in self.options.excluded_door_locks.value and item not in self.options.mandatory_door_locks.value and item.split(" <-> ")[1]+" <->"+item.split(" <-> ")[0] not in self.options.mandatory_door_locks.value and item.split(" <-> ")[1]+" <->"+item.split(" <-> ")[0] not in self.options.excluded_door_locks.value)]
+                amount_to_add = min(len(rand_door_list), self.options.door_locks.value)
+                print("actually added = "+str(amount_to_add))
+                self.random.shuffle(rand_door_list)
+                for i in range(amount_to_add):
+                    self.all_door_locks.append(rand_door_list.pop())
+            if len(self.options.mandatory_door_locks.value) > 0:
+                rand_door_list = door_name_list.copy()
+                self.all_door_locks.extend([do for do in rand_door_list if do in self.options.mandatory_door_locks.value or do.split(" <-> ")[1]+" <->"+do.split(" <-> ")[0] in self.options.mandatory_door_locks.value])
 
     def create_items(self):
         exclusion_pool = set()
@@ -178,9 +187,8 @@ class UndertaleWorld(World):
         for name, num in non_key_items.items():
             itempool += [name] * num
             
-        if self.options.door_locks.value > 0:
-            for door in self.all_door_locks:
-                itempool += ["Door Unlock - "+door]
+        for door in self.all_door_locks:
+            itempool += ["Door Unlock - "+door]
 
         if "attack" in self.options.enabled_spells:
             for name, num in spells_attack.items():
@@ -224,6 +232,16 @@ class UndertaleWorld(World):
                 (self.options.route_required != "genocide" and
                  self.options.route_required != "all_routes"):
             itempool = [item for item in itempool if not item == "LOVE"]
+        if self.options.rando_love or \
+                (self.options.route_required == "genocide" or
+                 self.options.route_required == "all_routes"):
+            itempool += ["LOVE Reduction Trap"] * self.options.love_reduction_traps.value
+        if self.options.rando_stats or \
+                (self.options.route_required == "genocide" or
+                 self.options.route_required == "all_routes"):
+            itempool += ["Max HP Reduction Trap"] * self.options.max_hp_reduction_traps.value
+            itempool += ["ATK Reduction Trap"] * self.options.atk_reduction_traps.value
+            itempool += ["DEF Reduction Trap"] * self.options.def_reduction_traps.value
         if self.options.spare_sanity and self.options.route_required != "genocide":
             itempool += ["Ruins Spare"] * math.ceil(self.options.spare_sanity_max.value /
                                                     self.options.spare_sanity_pack_size.value)
@@ -233,7 +251,7 @@ class UndertaleWorld(World):
                                                         self.options.spare_sanity_pack_size.value)
             itempool += ["Hotland Spare"] * math.ceil(self.options.spare_sanity_max.value /
                                                       self.options.spare_sanity_pack_size.value)
-        if not self.options.kill_sanity or \
+        if self.options.kill_sanity != 2 or \
                 (self.options.route_required != "genocide" and
                  self.options.route_required != "all_routes"):
             self.multiworld.push_precollected(self.create_item("Ruins Population Pack"))
@@ -296,7 +314,7 @@ class UndertaleWorld(World):
 
         # Choose locations to automatically exclude based on settings
         exclusion_checks = set()
-        exclusion_checks.update(["Free Nicecream", "Hotel Door Hush Puppy"])
+        exclusion_checks.update([])
         exclusion_rules(self.multiworld, self.player, exclusion_checks)
 
         # Convert itempool into real items

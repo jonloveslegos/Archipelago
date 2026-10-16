@@ -35,7 +35,7 @@ def create_er_regions_vanilla(world: "UndertaleWorld"):
 
     for location_name, location_id in location_table.items():
         if regions.__contains__(location_table[location_name].er_region) and (
-                location_name not in exclusion_table["NoKills"] or (world.options.kill_sanity and (
+                location_name not in exclusion_table["NoKills"] or (world.options.kill_sanity != 0 and (
                 world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (
                 location_name not in exclusion_table["NoStats"] or (world.options.rando_stats and (
                 world.options.route_required == "genocide" or world.options.route_required == "all_routes"))) and (

@@ -1,5 +1,6 @@
-from Options import Choice, Toggle, Range, PerGameCommonOptions, OptionSet
+from Options import Choice, Toggle, Range, PerGameCommonOptions, OptionSet, NamedRange
 from dataclasses import dataclass
+from .er_data import door_name_list
 
 
 class RouteRequired(Choice):
@@ -72,18 +73,6 @@ class GuaranteedFiller(Range):
     range_end = 20
 
 
-class AddDoorLocks(Range):
-    """Amount of random transitions to add locks to that require an item to open.
-    The doors at the hub will never be locked
-    Adds one location at each locked transition as well, approach the transition to obtain the location, can still be obtained even after unlocking it.
-    If the current room has a locked transition, you can press W to warp to the hub, to prevent you from being softlocked inside a one-way room.
-    Genocide route goal lowers the possible maximum to 192."""
-    display_name = "Door Locks Added"
-    default = 0
-    range_start = 0
-    range_end = 206
-
-
 class HubShopCost(Range):
     """How much each location in the Hub shop costs.
     The Hub shop will be given locations only if there are too little locations elsewhere to put everything."""
@@ -124,13 +113,13 @@ class NoEquips(Toggle):
 
 
 class RandomizeLove(Toggle):
-    """Adds LOVE to the pool. Only matters if your goal includes Genocide route"""
+    """Makes each LOVE increase a separate item and location. Only matters if your goal includes Genocide route"""
     display_name = "Randomize LOVE"
     default = 0
 
 
 class RandomizeStats(Toggle):
-    """Makes each stat increase from LV a separate item. Only matters if your goal includes Genocide route
+    """Makes each stat increase from EXP a separate item and location. Only matters if your goal includes Genocide route
     Warning: This tends to spam chat with sending out checks."""
     display_name = "Randomize Stats"
     default = 0
@@ -142,19 +131,65 @@ class RandoBattleOptions(Toggle):
     default = 0
 
 
-class KillSanity(Toggle):
-    """Makes every random encounter an item you need to receive to allow it to happen, also makes every kill from a random encounter a check. Only matters if your goal includes Genocide route"""
+class KillSanity(Choice):
+    """Only matters if your goal includes Genocide route. Randomizes Kills, and optionally locks encounters behind receiving Population Packs
+    Off: Fully disabled
+    Unlocked: Makes every random encounter kill a location
+    Locked: Makes every random encounter kill a location, and requires you to receive Population Packs for the area to be able to encounter enemies"""
     display_name = "Kill Sanity"
+    option_off = 0
+    option_unlocked = 1
+    option_locked = 2
     default = 0
 
 
 class KillSanityPackSize(Range):
-    """How many encounters do you unlock per item in Kill Sanity. Only matters if your goal includes Genocide route, and has Kill Sanity enabled
+    """How many encounters do you unlock per item in Kill Sanity. Only matters if your goal includes Genocide route, and has Kill Sanity on Locked
     Rounds down when you get a pack with more encounters than there are left to unlock in the area"""
     display_name = "Kill Sanity Pack Size"
     default = 5
     range_start = 1
     range_end = 40
+
+
+class LoveReductionTraps(Range):
+    """Adds this many Love Reduction Traps to the pool. Only matters if your goal includes Genocide route, and has Randomize LOVE enabled
+    Permenantly reduces your current LOVE by 1 (Max HP and ATK cannot be lowered below 1, and the Stat Menu displays ATK and DEF as 10 lower than it actually is)
+    Warning: High values tend to cause many Hub Shop locations to be added to fit all of the items"""
+    display_name = "LOVE Reduction Traps"
+    default = 0
+    range_start = 0
+    range_end = 56
+
+
+class MaxHPReductionTraps(Range):
+    """Adds this many Max HP Reduction Traps to the pool. Only matters if your goal includes Genocide route, and has Randomize Stats enabled
+    Permenantly reduces your current Max HP by 4 (Minimum of 1)
+    Warning: High values tend to cause many Hub Shop locations to be added to fit all of the items"""
+    display_name = "Max HP Reduction Traps"
+    default = 0
+    range_start = 0
+    range_end = 24
+
+
+class ATKReductionTraps(Range):
+    """Adds this many ATK Reduction Traps to the pool. Only matters if your goal includes Genocide route, and has Randomize Stats enabled
+    Permenantly reduces your current ATK by 2 (Minimum of 1, and is display as 10 lower in the Stat Menu)
+    Warning: High values tend to cause many Hub Shop locations to be added to fit all of the items"""
+    display_name = "ATK Reduction Traps"
+    default = 0
+    range_start = 0
+    range_end = 24
+
+
+class DEFReductionTraps(Range):
+    """Adds this many DEF Reduction Traps to the pool. Only matters if your goal includes Genocide route, and has Randomize Stats enabled
+    Permenantly reduces your current DEF by 1 (No minimum, and is display as 10 lower in the Stat Menu)
+    Warning: High values tend to cause many Hub Shop locations to be added to fit all of the items"""
+    display_name = "DEF Reduction Traps"
+    default = 0
+    range_start = 0
+    range_end = 15
 
 
 class CutItems(Toggle):
@@ -193,7 +228,7 @@ class SpareSanityPackSize(Range):
     Rounds down when you get a pack with more spares than there are left to unlock in the area"""
     display_name = "Spare Sanity Pack Size"
     default = 2
-    range_start = 2
+    range_start = 1
     range_end = 100
 
 
@@ -221,6 +256,36 @@ class SpellsEnabled(OptionSet):
     valid_keys = frozenset(["attack", "pacifist", "violent", "heal", "gimmick"])
 
 
+class AddDoorLocks(NamedRange):
+    """Amount of random transitions to add locks to that require an item to open.
+    The doors at the hub will never be locked
+    Adds one location at each locked transition as well, approach the transition to obtain the location, can still be obtained even after unlocking it.
+    If the current room has a locked transition, you can press W to warp to the hub, to prevent you from being softlocked inside a one-way room.
+    Genocide route goal lowers the possible maximum to 192."""
+    
+    display_name = "Door Locks Added"
+    default = 0
+    range_start = 0
+    range_end = 206
+    special_range_names = {
+        "maximum": range_end,
+    }
+
+
+class MandatoryDoorLocks(OptionSet):
+    """Requires the chosen Door Locks to exist, these are in addition to the Door Lock amount"""
+    display_name = "Mandatory Door Locks"
+    default = []
+    valid_keys = frozenset(door_name_list.copy())
+
+
+class ExcludedDoorLocks(OptionSet):
+    """Prevents the chosen Door Locks from existing"""
+    display_name = "Excluded Door Locks"
+    default = []
+    valid_keys = frozenset(door_name_list.copy())
+
+
 @dataclass
 class UndertaleOptions(PerGameCommonOptions):
     route_required:                           RouteRequired
@@ -236,18 +301,24 @@ class UndertaleOptions(PerGameCommonOptions):
     rando_love:                               RandomizeLove
     rando_stats:                              RandomizeStats
     enabled_spells:                           SpellsEnabled
-    door_locks:                               AddDoorLocks
     spare_sanity:                             SpareSanity
     spare_sanity_max:                         SpareSanityMaxSpares
     spare_sanity_pack_size:                   SpareSanityPackSize
     kill_sanity:                              KillSanity
     kill_sanity_pack_size:                    KillSanityPackSize
-    temy_include:                             IncludeTemy
-    cut_items:                                CutItems
-    ice_traps:                                IceTraps
+    door_locks:                               AddDoorLocks
+    mandatory_door_locks:                     MandatoryDoorLocks
+    excluded_door_locks:                      ExcludedDoorLocks
     prog_armor:                               ProgressiveArmor
     prog_weapons:                             ProgressiveWeapons
+    temy_include:                             IncludeTemy
+    cut_items:                                CutItems
     no_equips:                                NoEquips
     only_flakes:                              OnlyFlakes
+    ice_traps:                                IceTraps
+    love_reduction_traps:                     LoveReductionTraps
+    max_hp_reduction_traps:                   MaxHPReductionTraps
+    atk_reduction_traps:                      ATKReductionTraps
+    def_reduction_traps:                      DEFReductionTraps
     # gifting:                                  Gifting
     # entrance_rando:                           EntranceRando
