@@ -52,7 +52,7 @@ def create_er_regions_vanilla(world: "UndertaleWorld"):
                 region.locations.append(location)
 
     for region_name, region_data in undertale_er_regions.items():
-        if world.options.spare_sanity and world.options.route_required != "genocide":
+        if world.options.spare_sanity != 0 and world.options.route_required != "genocide":
             if region_name == "Ruins Grind Rooms":
                 regions[region_name].locations += [
                     UndertaleERLocation(world.player, "Ruins Spare " + str(i + 1), 78013 + i, regions[region_name])

@@ -61,11 +61,17 @@ Please read this page in its entirety before asking questions! Most importantly,
 gameplay differences at the bottom.
 [Undertale Game Info Page](/games/Undertale/info/en)
 
-### The game opens in widescreen and doesn't go past the titles
+### The game opens in widescreen and doesn't go past the title?
 
-The vanilla installation of Undertale was modified before patching, 
+The vanilla installation of Undertale was modified before patching.
 Steam allows you to "Verify integrity of game files" using a button in the game properties, 
 which will fix all file issues.
+
+### The "auto_patch" command fails with a "Permission Denied" error?
+
+The vanilla installation of Undertale was modified before patching.
+Steam will not be able to fix this one properly, but it is very simple to do so.
+Make sure there are no folders within the Steam installation of Undertale, and if there are any, delete them.
 
 ### Where do I get a YAML file?
 

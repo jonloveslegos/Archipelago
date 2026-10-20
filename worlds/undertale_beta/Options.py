@@ -1,4 +1,4 @@
-from Options import Choice, Toggle, Range, PerGameCommonOptions, OptionSet, NamedRange
+from Options import Choice, Toggle, Range, PerGameCommonOptions, OptionSet, NamedRange, StartInventoryPool
 from dataclasses import dataclass
 from .er_data import door_name_list
 
@@ -143,6 +143,15 @@ class KillSanity(Choice):
     default = 0
 
 
+class SpareSanity(Choice):
+    """Makes every spare from a random encounter a check, up to how many spare items you have for that area. Only matters if your goal includes the Pacifist or Neutral route"""
+    display_name = "Spare Sanity"
+    option_off = 0
+    option_unlocked = 1
+    option_locked = 2
+    default = 0
+
+
 class KillSanityPackSize(Range):
     """How many encounters do you unlock per item in Kill Sanity. Only matters if your goal includes Genocide route, and has Kill Sanity on Locked
     Rounds down when you get a pack with more encounters than there are left to unlock in the area"""
@@ -206,12 +215,6 @@ class IceTraps(Range):
     range_end = 10
 
 
-class SpareSanity(Toggle):
-    """Makes every spare from a random encounter a check, up to how many spare items you have for that area. Only matters if your goal includes the Pacifist or Neutral route"""
-    display_name = "Spare Sanity"
-    default = 0
-
-
 class SpareSanityMaxSpares(Range):
     """How many spares you want to be checks in each area. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled
     Warning: It is not recommended to set this to above 25, because there will be this many, times 4, locations that
@@ -224,12 +227,78 @@ class SpareSanityMaxSpares(Range):
 
 
 class SpareSanityPackSize(Range):
-    """How many spare checks you want to unlock per item. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity enabled
+    """How many spare checks you want to unlock per item. Only matters if your goal includes the Pacifist or Neutral route, and has Spare Sanity on Locked
     Rounds down when you get a pack with more spares than there are left to unlock in the area"""
     display_name = "Spare Sanity Pack Size"
     default = 2
     range_start = 1
     range_end = 100
+
+
+class SansReqHp(Range):
+    """How much Max HP is required prior to fighting Sans. Only matters if your goal includes the Genocide route.
+    Vanilla has you at 92 Max HP."""
+    display_name = "Sans Required HP"
+    default = 80
+    range_start = 20
+    range_end = 99
+
+
+class SansReqInvTier(Range):
+    """What tier of INV is required prior to fighting Sans. Only matters if your goal includes the Genocide route.
+    Tier 0 makes you take damage and karma like normal.
+    Tier 1 makes you not take damage once every 5 frames, and karma will have a 1/2 chance to take longer to go down.
+    Tier 2 makes you not take damage once every 4 frames, and karma will have a 2/3 chance to take longer to go down.
+    Tier 3 makes you not take damage once every 3 frames, and karma will always take longer to go down."""
+    display_name = "Sans Required INV Tier"
+    default = 1
+    range_start = 0
+    range_end = 3
+
+
+class UndyingReqHp(Range):
+    """How much Max HP is required prior to fighting Undyne the Undying. Only matters if your goal includes the Genocide route.
+    Vanilla has you at around 56 Max HP."""
+    display_name = "Undying Required HP"
+    default = 40
+    range_start = 20
+    range_end = 99
+
+
+class UndyingReqAtk(Range):
+    """How much ATK is required prior to fighting Undyne the Undying, including equipment. Only matters if your goal includes the Genocide route.
+    Vanilla has you at around 35 ATK."""
+    display_name = "Undying Required ATK"
+    default = 25
+    range_start = 10
+    range_end = 208
+
+
+class UndyingReqDef(Range):
+    """How much DEF is required prior to fighting Undyne the Undying, including equipment. Only matters if your goal includes the Genocide route.
+    Vanilla has you at around 22 DEF."""
+    display_name = "Undying Required DEF"
+    default = 16
+    range_start = 10
+    range_end = 198
+
+
+class AsgoreReqAtk(Range):
+    """How much ATK is required prior to fighting Asgore, only counting equipment. Only matters if your goal includes the Neutral route.
+    Vanilla has you at around 15 ATK."""
+    display_name = "Asgore Required ATK"
+    default = 10
+    range_start = 0
+    range_end = 25
+
+
+class AsgoreReqDef(Range):
+    """How much DEF is required prior to fighting Asgore, only counting equipment. Only matters if your goal includes the Neutral route.
+    Vanilla has you at around 15 DEF."""
+    display_name = "Asgore Required DEF"
+    default = 10
+    range_start = 0
+    range_end = 20
 
 
 class EntranceRando(Toggle):
@@ -288,6 +357,7 @@ class ExcludedDoorLocks(OptionSet):
 
 @dataclass
 class UndertaleOptions(PerGameCommonOptions):
+    start_inventory_from_pool:                StartInventoryPool
     route_required:                           RouteRequired
     starting_area:                            StartingArea
     bonus_locations:                          BonusLocations
@@ -309,6 +379,13 @@ class UndertaleOptions(PerGameCommonOptions):
     door_locks:                               AddDoorLocks
     mandatory_door_locks:                     MandatoryDoorLocks
     excluded_door_locks:                      ExcludedDoorLocks
+    sans_req_hp:                              SansReqHp
+    sans_req_inv_tier:                        SansReqInvTier
+    undying_req_hp:                           UndyingReqHp
+    undying_req_atk:                          UndyingReqAtk
+    undying_req_def:                          UndyingReqDef
+    asgore_req_atk:                           AsgoreReqAtk
+    asgore_req_def:                           AsgoreReqDef
     prog_armor:                               ProgressiveArmor
     prog_weapons:                             ProgressiveWeapons
     temy_include:                             IncludeTemy

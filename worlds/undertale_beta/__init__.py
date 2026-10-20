@@ -100,7 +100,7 @@ class UndertaleWorld(World):
             "cut_items": bool(self.options.cut_items.value),
             "kill_sanity_pack_size": self.options.kill_sanity_pack_size.value,
             "ice_traps": self.options.ice_traps.value,
-            "spare_sanity": bool(self.options.spare_sanity.value),
+            "spare_sanity": self.options.spare_sanity.current_key,
             "gifting": False,
             # "gifting": bool(self.options.gifting.value),
             "entrance_rando": False,
@@ -117,7 +117,15 @@ class UndertaleWorld(World):
             "love_reduction_traps": self.options.love_reduction_traps.value,
             "max_hp_reduction_traps": self.options.max_hp_reduction_traps.value,
             "atk_reduction_traps": self.options.atk_reduction_traps.value,
-            "def_reduction_traps": self.options.def_reduction_traps.value
+            "def_reduction_traps": self.options.def_reduction_traps.value,
+            "sans_req_hp": self.options.sans_req_hp.value,
+            "sans_req_inv_tier": self.options.sans_req_inv_tier.value,
+            "undying_req_hp": self.options.undying_req_hp.value,
+            "undying_req_atk": self.options.undying_req_atk.value,
+            "undying_req_def": self.options.undying_req_def.value,
+            "asgore_req_atk": self.options.asgore_req_atk.value,
+            "asgore_req_def": self.options.asgore_req_def.value,
+            "start_inventory_from_pool": self.options.start_inventory_from_pool.value
         }
 
     def get_filler_item_name(self):
@@ -152,6 +160,8 @@ class UndertaleWorld(World):
             self.options.spare_sanity.value = 0
         if self.options.kill_sanity.value != 2:
             self.options.kill_sanity_pack_size.value = 40
+        if self.options.spare_sanity.value == 1:
+            self.options.spare_sanity_pack_size.value = self.options.spare_sanity_max.value
             
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
         if re_gen_passthrough and self.game in re_gen_passthrough:
@@ -242,7 +252,7 @@ class UndertaleWorld(World):
             itempool += ["Max HP Reduction Trap"] * self.options.max_hp_reduction_traps.value
             itempool += ["ATK Reduction Trap"] * self.options.atk_reduction_traps.value
             itempool += ["DEF Reduction Trap"] * self.options.def_reduction_traps.value
-        if self.options.spare_sanity and self.options.route_required != "genocide":
+        if self.options.spare_sanity == 2 and self.options.route_required != "genocide":
             itempool += ["Ruins Spare"] * math.ceil(self.options.spare_sanity_max.value /
                                                     self.options.spare_sanity_pack_size.value)
             itempool += ["Snowdin Spare"] * math.ceil(self.options.spare_sanity_max.value /
@@ -251,6 +261,11 @@ class UndertaleWorld(World):
                                                         self.options.spare_sanity_pack_size.value)
             itempool += ["Hotland Spare"] * math.ceil(self.options.spare_sanity_max.value /
                                                       self.options.spare_sanity_pack_size.value)
+        elif self.options.spare_sanity == 1:
+            self.multiworld.push_precollected(self.create_item("Ruins Spare"))
+            self.multiworld.push_precollected(self.create_item("Snowdin Spare"))
+            self.multiworld.push_precollected(self.create_item("Waterfall Spare"))
+            self.multiworld.push_precollected(self.create_item("Hotland Spare"))
         if self.options.kill_sanity != 2 or \
                 (self.options.route_required != "genocide" and
                  self.options.route_required != "all_routes"):

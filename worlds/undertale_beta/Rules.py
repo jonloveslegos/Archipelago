@@ -53,7 +53,7 @@ def _undertale_exp_available(state: CollectionState, world: "UndertaleWorld", pl
         exp += 80
     if state.can_reach("Waterfall Grind Rooms", "Region", player):
         exp += (min(18, state.count("Waterfall Population Pack", player) * pack_size) * 3)
-        if state.can_reach("room_water20", "Region", player) and state.has("ITEM", player) and state.count("Waterfall Population Pack", player) * \
+        if state.can_reach("room_water20", "Region", player) and (_undertale_return_reachable_def(state, world, player) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player) >= world.options.undying_req_hp) and state.has("ITEM", player) and state.count("Waterfall Population Pack", player) * \
                 pack_size >= 18:
             exp += 1500
     if state.can_reach("room_water14", "Region", player):
@@ -70,6 +70,216 @@ def _undertale_exp_available(state: CollectionState, world: "UndertaleWorld", pl
     if state.can_reach("room_castle_finalshoehorn", "Region", player):
         exp = 99999
     return exp
+
+
+def _undertale_has_weapon(state: CollectionState, world: "UndertaleWorld", player: int, weapon_name: str):
+    if world.options.prog_weapons.value == 1:
+        need_count = 0
+        if weapon_name == "Toy Knife":
+            need_count = 1
+        elif weapon_name == "Tough Glove":
+            need_count = 2
+        elif weapon_name == "Ballet Shoes":
+            need_count = 3
+        elif weapon_name == "Torn Notebook":
+            need_count = 4
+        elif weapon_name == "Empty Gun":
+            need_count = 5
+        elif weapon_name == "Burnt Pan":
+            need_count = 6
+        elif weapon_name == "Worn Dagger" or weapon_name == "Real Knife":
+            need_count = 7
+        return state.has("Progressive Weapons", player, need_count)
+    else:
+        return state.has(weapon_name, player)
+
+
+def _undertale_has_armor(state: CollectionState, world: "UndertaleWorld", player: int, armor_name: str):
+    if world.options.prog_armor.value == 1:
+        need_count = 0
+        if armor_name == "Faded Ribbon":
+            need_count = 1
+        elif armor_name == "Manly Bandanna":
+            need_count = 2
+        elif armor_name == "Old Tutu":
+            need_count = 3
+        elif armor_name == "Cloudy Glasses":
+            need_count = 4
+        elif armor_name == "Cowboy Hat":
+            need_count = 5
+        elif armor_name == "Stained Apron" or (world.options.route_required.value == RouteRequired.option_genocide and armor_name == "The Locket"):
+            need_count = 6
+        elif armor_name == "Heart Locket" or (world.options.route_required.value == RouteRequired.option_genocide and armor_name == "temy armor"):
+            need_count = 7
+        elif armor_name == "temy armor" and world.options.route_required.value != RouteRequired.option_genocide:
+            need_count = 8
+            print("temmmm")
+        return state.has("Progressive Armor", player, need_count)
+    else:
+        return state.has(armor_name, player)
+
+
+def _undertale_return_reachable_hp(state: CollectionState, world: "UndertaleWorld", player: int):
+    met_hp = 20
+    if world.options.rando_stats.value == 1:
+        met_hp += state.count("HP Up", player) * 4
+    elif world.options.rando_love.value == 1:
+        met_hp += state.count("LOVE", player) * 4
+    else:
+        met_hp += (_undertale_return_reachable_level(_undertale_exp_available(state, world, player)) - 1) * 4
+    if met_hp > 92:
+        met_hp = 99
+    return met_hp
+
+
+def _undertale_return_reachable_inv_tier(state: CollectionState, world: "UndertaleWorld", player: int):
+    met_inv = 30
+    if _undertale_has_armor(state, world, player, "Cloudy Glasses"):
+        met_inv += 30
+    elif _undertale_has_armor(state, world, player, "temy armor"):
+        met_inv += 15
+
+    if _undertale_has_weapon(state, world, player, "Torn Notebook"):
+        met_inv += 15
+
+    met_tier = 0
+    if met_inv >= 75:
+        met_tier = 3
+    elif met_inv >= 60:
+        met_tier = 2
+    elif met_inv >= 45:
+        met_tier = 1
+    return met_tier
+
+
+def _undertale_return_reachable_atk_equipment(state: CollectionState, world: "UndertaleWorld", player: int):
+    met_atk = 0
+        
+    if _undertale_has_armor(state, world, player, "temy armor"):
+        met_atk += 10
+    elif _undertale_has_armor(state, world, player, "Cowboy Hat"):
+        met_atk += 5
+
+    if _undertale_has_weapon(state, world, player, "Real Knife"):
+        met_atk += 99
+    elif _undertale_has_weapon(state, world, player, "Worn Dagger"):
+        met_atk += 15
+    elif _undertale_has_weapon(state, world, player, "Empty Gun"):
+        met_atk += 12
+    elif _undertale_has_weapon(state, world, player, "Burnt Pan"):
+        met_atk += 10
+    elif _undertale_has_weapon(state, world, player, "Ballet Shoes"):
+        met_atk += 7
+    elif _undertale_has_weapon(state, world, player, "Tough Glove"):
+        met_atk += 5
+    elif _undertale_has_weapon(state, world, player, "Toy Knife"):
+        met_atk += 3
+    elif _undertale_has_weapon(state, world, player, "Torn Notebook"):
+        met_atk += 2
+    return met_atk
+
+
+def _undertale_return_reachable_atk(state: CollectionState, world: "UndertaleWorld", player: int):
+    met_atk = 10
+    if world.options.rando_stats.value == 1:
+        met_atk += state.count("ATK Up", player) * 2
+    elif world.options.rando_love.value == 1:
+        met_atk += state.count("LOVE", player) * 2
+    else:
+        met_atk += (_undertale_return_reachable_level(_undertale_exp_available(state, world, player)) - 1) * 2
+    if met_atk > 46:
+        met_atk = 99
+        
+    if _undertale_has_armor(state, world, player, "temy armor"):
+        met_atk += 10
+    elif _undertale_has_armor(state, world, player, "Cowboy Hat"):
+        met_atk += 5
+
+    if _undertale_has_weapon(state, world, player, "Real Knife"):
+        met_atk += 99
+    elif _undertale_has_weapon(state, world, player, "Worn Dagger"):
+        met_atk += 15
+    elif _undertale_has_weapon(state, world, player, "Empty Gun"):
+        met_atk += 12
+    elif _undertale_has_weapon(state, world, player, "Burnt Pan"):
+        met_atk += 10
+    elif _undertale_has_weapon(state, world, player, "Ballet Shoes"):
+        met_atk += 7
+    elif _undertale_has_weapon(state, world, player, "Tough Glove"):
+        met_atk += 5
+    elif _undertale_has_weapon(state, world, player, "Toy Knife"):
+        met_atk += 3
+    elif _undertale_has_weapon(state, world, player, "Torn Notebook"):
+        met_atk += 2
+    return met_atk
+
+
+def _undertale_return_reachable_def_equipment(state: CollectionState, world: "UndertaleWorld", player: int):
+    met_def = 0
+
+    if _undertale_has_armor(state, world, player, "The Locket"):
+        met_def += 99
+    elif _undertale_has_armor(state, world, player, "temy armor"):
+        met_def += 20
+    elif _undertale_has_armor(state, world, player, "Heart Locket"):
+        met_def += 15
+    elif _undertale_has_armor(state, world, player, "Cowboy Hat"):
+        met_def += 12
+    elif _undertale_has_armor(state, world, player, "Stained Apron"):
+        met_def += 11
+    elif _undertale_has_armor(state, world, player, "Old Tutu"):
+        met_def += 10
+    elif _undertale_has_armor(state, world, player, "Manly Bandanna"):
+        met_def += 7
+    elif _undertale_has_armor(state, world, player, "Cloudy Glasses"):
+        met_def += 5
+    elif _undertale_has_armor(state, world, player, "Faded Ribbon"):
+        met_def += 3
+    return met_def
+
+
+def _undertale_return_reachable_def(state: CollectionState, world: "UndertaleWorld", player: int):
+    met_def = 10
+    if world.options.rando_stats.value == 1:
+        met_def += state.count("DEF Up", player)
+        if met_def > 14:
+            met_def = 99
+    else:
+        met_lv = 1
+        if world.options.rando_love.value == 1:
+            met_lv = state.count("LOVE", player)
+        else:
+            met_lv = _undertale_return_reachable_level(_undertale_exp_available(state, world, player))
+        if met_lv >= 5:
+            met_def += 1
+        if met_lv >= 9:
+            met_def += 1
+        if met_lv >= 13:
+            met_def += 1
+        if met_lv >= 17:
+            met_def += 1
+        if met_lv >= 20:
+            met_def = 99
+
+    if _undertale_has_armor(state, world, player, "The Locket"):
+        met_def += 99
+    elif _undertale_has_armor(state, world, player, "temy armor"):
+        met_def += 20
+    elif _undertale_has_armor(state, world, player, "Heart Locket"):
+        met_def += 15
+    elif _undertale_has_armor(state, world, player, "Cowboy Hat"):
+        met_def += 12
+    elif _undertale_has_armor(state, world, player, "Stained Apron"):
+        met_def += 11
+    elif _undertale_has_armor(state, world, player, "Old Tutu"):
+        met_def += 10
+    elif _undertale_has_armor(state, world, player, "Manly Bandanna"):
+        met_def += 7
+    elif _undertale_has_armor(state, world, player, "Cloudy Glasses"):
+        met_def += 5
+    elif _undertale_has_armor(state, world, player, "Faded Ribbon"):
+        met_def += 3
+    return met_def
 
 
 def _undertale_return_reachable_level(exp: int):
