@@ -117,6 +117,7 @@ item_table = {
     "Pacify": ItemData(5006, ItemClassification.useful),
     "DefShatter": ItemData(5007, ItemClassification.useful),
     "RestfulSleep": ItemData(5008, ItemClassification.useful),
+    "Out of Logic Access": ItemData(None, ItemClassification.progression),
 }
 
 i = 1

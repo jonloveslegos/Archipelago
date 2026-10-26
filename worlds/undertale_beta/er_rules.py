@@ -7,7 +7,7 @@ from rule_builder.field_resolvers import FromOption
 from rule_builder.rules import Has, HasAll, Rule, CanReachEntrance, CanReachLocation, CanReachRegion, False_, True_
 import math
 from .er_data import door_name_list, undertale_er_regions, RegionInfo
-from .Options import RouteRequired, KillSanity, KillSanityPackSize, SpareSanity, SpareSanityPackSize, SpareSanityMaxSpares
+from .Options import HubShopCost, RouteRequired, KillSanity, KillSanityPackSize, SpareSanity, SpareSanityPackSize, SpareSanityMaxSpares
 import dataclasses
 
 if TYPE_CHECKING:
@@ -535,39 +535,39 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                      "room_fire_core_final") & Has("Undyne Letter EX") & CanReachLocation(
                      "Undyne Cook-off"))
         world.set_rule(multiworld.get_location("Right Spider Bake Sale", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Left Spider Bake Sale", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Sans Hot Dog Sale 1", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Sans Hot Cat Sale", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Sans Hot Dog Sale 2", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Sans Hot Dog Sale 3", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Sans Hot Dog Sale 4", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Hotel Door Hush Puppy", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Undyne Letter", player),
                  CanReachRegion("room_fire_core_final") & CanReachLocation("Undyne Cook-off"))
     if (not _undertale_is_route(world, 2)) or _undertale_is_route(world, 3):
         world.set_rule(multiworld.get_location("Free Nicecream", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Nicecream Snowdin", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Nicecream Waterfall", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
         world.set_rule(multiworld.get_location("Punch Card", player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     if _undertale_is_route(world, 2) and (not _undertale_is_route(world, 3)) and (world.options.kill_sanity.value == 2):
         world.set_rule(multiworld.get_location("Toriel Fight", player),
                  Has("Ruins Population Pack", math.ceil(20 / FromOption(KillSanityPackSize).resolve(world))))
         world.set_rule(multiworld.get_location("Papyrus Fight", player),
                  Has("Snowdin Population Pack", math.ceil(16 / FromOption(KillSanityPackSize).resolve(world))))
         world.set_rule(multiworld.get_location("Undyne Fight", player),
-                 lambda state, world=world, player=player: (world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player) >= world.options.undying_req_hp)) and state.has("ITEM", player) and state.has("Waterfall Population Pack", math.ceil(18 / world.options.kill_sanity_pack_size.value)))
+                 lambda state, world=world, player=player: (world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player) >= world.options.undying_req_hp)) and state.has("ITEM", player) and state.has("Waterfall Population Pack", player, math.ceil(18 / world.options.kill_sanity_pack_size.value)))
     if _undertale_is_route(world, 2) and (not _undertale_is_route(world, 3)) and (world.options.kill_sanity.value != 2):
         world.set_rule(multiworld.get_location("Undyne Fight", player),
                  lambda state, world=world, player=player: (world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player) >= world.options.undying_req_hp)) and state.has("ITEM", player))
@@ -619,45 +619,45 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
     world.set_rule(multiworld.get_location("Mettaton Fight", player),
              CanReachRegion("room_fire_core_metttest") & Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), filtered_resolution=True, options=[OptionFilter(KillSanity, KillSanity.option_locked), OptionFilter(RouteRequired, RouteRequired.option_genocide)]))
     world.set_rule(multiworld.get_location("Snowdin Shop 1", player),
-             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
+             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))))
     world.set_rule(multiworld.get_location("Snowdin Shop 2", player),
-             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
+             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))))
     world.set_rule(multiworld.get_location("Snowdin Shop 3", player),
-             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
+             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))))
     world.set_rule(multiworld.get_location("Snowdin Shop 4", player),
-             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
+             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))))
     world.set_rule(multiworld.get_location("Gerson Shop 1", player),
-             CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+             ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     world.set_rule(multiworld.get_location("Gerson Shop 2", player),
-             CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+             ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     world.set_rule(multiworld.get_location("Gerson Shop 3", player),
-             CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+             ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     world.set_rule(multiworld.get_location("Gerson Shop 4", player),
-             CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+             ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     world.set_rule(multiworld.get_location("Temmie Shop 1", player),
-             CanReachRegion("room_water_piano"))
+             CanReachRegion("room_water_piano") | Has("Out of Logic Access"))
     world.set_rule(multiworld.get_location("Temmie Shop 2", player),
-             CanReachRegion("room_water_piano"))
+             CanReachRegion("room_water_piano") | Has("Out of Logic Access"))
     world.set_rule(multiworld.get_location("Temmie Shop 3", player),
-             CanReachRegion("room_water_piano"))
+             CanReachRegion("room_water_piano") | Has("Out of Logic Access"))
     world.set_rule(multiworld.get_location("Temmie Shop 4", player),
-             CanReachRegion("room_water_piano") & Has("1000G", 2))
+             (CanReachRegion("room_water_piano") & Has("1000G", 2)) | Has("Out of Logic Access"))
     world.set_rule(multiworld.get_location("Bratty Catty Shop 1", player),
-             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
+             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))))
     world.set_rule(multiworld.get_location("Bratty Catty Shop 2", player),
-             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
+             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))))
     world.set_rule(multiworld.get_location("Bratty Catty Shop 3", player),
-             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
+             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))))
     world.set_rule(multiworld.get_location("Bratty Catty Shop 4", player),
-             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")))
+             OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))))
     world.set_rule(multiworld.get_location("Burgerpants Shop 1", player),
-             CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+             ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     world.set_rule(multiworld.get_location("Burgerpants Shop 2", player),
-             CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+             ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     world.set_rule(multiworld.get_location("Burgerpants Shop 3", player),
-             CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+             ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     world.set_rule(multiworld.get_location("Burgerpants Shop 4", player),
-             CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+             ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")))
     counter = 1
     all_locs = world.get_locations()
     loc_names: list[str] = []
@@ -665,5 +665,5 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
         loc_names.append(a_loc.name)
     while "Hub Shop "+str(counter) in loc_names:
         world.set_rule(multiworld.get_location("Hub Shop "+str(counter), player),
-                 CanReachRegion("room_water_piano") & CanReachRegion("room_shop5"))
+                 ((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access")) | OptionFilter(HubShopCost, 0, "eq"))
         counter += 1

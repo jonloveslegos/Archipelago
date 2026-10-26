@@ -701,10 +701,7 @@ class UndertaleCommandProcessor(ClientCommandProcessor):
     def _cmd_patch(self):
         """Patch the game. Only use this command if /auto_patch fails."""
         if isinstance(self.ctx, UndertaleContext):
-            if platform.system() == "Linux":
-                os.makedirs(name=os.path.expanduser("~/Archipelago/Undertale/assets"), exist_ok=True)
-            else:
-                os.makedirs(name=os.path.join(os.getcwd(), "Undertale"), exist_ok=True)
+            os.makedirs(name=os.path.join(os.getcwd(), "Undertale"), exist_ok=True)
             self.ctx.patch_game()
             self.output("Patched.")
 
@@ -867,7 +864,7 @@ class UndertaleContext(CommonContext):
                     if "total_pieces" == file or "add.gift" == file or "remove.gift" == file or "doorlock.locked" == file or "team_players" == file or "doorcheck.doorspot" == file or "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
                             "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
-                    elif file.endswith(("only_tem", "disconnected", "connected", ".item", ".victory", ".route", ".playerspot", ".mad",
+                    elif file.endswith(("only_tem", "disconnected", "connected", ".item", "items.itsem", ".victory", ".route", ".playerspot", ".mad",
                                         ".youdied", ".lv", ".flag", ".hint", ".pack", "roomrando", "no_chest", "hub_shop_cost", "hub_shop_count", "allow_gifting")):
                         os.remove(os.path.join(root, file))
                 except Exception as error:
@@ -1085,6 +1082,9 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             counter = -1
             placedWeapon = 0
             placedArmor = 0
+            filename = "items.itsem"
+            with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+                f.close()
             for item in args["items"]:
                 itm_id = NetworkItem(*item).location
                 while NetworkItem(*item).location < 0 and \
@@ -1096,8 +1096,9 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                     if ctx.item_names.lookup_in_game(NetworkItem(*item).item).removeprefix("Door Unlock - ") in ctx.locked_doors:
                         ctx.locked_doors.remove(ctx.item_names.lookup_in_game(NetworkItem(*item).item).removeprefix("Door Unlock - "))
                 else:
-                    filename = f"{str(itm_id)}plr{str(NetworkItem(*item).player)}.item"
-                    with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+                    filename = "items.itsem"
+                    with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
+                        f.write(f"{str(itm_id)}plr{str(NetworkItem(*item).player)}.item\n")
                         if NetworkItem(*item).item == 77701:
                             if placedWeapon == 0:
                                 f.write(str(77013))
@@ -1149,16 +1150,22 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                             placedArmor += 1
                         else:
                             f.write(str(NetworkItem(*item).item))
+                        f.write("\n")
                         f.close()
                 ctx.items_received.append(NetworkItem(*item))
                 if [item.item for item in ctx.items_received].count(77000) >= ctx.pieces_needed > 0:
-                    filename = f"{str(-99999)}plr{str(0)}.item"
-                    with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+                    filename = "items.itsem"
+                    with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
+                        f.write(f"{str(-99999)}plr{str(0)}.item")
+                        f.write("\n")
                         f.write(str(77787))
+                        f.write("\n")
                         f.close()
-                    filename = f"{str(-99998)}plr{str(0)}.item"
-                    with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
+                    with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
+                        f.write(f"{str(-99998)}plr{str(0)}.item")
+                        f.write("\n")
                         f.write(str(77789))
+                        f.write("\n")
                         f.close()
             with open(os.path.join(ctx.save_game_folder, "doorlock.locked"), "w") as ff:
                     for item in ctx.locked_doors:

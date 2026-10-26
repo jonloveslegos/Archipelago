@@ -144,7 +144,11 @@ class KillSanity(Choice):
 
 
 class SpareSanity(Choice):
-    """Makes every spare from a random encounter a check, up to how many spare items you have for that area. Only matters if your goal includes the Pacifist or Neutral route"""
+    """Makes every spare from a random encounter a check, up to how many spare items you have for that area. Only matters if your goal includes the Pacifist or Neutral route
+    Off: Fully disabled
+    Unlocked: Makes every random encounter spare a location
+    Locked: Makes every random encounter spare a location, and requires you to receive Population Packs for the area to send them.
+    You can still encounter enemies and spare them regardless of being locked or not, but it wont send out the locations until they are unlocked."""
     display_name = "Spare Sanity"
     option_off = 0
     option_unlocked = 1

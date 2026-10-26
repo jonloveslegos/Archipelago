@@ -11,7 +11,7 @@ from .Options import UndertaleOptions
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components
 from multiprocessing import Process
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, ClassVar
 import Utils
 import math
 import typing
@@ -55,8 +55,8 @@ class UndertaleWorld(World):
     options_dataclass = UndertaleOptions
     options: UndertaleOptions
     web = UndertaleWeb()
-
     topology_present = True
+    glitches_item_name = "Out of Logic Access"
 
     item_name_to_id = {name: data.code for name, data in item_table.items()}
     location_name_to_id = {name: data.id for name, data in advancement_table.items()}
@@ -166,9 +166,11 @@ class UndertaleWorld(World):
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
         if re_gen_passthrough and self.game in re_gen_passthrough:
             slot_data: dict[str, Any] = re_gen_passthrough[self.game]
+            self.all_door_locks = []
             if "Locked Doors" in slot_data:
                 self.all_door_locks = slot_data["Locked Doors"]
         else:
+            self.all_door_locks = []
             if self.options.door_locks.value > 0:
                 rand_door_list = door_name_list.copy()
                 if self.options.route_required.current_key == "genocide":
