@@ -53,9 +53,6 @@ def _undertale_exp_available(state: CollectionState, world: "UndertaleWorld", pl
         exp += 80
     if state.can_reach("Waterfall Grind Rooms", "Region", player):
         exp += (min(18, state.count("Waterfall Population Pack", player) * pack_size) * 3)
-        if state.can_reach("room_water20", "Region", player) and (_undertale_return_reachable_def(state, world, player) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player) >= world.options.undying_req_hp) and state.has("ITEM", player) and state.count("Waterfall Population Pack", player) * \
-                pack_size >= 18:
-            exp += 1500
     if state.can_reach("room_water14", "Region", player):
         exp += 52
     if state.can_reach("room_fire_turn", "Region", player):
@@ -64,6 +61,11 @@ def _undertale_exp_available(state: CollectionState, world: "UndertaleWorld", pl
         exp += 300
     if state.can_reach("Hotland Grind Rooms", "Region", player):
         exp += (min(40, state.count("Hotland Population Pack", player) * pack_size) * 70)
+    if state.can_reach("Waterfall Grind Rooms", "Region", player):
+        if state.can_reach("room_water20", "Region", player) and (_undertale_return_reachable_def(state, world, player, _undertale_return_reachable_level(exp)) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player, _undertale_return_reachable_level(exp)) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player, _undertale_return_reachable_level(exp)) >= world.options.undying_req_hp) and state.has("ITEM", player) and state.count("Waterfall Population Pack", player) * \
+                pack_size >= 18:
+            exp += 1500
+    if state.can_reach("Hotland Grind Rooms", "Region", player):
         if state.can_reach("room_fire_core_metttest", "Region", player) and \
                 state.count("Hotland Population Pack", player) * pack_size >= 40:
             exp = 50000
@@ -119,14 +121,14 @@ def _undertale_has_armor(state: CollectionState, world: "UndertaleWorld", player
         return state.has(armor_name, player)
 
 
-def _undertale_return_reachable_hp(state: CollectionState, world: "UndertaleWorld", player: int):
+def _undertale_return_reachable_hp(state: CollectionState, world: "UndertaleWorld", player: int, love_current: int):
     met_hp = 20
     if world.options.rando_stats.value == 1:
         met_hp += state.count("HP Up", player) * 4
     elif world.options.rando_love.value == 1:
         met_hp += state.count("LOVE", player) * 4
     else:
-        met_hp += (_undertale_return_reachable_level(_undertale_exp_available(state, world, player)) - 1) * 4
+        met_hp += (love_current - 1) * 4
     if met_hp > 92:
         met_hp = 99
     return met_hp
@@ -179,14 +181,14 @@ def _undertale_return_reachable_atk_equipment(state: CollectionState, world: "Un
     return met_atk
 
 
-def _undertale_return_reachable_atk(state: CollectionState, world: "UndertaleWorld", player: int):
+def _undertale_return_reachable_atk(state: CollectionState, world: "UndertaleWorld", player: int, love_current: int):
     met_atk = 10
     if world.options.rando_stats.value == 1:
         met_atk += state.count("ATK Up", player) * 2
     elif world.options.rando_love.value == 1:
         met_atk += state.count("LOVE", player) * 2
     else:
-        met_atk += (_undertale_return_reachable_level(_undertale_exp_available(state, world, player)) - 1) * 2
+        met_atk += (love_current - 1) * 2
     if met_atk > 46:
         met_atk = 99
         
@@ -238,7 +240,7 @@ def _undertale_return_reachable_def_equipment(state: CollectionState, world: "Un
     return met_def
 
 
-def _undertale_return_reachable_def(state: CollectionState, world: "UndertaleWorld", player: int):
+def _undertale_return_reachable_def(state: CollectionState, world: "UndertaleWorld", player: int, love_current: int):
     met_def = 10
     if world.options.rando_stats.value == 1:
         met_def += state.count("DEF Up", player)
@@ -249,7 +251,7 @@ def _undertale_return_reachable_def(state: CollectionState, world: "UndertaleWor
         if world.options.rando_love.value == 1:
             met_lv = state.count("LOVE", player)
         else:
-            met_lv = _undertale_return_reachable_level(_undertale_exp_available(state, world, player))
+            met_lv = love_current
         if met_lv >= 5:
             met_def += 1
         if met_lv >= 9:
