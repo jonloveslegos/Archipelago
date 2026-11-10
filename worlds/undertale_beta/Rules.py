@@ -115,7 +115,6 @@ def _undertale_has_armor(state: CollectionState, world: "UndertaleWorld", player
             need_count = 7
         elif armor_name == "temy armor" and world.options.route_required.value != RouteRequired.option_genocide:
             need_count = 8
-            print("temmmm")
         return state.has("Progressive Armor", player, need_count)
     else:
         return state.has(armor_name, player)

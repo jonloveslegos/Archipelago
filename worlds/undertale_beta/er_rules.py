@@ -534,7 +534,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                      (CanReachRegion("Hotland Grind Rooms")))
     if _undertale_is_route(world, 1):
         world.set_rule(multiworld.get_location("Popato Chisps Machine", player),
-                (CanReachLocation("Alphys Date") & _undertale_has_keys() & Has(
+                (CanReachLocation("Alphys Date") & Has(
                 "DT Extractor")))
         world.set_rule(multiworld.get_location("Papyrus Hangout", player),
                  Has("Complete Skeleton") & CanReachLocation("Papyrus Fight"))

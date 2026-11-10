@@ -177,7 +177,7 @@ class UndertaleWorld(World):
                     rand_door_list = [item for item in rand_door_list if (item.split(" <-> ")[0] not in genocide_missing_rooms and item.split(" <-> ")[1] not in genocide_missing_rooms)]
                 rand_door_list = [item for item in rand_door_list if (item not in self.options.excluded_door_locks.value and item not in self.options.mandatory_door_locks.value and item.split(" <-> ")[1]+" <->"+item.split(" <-> ")[0] not in self.options.mandatory_door_locks.value and item.split(" <-> ")[1]+" <->"+item.split(" <-> ")[0] not in self.options.excluded_door_locks.value)]
                 amount_to_add = min(len(rand_door_list), self.options.door_locks.value)
-                print("actually added = "+str(amount_to_add))
+                # print("actually added = "+str(amount_to_add))
                 self.random.shuffle(rand_door_list)
                 for i in range(amount_to_add):
                     self.all_door_locks.append(rand_door_list.pop())

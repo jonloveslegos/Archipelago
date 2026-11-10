@@ -622,7 +622,7 @@ async def pick_gift_recipient(ctx, gift):
         "IsRefund": False
     }
     # print(item)
-    print(str(gift.split("]:::[", maxsplit=1)[0]))
+    # print(str(gift.split("]:::[", maxsplit=1)[0]))
     if chosen_slot == ctx.slot:
         filename = f"fail.gift"
         with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
@@ -654,7 +654,7 @@ async def pop_gift(ctx):
                         closeness = abs(undertale_gifts[item]["Traits"][0]["Quality"]-qualities[traits.index("Consumable")])
                         item_to_write = item
             filename = f"add.gift"
-            print(str(item_to_write))
+            # print(str(item_to_write))
             with open(os.path.join(ctx.save_game_folder, filename), "a") as f:
                 f.write(str(item_to_write)+"\n")
                 f.close()
@@ -825,7 +825,7 @@ class UndertaleContext(CommonContext):
         self.completed_routes = {"pacifist": 0, "genocide": 0, "neutral": 0}
         # self.save_game_folder: files go in this path to pass data between us and the actual game
         self.save_game_folder = platformdirs.user_config_dir(appname="UNDERTALEAP", ensure_exists=True, appauthor=False)
-        print(self.save_game_folder)
+        # print(self.save_game_folder)
 
     def patch_game(self):
         if os.path.isfile(os.path.join(os.getcwd(), "Undertale", "game.unx")):
@@ -965,7 +965,6 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             filename = f"entrance_rando.dest"
             with open(os.path.join(ctx.save_game_folder, filename), "w") as f:
                 for item in ctx.entrances:
-                    print(item)
                     f.write(item[0] + "\n" + item[1] + "\n")
                 f.close()
         ctx.enable_gifting = bool(args["slot_data"]["gifting"])
