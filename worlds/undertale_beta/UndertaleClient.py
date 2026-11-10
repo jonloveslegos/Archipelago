@@ -828,16 +828,7 @@ class UndertaleContext(CommonContext):
         # print(self.save_game_folder)
 
     def patch_game(self):
-        if os.path.isfile(os.path.join(os.getcwd(), "Undertale", "game.unx")):
-            with open(os.path.join(os.getcwd(), "Undertale", "game.unx"), "rb") as f:
-                patchedFile = bsdiff4.patch(f.read(), data_path("lintowin.bsdiff"))
-            with open(os.path.join(os.getcwd(), "Undertale", "game.unx"), "wb") as f:
-                f.write(patchedFile)
-            with open(os.path.join(os.getcwd(), "Undertale", "game.unx"), "rb") as f:
-                patchedFile = bsdiff4.patch(f.read(), data_path("patch.bsdiff"))
-            with open(os.path.join(os.getcwd(), "Undertale", "game.unx"), "wb") as f:
-                f.write(patchedFile)
-        elif os.path.isfile(os.path.join(os.getcwd(), "Undertale", "data.win")):
+        if os.path.isfile(os.path.join(os.getcwd(), "Undertale", "data.win")):
             with open(os.path.join(os.getcwd(), "Undertale", "data.win"), "rb") as f:
                 patchedFile = bsdiff4.patch(f.read(), data_path("patch.bsdiff"))
             with open(os.path.join(os.getcwd(), "Undertale", "data.win"), "wb") as f:
