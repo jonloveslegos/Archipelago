@@ -318,6 +318,9 @@ class Gifting(Toggle):
 
 class SpellsEnabled(OptionSet):
     """Adds the selected Spell types to the pool.
+    You will need to equip spells to use them, also adds the TP, Grazing, and Defending systems from Deltarune once a spell is equipped.
+    Spells can be cast in the ACT menu once you have a spell equipped, you will also be able to Defend in the SPARE menu for extra TP.
+
     Valid keys: 
     attack: Spells that deal direct damage to the opponent. (2 total)
     pacifist: Spells that are only useful for sparing the opponent. (1 total)
