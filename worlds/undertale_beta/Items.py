@@ -66,7 +66,7 @@ item_table = {
     "The Locket": ItemData(77053, ItemClassification.progression_skip_balancing),
     "Bad Memory": ItemData(77054, ItemClassification.filler),
     "Dream": ItemData(77055, ItemClassification.filler),
-    "Undyne Letter EX": ItemData(77057, ItemClassification.progression),
+    "Undyne Letter": ItemData(77057, ItemClassification.progression),
     "Popato Chisps": ItemData(77058, ItemClassification.filler),
     "Junk Food": ItemData(77059, ItemClassification.filler),
     "Mystery Key": ItemData(77060, ItemClassification.progression),

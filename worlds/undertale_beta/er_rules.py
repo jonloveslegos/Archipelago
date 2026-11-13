@@ -549,7 +549,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                  CanReachLocation("Papyrus Hangout") & Has("Fish") & CanReachLocation("Undyne Fight"))
         world.set_rule(multiworld.get_location("Alphys Date", player),
                  CanReachRegion("room_water_trashzone1") & CanReachRegion(
-                     "room_fire_core_final") & Has("Undyne Letter EX") & CanReachLocation(
+                     "room_fire_core_final") & Has("Undyne Letter") & CanReachLocation(
                      "Undyne Cook-off"))
         world.set_rule(multiworld.get_location("Right Spider Bake Sale", player),
                  _undertale_can_get_inf_gold())
