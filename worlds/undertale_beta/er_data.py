@@ -487,7 +487,6 @@ portal_mapping: List[Portal] = [
 
     Portal(region="room_ruins15A", destination="Ruins 14 Past Puzzles"),
     Portal(region="Ruins 15A Past Puzzles", destination="room_ruins15B"),
-    Portal(region="room_ruins15A", destination="room_ruins15E"),
 
     Portal(region="room_ruins15B", destination="Ruins 15A Past Puzzles"),
     Portal(region="Ruins 15B Past Puzzles", destination="room_ruins15C"),
@@ -504,8 +503,6 @@ portal_mapping: List[Portal] = [
     Portal(region="Ruins Pit Circle B", destination="room_ruins15B"),
     Portal(region="Ruins Pit Circle C", destination="room_ruins15C"),
     Portal(region="Ruins Pit Circle D", destination="room_ruins15D"),
-
-    Portal(region="room_ruins15E", destination="room_ruins15A"),
 
     Portal(region="room_ruins16", destination="Ruins 15D Past Puzzles"),
     Portal(region="room_ruins16", destination="room_ruins17"),
@@ -948,7 +945,7 @@ undertale_er_regions: Dict[str, RegionInfo] = {
 
 genocide_missing_rooms: List[str] = ["room_fire_hotdog", "room_fire_walkandbranch", "room_fire_apron", "room_fire10", 
                                      "room_fire_rpuzzle", "room_fire_mewmew2", "room_fire_boysnightout", "room_fire_newsreport", 
-                                     "room_fire_coreview2", "room_tundra_sanshouse", "room_tundra_paproom", "room_tundra_sansroom"]
+                                     "room_fire_coreview2", "room_tundra_sanshouse", "room_tundra_paproom", "room_tundra_sansroom", "room_fire_hotelbed"]
 
 excluded_rooms: List[str] = ["room_area1", "room_ruins15E"]
 

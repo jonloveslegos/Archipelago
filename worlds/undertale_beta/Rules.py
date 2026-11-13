@@ -1,9 +1,9 @@
 from BaseClasses import CollectionState
 from typing import TYPE_CHECKING
-from .Options import KeyPieces, RouteRequired, KeyHunt, KillSanity, KillSanityPackSize
+from .Options import KeyPieces, RouteRequired, KeyHunt, KillSanityPackSize
 from rule_builder.options import OptionFilter
 from rule_builder.field_resolvers import FromOption
-from rule_builder.rules import Has, HasAll, Rule, CanReachEntrance, CanReachLocation, CanReachRegion, False_, True_
+from rule_builder.rules import Has, Rule, CanReachRegion
 import dataclasses
 
 if TYPE_CHECKING:
@@ -24,7 +24,12 @@ def _undertale_is_route(world: "UndertaleWorld", route: int):
     return False
 
 @dataclasses.dataclass()
-class _undertale_has_keys(Rule["UndertaleWorld"], game="Undertale Beta"):
+class _undertale_can_get_inf_gold(Rule["UndertaleWorld"], game="Undertale"):
+    def _instantiate(self, world: "UndertaleWorld") -> Rule.Resolved:
+        return (((CanReachRegion("room_water_piano") & CanReachRegion("room_shop5")) | Has("Out of Logic Access"))).resolve(world)
+
+@dataclasses.dataclass()
+class _undertale_has_keys(Rule["UndertaleWorld"], game="Undertale"):
     def _instantiate(self, world: "UndertaleWorld") -> Rule.Resolved:
         return ((Has("Left Home Key", options=[OptionFilter(KeyHunt, KeyHunt.option_false)]) & Has("Right Home Key", options=[OptionFilter(KeyHunt, KeyHunt.option_false)])) |
             Has("Key Piece", FromOption(KeyPieces), options=[OptionFilter(KeyHunt, KeyHunt.option_true)])).resolve(world)
@@ -76,7 +81,7 @@ def _undertale_exp_available(state: CollectionState, world: "UndertaleWorld", pl
 
 def _undertale_has_weapon(state: CollectionState, world: "UndertaleWorld", player: int, weapon_name: str):
     if world.options.prog_weapons.value == 1:
-        need_count = 0
+        need_count = 999
         if weapon_name == "Toy Knife":
             need_count = 1
         elif weapon_name == "Tough Glove":
@@ -85,11 +90,11 @@ def _undertale_has_weapon(state: CollectionState, world: "UndertaleWorld", playe
             need_count = 3
         elif weapon_name == "Torn Notebook":
             need_count = 4
-        elif weapon_name == "Empty Gun":
-            need_count = 5
         elif weapon_name == "Burnt Pan":
+            need_count = 5
+        elif weapon_name == "Empty Gun":
             need_count = 6
-        elif weapon_name == "Worn Dagger" or weapon_name == "Real Knife":
+        elif weapon_name == "Worn Dagger" or ((world.options.route_required.value == RouteRequired.option_all_routes or world.options.route_required.value == RouteRequired.option_genocide) and weapon_name == "Real Knife"):
             need_count = 7
         return state.has("Progressive Weapons", player, need_count)
     else:
@@ -98,7 +103,7 @@ def _undertale_has_weapon(state: CollectionState, world: "UndertaleWorld", playe
 
 def _undertale_has_armor(state: CollectionState, world: "UndertaleWorld", player: int, armor_name: str):
     if world.options.prog_armor.value == 1:
-        need_count = 0
+        need_count = 999
         if armor_name == "Faded Ribbon":
             need_count = 1
         elif armor_name == "Manly Bandanna":
@@ -107,11 +112,11 @@ def _undertale_has_armor(state: CollectionState, world: "UndertaleWorld", player
             need_count = 3
         elif armor_name == "Cloudy Glasses":
             need_count = 4
-        elif armor_name == "Cowboy Hat":
+        elif armor_name == "Stained Apron" or (world.options.route_required.value == RouteRequired.option_genocide and armor_name == "Cowboy Hat"):
             need_count = 5
-        elif armor_name == "Stained Apron" or (world.options.route_required.value == RouteRequired.option_genocide and armor_name == "The Locket"):
+        elif armor_name == "Cowboy Hat" or (world.options.route_required.value == RouteRequired.option_genocide and armor_name == "The Locket"):
             need_count = 6
-        elif armor_name == "Heart Locket" or (world.options.route_required.value == RouteRequired.option_genocide and armor_name == "temy armor"):
+        elif armor_name == "Heart Locket" or (world.options.route_required.value == RouteRequired.option_all_routes and armor_name == "The Locket") or (world.options.route_required.value == RouteRequired.option_genocide and armor_name == "temy armor"):
             need_count = 7
         elif armor_name == "temy armor" and world.options.route_required.value != RouteRequired.option_genocide:
             need_count = 8

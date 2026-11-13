@@ -1,7 +1,7 @@
 from .Items import UndertaleItem, item_table, required_armor, required_weapons, non_key_items, key_items, \
-    junk_weights_all, plot_items, junk_weights_neutral, junk_weights_pacifist, junk_weights_genocide, \
+    junk_weights_all, junk_weights_neutral, junk_weights_pacifist, junk_weights_genocide, \
     junk_weights_cut_items, spells_attack, spells_heal, spells_gimmicks, spells_pacifist, spells_violent
-from .Locations import UndertaleAdvancement, advancement_table, exclusion_table
+from .Locations import advancement_table, exclusion_table
 from .er_rules import set_er_location_rules
 from .er_scripts import create_er_regions_vanilla, UndertaleERLocation
 from .er_data import door_name_list, genocide_missing_rooms
@@ -11,8 +11,7 @@ from .Options import UndertaleOptions
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components
 from multiprocessing import Process
-from typing import Dict, List, Tuple, Any, ClassVar
-import Utils
+from typing import Dict, List, Any
 import math
 import typing
 

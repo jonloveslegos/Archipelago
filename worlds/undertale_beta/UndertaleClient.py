@@ -1099,9 +1099,9 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                             elif placedWeapon == 3:
                                 f.write(str(77045))
                             elif placedWeapon == 4:
-                                f.write(str(77049))
-                            elif placedWeapon == 5:
                                 f.write(str(77047))
+                            elif placedWeapon == 5:
+                                f.write(str(77049))
                             elif placedWeapon == 6:
                                 if str(ctx.route) == "genocide" or str(ctx.route) == "all_routes":
                                     f.write(str(77052))
@@ -1120,12 +1120,15 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
                             elif placedArmor == 3:
                                 f.write(str(77044))
                             elif placedArmor == 4:
-                                f.write(str(77048))
+                                if str(ctx.route) == "genocide":
+                                    f.write(str(77048))
+                                else:
+                                    f.write(str(77046))
                             elif placedArmor == 5:
                                 if str(ctx.route) == "genocide":
                                     f.write(str(77053))
                                 else:
-                                    f.write(str(77046))
+                                    f.write(str(77048))
                             elif placedArmor == 6 and ((not str(ctx.route) == "genocide") or ctx.tem_armor):
                                 if str(ctx.route) == "all_routes":
                                     f.write(str(77053))

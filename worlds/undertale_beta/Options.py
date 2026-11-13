@@ -77,7 +77,7 @@ class HubShopCost(Range):
     """How much each location in the Hub shop costs.
     The Hub shop will be given locations only if there are too little locations elsewhere to put everything."""
     display_name = "Hub Shop Cost"
-    default = 250
+    default = 50
     range_start = 0
     range_end = 1000
 

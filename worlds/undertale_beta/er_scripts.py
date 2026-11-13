@@ -1,17 +1,13 @@
-import string
 from typing import TYPE_CHECKING, List
-from BaseClasses import ItemClassification, Item, Location, Region
+from BaseClasses import Item, Location, Region
 from .Locations import exclusion_table
 from .Locations import advancement_table as location_table
 from .er_data import undertale_er_regions, portal_mapping, Portal
 from .er_rules import set_er_region_rules
 import platformdirs
-import Utils
 import os
 from typing import Dict
-from rule_builder.options import OptionFilter
-from rule_builder.field_resolvers import FromOption
-from rule_builder.rules import Has, HasAll, Rule, CanReachEntrance, CanReachLocation, CanReachRegion, False_, True_
+from rule_builder.rules import CanReachLocation, CanReachRegion
 
 if TYPE_CHECKING:
     from . import UndertaleWorld

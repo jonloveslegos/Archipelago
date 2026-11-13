@@ -177,12 +177,6 @@ required_weapons = {
     "Empty Gun": 1,
 }
 
-plot_items = {
-    "Complete Skeleton": 1,
-    "Fish": 1,
-    "DT Extractor": 1,
-}
-
 key_items = {
     "Complete Skeleton": 1,
     "Fish": 1,
