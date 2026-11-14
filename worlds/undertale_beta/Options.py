@@ -337,7 +337,7 @@ class AddDoorLocks(NamedRange):
     The doors at the hub will never be locked
     Adds one location at each locked transition as well, approach the transition to obtain the location, can still be obtained even after unlocking it.
     If the current room has a locked transition, you can press W to warp to the hub, to prevent you from being softlocked inside a one-way room.
-    Genocide route goal lowers the possible maximum to 192."""
+    Genocide route goal lowers the possible maximum to 191."""
     
     display_name = "Door Locks Added"
     default = 0
