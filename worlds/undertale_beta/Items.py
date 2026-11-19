@@ -125,6 +125,9 @@ for door in door_name_list:
     item_table.__setitem__("Door Unlock - "+door, ItemData(1000+i, ItemClassification.progression))
     i += 1
 
+for x in range(20):
+    item_table.__setitem__("Procedural Spell "+str(x+1), ItemData(6000+x, ItemClassification.useful))
+
 spells_heal = {
     "HopefulHeal": 1,
     "PatientStand": 1,

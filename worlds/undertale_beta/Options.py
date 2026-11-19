@@ -362,6 +362,26 @@ class ExcludedDoorLocks(OptionSet):
     valid_keys = frozenset(door_name_list.copy())
 
 
+class AdvancedLogic(Toggle):
+    """When enabled, logic may require lesser-known knowledge."""
+    display_name = "Advanced Logic"
+    default = 0
+
+
+class ProceduralSpells(Range):
+    """Adds this many procedurally-generated spells to the pool that have randomized effects."""
+    display_name = "Procedural Spell Amount"
+    default = 0
+    range_start = 0
+    range_end = 20
+
+
+class BalanceProceduralSpells(Toggle):
+    """Attempts to balance the procedurally-generated spell when enabled."""
+    display_name = "Balanced Procedural Spells"
+    default = 1
+
+
 @dataclass
 class UndertaleOptions(PerGameCommonOptions):
     start_inventory_from_pool:                StartInventoryPool
@@ -370,6 +390,7 @@ class UndertaleOptions(PerGameCommonOptions):
     bonus_locations:                          BonusLocations
     guaranteed_filler:                        GuaranteedFiller
     hub_shop_cost:                            HubShopCost
+    advanced_logic:                           AdvancedLogic
     key_hunt:                                 KeyHunt
     key_pieces:                               KeyPieces
     extra_key_pieces:                         ExtraKeyPieces
@@ -378,6 +399,8 @@ class UndertaleOptions(PerGameCommonOptions):
     rando_love:                               RandomizeLove
     rando_stats:                              RandomizeStats
     enabled_spells:                           SpellsEnabled
+    procedural_spell_amount:                  ProceduralSpells
+    # balance_procedural_spells:                BalanceProceduralSpells
     spare_sanity:                             SpareSanity
     spare_sanity_max:                         SpareSanityMaxSpares
     spare_sanity_pack_size:                   SpareSanityPackSize

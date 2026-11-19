@@ -8,12 +8,14 @@ from .er_data import door_name_list, genocide_missing_rooms
 from worlds.generic.Rules import exclusion_rules
 from BaseClasses import Tutorial, Item, MultiWorld
 from .Options import UndertaleOptions
+from .Spells import _undertale_procedural_spell, spell_effects, targeting_spell_effects, numerical_spell_effects, soul_spell_effects
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import Component, components
 from multiprocessing import Process
 from typing import Dict, List, Any
 import math
 import typing
+
 
 
 def run_client():
@@ -44,6 +46,9 @@ class UndertaleWeb(WebWorld):
     )]
 
 
+
+
+
 class UndertaleWorld(World):
     """
     Undertale is an RPG where every choice you make matters. You could choose to hurt all the enemies, eventually
@@ -64,6 +69,8 @@ class UndertaleWorld(World):
     er_portal_hints: Dict[int, str]
     
     all_door_locks: List[str] = []
+
+    procedural_spells_list: List[_undertale_procedural_spell] = []
 
     def interpret_slot_data(self, slot_data: dict[str, Any]) -> None:
         if "Locked Doors" in slot_data:
@@ -124,7 +131,9 @@ class UndertaleWorld(World):
             "undying_req_def": self.options.undying_req_def.value,
             "asgore_req_atk": self.options.asgore_req_atk.value,
             "asgore_req_def": self.options.asgore_req_def.value,
-            "start_inventory_from_pool": self.options.start_inventory_from_pool.value
+            "start_inventory_from_pool": self.options.start_inventory_from_pool.value,
+            "advanced_logic": bool(self.options.advanced_logic.value),
+            "procedural_spell_amount": self.options.procedural_spell_amount.value
         }
 
     def get_filler_item_name(self):
@@ -161,6 +170,97 @@ class UndertaleWorld(World):
             self.options.kill_sanity_pack_size.value = 40
         if self.options.spare_sanity.value == 1:
             self.options.spare_sanity_pack_size.value = self.options.spare_sanity_max.value
+
+        self.procedural_spells_list = []
+        if self.options.procedural_spell_amount.value > 0:
+            for x in range(self.options.procedural_spell_amount.value):
+                failed_to_create = True
+                while failed_to_create:
+                    tp_cost_from_stats = 0
+                    temp_proc_spell = _undertale_procedural_spell()
+                    temp_proc_spell.effect_one = self.random.choice(list(spell_effects.keys()))
+                    temp_proc_spell.effect_two = self.random.choice(list(spell_effects.keys())+(["none"]*10))
+                    if temp_proc_spell.effect_two != "none":
+                        temp_proc_spell.tp_cost = (spell_effects[temp_proc_spell.effect_one] + (spell_effects[temp_proc_spell.effect_two]/2.0)) * 5
+                    else:
+                        temp_proc_spell.tp_cost = (spell_effects[temp_proc_spell.effect_one]) * 5
+                    if ((temp_proc_spell.effect_one in numerical_spell_effects) or (temp_proc_spell.effect_two in numerical_spell_effects)) and ((temp_proc_spell.effect_one in targeting_spell_effects) or (temp_proc_spell.effect_two in targeting_spell_effects)):
+                        temp_returned = self.gen_random_spell_stats([-5, 5],[-5, 5],[-1, 3],[-3, 3])
+                        temp_proc_spell.target_def_mult = temp_returned[0]
+                        temp_proc_spell.target_def_add = temp_returned[1]
+                        temp_proc_spell.target_def_sub = temp_returned[2]
+                        temp_proc_spell.target_def_div = temp_returned[3]
+                        temp_proc_spell.tp_cost -= (temp_proc_spell.target_def_add-temp_proc_spell.target_def_sub+3)*(temp_proc_spell.target_def_mult/temp_proc_spell.target_def_div)*2
+                    if ((temp_proc_spell.effect_one in numerical_spell_effects) or (temp_proc_spell.effect_two in numerical_spell_effects)):
+                        temp_forced_stat = self.random.choice(["atk", "def", "lv", "hp"])
+                        temp_returned = self.gen_random_spell_stats([-20, 20],[-20, 20],[-5, 5],[-5, 5])
+                        temp_proc_spell.atk_mult = temp_returned[0]
+                        if temp_forced_stat == "atk" and temp_proc_spell.atk_mult <= 0:
+                            temp_proc_spell.atk_mult = 1
+                        if temp_proc_spell.atk_mult > 0:
+                            temp_proc_spell.atk_add = temp_returned[1]
+                            temp_proc_spell.atk_sub = temp_returned[2]
+                            temp_proc_spell.atk_div = temp_returned[3]
+                        tp_cost_from_stats += (temp_proc_spell.atk_add-temp_proc_spell.atk_sub+20)*(temp_proc_spell.atk_mult/temp_proc_spell.atk_div)*2
+                        temp_proc_spell.tp_cost += (temp_proc_spell.atk_add-temp_proc_spell.atk_sub+20)*(temp_proc_spell.atk_mult/temp_proc_spell.atk_div)*2
+                        temp_returned = self.gen_random_spell_stats([-10, 10],[-10, 10],[-5, 5],[-5, 5])
+                        temp_proc_spell.def_mult = temp_returned[0]
+                        if temp_forced_stat == "def" and temp_proc_spell.def_mult <= 0:
+                            temp_proc_spell.def_mult = 1
+                        if temp_proc_spell.def_mult > 0:
+                            temp_proc_spell.def_add = temp_returned[1]
+                            temp_proc_spell.def_sub = temp_returned[2]
+                            temp_proc_spell.def_div = temp_returned[3]
+                        tp_cost_from_stats += (temp_proc_spell.def_add-temp_proc_spell.def_sub+12)*(temp_proc_spell.def_mult/temp_proc_spell.def_div)*2
+                        temp_proc_spell.tp_cost += (temp_proc_spell.def_add-temp_proc_spell.def_sub+12)*(temp_proc_spell.def_mult/temp_proc_spell.def_div)*2
+                        temp_returned = self.gen_random_spell_stats([-20, 20],[-20, 20],[-2, 2],[-2, 2])
+                        temp_proc_spell.hp_mult = temp_returned[0]
+                        if temp_forced_stat == "hp" and temp_proc_spell.hp_mult <= 0:
+                            temp_proc_spell.hp_mult = 1
+                        if temp_proc_spell.hp_mult > 0:
+                            temp_proc_spell.hp_add = temp_returned[1]
+                            temp_proc_spell.hp_sub = temp_returned[2]
+                            temp_proc_spell.hp_div = temp_returned[3]
+                        tp_cost_from_stats += (temp_proc_spell.hp_add-temp_proc_spell.hp_sub+40)*(temp_proc_spell.hp_mult/temp_proc_spell.hp_div)*2
+                        temp_proc_spell.tp_cost += (temp_proc_spell.hp_add-temp_proc_spell.hp_sub+40)*(temp_proc_spell.hp_mult/temp_proc_spell.hp_div)*2
+                        temp_returned = self.gen_random_spell_stats([-5, 5],[-5, 5],[-2, 2],[-2, 2])
+                        temp_proc_spell.lv_mult = temp_returned[0]
+                        if temp_forced_stat == "lv" and temp_proc_spell.lv_mult <= 0:
+                            temp_proc_spell.lv_mult = 1
+                        if temp_proc_spell.lv_mult > 0:
+                            temp_proc_spell.lv_add = temp_returned[1]
+                            temp_proc_spell.lv_sub = temp_returned[2]
+                            temp_proc_spell.lv_div = temp_returned[3]
+                        tp_cost_from_stats += (temp_proc_spell.lv_add-temp_proc_spell.lv_sub+6)*(temp_proc_spell.lv_mult/temp_proc_spell.lv_div)*2
+                        temp_proc_spell.tp_cost += (temp_proc_spell.lv_add-temp_proc_spell.lv_sub+6)*(temp_proc_spell.lv_mult/temp_proc_spell.lv_div)*2
+                        temp_returned = self.gen_random_spell_stats([-10, 10],[-10, 10],[1, 1],[-2, 2])
+                        temp_proc_spell.total_mult = max(1, self.random.randint(-1, 2))
+                        temp_proc_spell.total_add = temp_returned[1]
+                        temp_proc_spell.total_sub = temp_returned[2]
+                        temp_proc_spell.total_div = temp_returned[3]
+                        tp_cost_from_stats = (temp_proc_spell.total_add-temp_proc_spell.total_sub+(tp_cost_from_stats/2))*(temp_proc_spell.total_mult/temp_proc_spell.total_div)*2
+                        temp_proc_spell.tp_cost = (temp_proc_spell.total_add-temp_proc_spell.total_sub+(temp_proc_spell.tp_cost/2))*(temp_proc_spell.total_mult/temp_proc_spell.total_div)*2
+                    if ((temp_proc_spell.effect_one in numerical_spell_effects) and (temp_proc_spell.effect_two in numerical_spell_effects)):
+                        temp_proc_spell.tp_cost += tp_cost_from_stats
+                    if temp_proc_spell.effect_one in soul_spell_effects:
+                        temp_proc_spell.soul_mode_length = max(2, self.random.randint(-4, 8))
+                    if temp_proc_spell.effect_two in soul_spell_effects:
+                        temp_proc_spell.soul_mode_length = round(max(2, self.random.randint(-4, 8))/2)
+                    temp_proc_spell.tp_cost += (temp_proc_spell.soul_mode_length * 30)
+                    if temp_proc_spell.effect_one == "self_defense_reduction":
+                        if temp_proc_spell.effect_two == "none":
+                            temp_proc_spell.tp_cost = -temp_proc_spell.tp_cost
+                        elif temp_proc_spell.effect_two == "self_defense_reduction":
+                            temp_proc_spell.tp_cost = -(temp_proc_spell.tp_cost * 2)
+                        else:
+                            temp_proc_spell.tp_cost = (temp_proc_spell.tp_cost - (tp_cost_from_stats/2))-(spell_effects["self_defense_reduction"]*5)
+                    elif temp_proc_spell.effect_two == "self_defense_reduction":
+                        temp_proc_spell.tp_cost = (temp_proc_spell.tp_cost - (tp_cost_from_stats/4))-(spell_effects["self_defense_reduction"]*5*0.5)
+                    if temp_proc_spell.tp_cost <= 250 and temp_proc_spell.tp_cost >= -250:
+                        self.procedural_spells_list.append(temp_proc_spell)
+                        failed_to_create = False
+            for x in self.procedural_spells_list:
+                print(x)
             
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
         if re_gen_passthrough and self.game in re_gen_passthrough:
@@ -282,6 +382,9 @@ class UndertaleWorld(World):
             itempool += ["Hotland Population Pack"] * math.ceil(40/self.options.kill_sanity_pack_size.value)
         if self.options.ice_traps.value > 0:
             itempool += ["Ice Trap"] * self.options.ice_traps.value
+        if self.options.procedural_spell_amount.value > 0:
+            for x in range(self.options.procedural_spell_amount.value):
+                itempool += ["Procedural Spell "+str(x+1)]
         if not self.options.rando_stats or \
                 (self.options.route_required != "genocide" and
                  self.options.route_required != "all_routes"):
@@ -355,6 +458,14 @@ class UndertaleWorld(World):
 
     def fill_slot_data(self):
         slot_data = self._get_undertale_data()
+        temp_list: List = []
+        for spl in self.procedural_spells_list:
+            temp_list.append([spl.effect_one, spl.effect_two, spl.soul_mode_length, spl.tp_cost, spl.lv_add, spl.lv_sub, spl.lv_mult, spl.lv_div, 
+                                              spl.hp_add, spl.hp_sub, spl.hp_mult, spl.hp_div, spl.atk_add, spl.atk_sub, spl.atk_mult, spl.atk_div, 
+                                              spl.def_add, spl.def_sub, spl.def_mult, spl.def_div, spl.target_def_add, spl.target_def_sub, spl.target_def_mult, spl.target_def_div, 
+                                              spl.total_add, spl.total_sub, spl.total_mult, spl.total_div])
+        slot_data["Procedural_Spells"] = temp_list
+        print(temp_list)
         slot_data["Locked Doors"] = self.all_door_locks
         return slot_data
 
@@ -364,6 +475,52 @@ class UndertaleWorld(World):
         item = UndertaleItem(name, item_data.classification, item_data.code, self.player)
         return item
 
+    def format_spoiler_spell_math(self, math_add: float, math_sub: float, math_div: float, math_mult: float, math_name: str, math_base_name: str) -> str:
+                list_as_string = ""
+                if (math_mult != 1 or math_div != 1) and (math_add != 0 or math_sub != 0):
+                    list_as_string += f"    {math_name}: ({math_base_name}"
+                else:
+                    list_as_string += f"    {math_name}: {math_base_name}"
+                if math_add > 0:
+                    list_as_string += f" + {math_add}"
+                if math_sub > 0:
+                    list_as_string += f" - {math_sub}"
+                if math_mult != 1 or math_div != 1:
+                    if math_add != 0 or math_sub != 0:
+                        list_as_string += f")"
+                    if math_mult != 1:
+                        list_as_string += f" * "
+                        if math_div != 1:
+                            list_as_string += f"({math_mult} / {max(1, math_div)})"
+                        else:
+                            list_as_string += f"{math_mult}"
+                    else:
+                        list_as_string += f" / {max(1, math_div)}"
+                list_as_string += f"\n"
+                return list_as_string
+
+    def gen_random_spell_stats(self, add_range: List[int], sub_range: List[int], mult_range: List[int], div_range: List[int]) -> List[int]:
+                            _mult = max(0, self.random.randint(mult_range[0], mult_range[1]))
+                            _add = 0
+                            _sub = 0
+                            _div = 1
+                            _add = max(0, self.random.randint(add_range[0], add_range[1]))
+                            _sub = max(0, self.random.randint(sub_range[0], sub_range[1]))
+                            if _sub > _add:
+                                _sub -= _add
+                                _add = 0
+                            elif _sub < _add:
+                                _add -= _sub
+                                _sub = 0
+                            elif _sub == _add:
+                                _sub = 0
+                                _add = 0
+                            _div = max(1, self.random.randint(div_range[0], div_range[1]))
+                            if _mult == _div:
+                                _div = 1
+                                _mult = 1
+                            return [_mult, _add, _sub, _div]
+
     def write_spoiler(self, spoiler_handle: typing.TextIO) -> None:
         player_name = self.multiworld.get_player_name(self.player)
         spoiler_handle.write(f"\n\nLocked Doors ({player_name}): ")
@@ -372,3 +529,29 @@ class UndertaleWorld(World):
             list_as_string += f"{item}, "
         list_as_string = list_as_string.removesuffix(", ")
         spoiler_handle.write(list_as_string)
+        spoiler_handle.write(f"\n\nProcedural Spells ({player_name}): \n")
+        list_as_string = " All spell totals are rounded down, and cannot be lower than zero.\n"
+        i = 1
+        for item in self.procedural_spells_list:
+            list_as_string += f"  Spell {str(i)}:\n"
+            list_as_string += f"    TP Cost: {(item.tp_cost/250.0*100.0)}\n"
+            list_as_string += f"    Effect One: {item.effect_one}\n"
+            if item.effect_two != "none":
+                list_as_string += f"    Effect Two (Half Power): {item.effect_two}\n"
+            if item.soul_mode_length > 0:
+                list_as_string += f"    Soul Effect Turn Length: {item.soul_mode_length}\n"
+            if item.lv_mult > 0:
+                list_as_string += self.format_spoiler_spell_math(item.lv_add, item.lv_sub, item.lv_div, item.lv_mult, "LV Bonus", "LV")
+            if item.hp_mult > 0:
+                list_as_string += self.format_spoiler_spell_math(item.hp_add, item.hp_sub, item.hp_div, item.hp_mult, "HP Bonus", "HP")
+            if item.atk_mult > 0:
+                list_as_string += self.format_spoiler_spell_math(item.atk_add, item.atk_sub, item.atk_div, item.atk_mult, "ATK Bonus", "ATK")
+            if item.def_mult > 0:
+                list_as_string += self.format_spoiler_spell_math(item.def_add, item.def_sub, item.def_div, item.def_mult, "DEF Bonus", "DEF")
+            if item.target_def_mult > 0:
+                list_as_string += self.format_spoiler_spell_math(item.target_def_add, item.target_def_sub, item.target_def_div, item.target_def_mult, "Enemy DEF Modifier", "Enemy_DEF")
+            if item.total_mult > 0 and (item.total_div != 1 or item.total_sub != 0 or item.total_add != 0 or item.total_mult != 1):
+                list_as_string += self.format_spoiler_spell_math(item.total_add, item.total_sub, item.total_div, item.total_mult, "Total Modifier", "Total")
+            i += 1
+        spoiler_handle.write(list_as_string)
+        

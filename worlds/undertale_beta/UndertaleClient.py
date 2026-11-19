@@ -14,6 +14,7 @@ from typing import List, Tuple
 from NetUtils import NetworkItem, ClientStatus
 from . import data_path
 from .Locations import advancement_table
+from .Spells import _undertale_procedural_spell
 from MultiServer import mark_raw
 from CommonClient import CommonContext, server_loop, \
     gui_enabled, ClientCommandProcessor, logger, get_base_parser
@@ -852,7 +853,7 @@ class UndertaleContext(CommonContext):
         for root, dirs, files in os.walk(path):
             for file in files:
                 try:
-                    if "total_pieces" == file or "add.gift" == file or "remove.gift" == file or "doorlock.locked" == file or "team_players" == file or "doorcheck.doorspot" == file or "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
+                    if "total_pieces" == file or "proc_spell_data.spell" == file or "add.gift" == file or "remove.gift" == file or "doorlock.locked" == file or "team_players" == file or "doorcheck.doorspot" == file or "check.spot" == file or "scout" == file or "entrance_rando.dest" == file or \
                             "roomrando.enabled" == file:
                         os.remove(os.path.join(root, file))
                     elif file.endswith(("only_tem", "disconnected", "connected", ".item", "items.itsem", ".victory", ".route", ".playerspot", ".mad",
@@ -1018,6 +1019,41 @@ async def process_undertale_cmd(ctx: UndertaleContext, cmd: str, args: dict):
             for ss in ctx.player_names:
                 if ctx.player_names[ss] != "Archipelago":
                     f.write(ctx.player_names[ss]+"\n")
+            f.close()
+        spell_data = args["slot_data"]["Procedural_Spells"]
+        with open(os.path.join(ctx.save_game_folder, "proc_spell_data.spell"), "w") as f:
+            temp_i = 1
+            for spl in spell_data:
+                f.write("Proc Spell "+str(temp_i)+"\n")
+                f.write(str(spl[0])+"\n")
+                f.write(str(spl[1])+"\n")
+                f.write(str(spl[2])+"\n")
+                f.write(str(round(spl[3]))+"\n")
+                f.write(str(spl[4])+"\n")
+                f.write(str(spl[5])+"\n")
+                f.write(str(spl[6])+"\n")
+                f.write(str(spl[7])+"\n")
+                f.write(str(spl[8])+"\n")
+                f.write(str(spl[9])+"\n")
+                f.write(str(spl[10])+"\n")
+                f.write(str(spl[11])+"\n")
+                f.write(str(spl[12])+"\n")
+                f.write(str(spl[13])+"\n")
+                f.write(str(spl[14])+"\n")
+                f.write(str(spl[15])+"\n")
+                f.write(str(spl[16])+"\n")
+                f.write(str(spl[17])+"\n")
+                f.write(str(spl[18])+"\n")
+                f.write(str(spl[19])+"\n")
+                f.write(str(spl[20])+"\n")
+                f.write(str(spl[21])+"\n")
+                f.write(str(spl[22])+"\n")
+                f.write(str(spl[23])+"\n")
+                f.write(str(spl[24])+"\n")
+                f.write(str(spl[25])+"\n")
+                f.write(str(spl[26])+"\n")
+                f.write(str(spl[27])+"\n")
+                temp_i += 1
             f.close()
         ctx.giftbox_key = f"Giftbox;{ctx.team};{ctx.slot}"
         ctx.motherbox_key = f"Giftboxes;{ctx.team}"
