@@ -369,7 +369,7 @@ class AdvancedLogic(Toggle):
 
 
 class ProceduralSpells(Range):
-    """Adds this many procedurally-generated spells to the pool that have randomized effects."""
+    """EARLY FEATURE, MAY BE UNSTABLE OR CONFUSING: Adds this many procedurally-generated spells to the pool that have randomized effects."""
     display_name = "Procedural Spell Amount"
     default = 0
     range_start = 0
