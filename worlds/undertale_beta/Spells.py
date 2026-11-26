@@ -34,16 +34,21 @@ class _undertale_procedural_spell:
     target_def_div: float = 1.0
     tp_cost: float = 0.0
 
+class under_Expected_Spell_Stats(typing.NamedTuple):
+    tension_mod: int
+    lv_1_value: int
+    lv_19_value: int
+
 spell_effects = {
-    "heal": 5,
-    "over_heal": 16,
-    "damage_target": 5,
-    "damage_all": 10,
-    "target_defense_reduction": 6,
-    "brave_defense": 20,
-    "patient_regen": 25,
-    "pacify_target": 45,
-    "self_defense_reduction": 10,
+    "heal": under_Expected_Spell_Stats(80, 10, 46),
+    "over_heal": under_Expected_Spell_Stats(120, 5, 23),
+    "damage_target": under_Expected_Spell_Stats(100, 44, 202),
+    "damage_all": under_Expected_Spell_Stats(175, 44, 202),
+    "target_defense_reduction": under_Expected_Spell_Stats(100, 10, 10),
+    "brave_defense": under_Expected_Spell_Stats(125, 3, 3),
+    "patient_regen": under_Expected_Spell_Stats(100, 2, 2),
+    "pacify_target": under_Expected_Spell_Stats(187, 1, 1),
+    "self_defense_reduction": under_Expected_Spell_Stats(-260, 30, 30),
 }
 
 targeting_spell_effects = [
@@ -63,4 +68,8 @@ numerical_spell_effects = [
 soul_spell_effects = [
     "brave_defense",
     "patient_regen",
+]
+
+unaffected_by_secondary = [
+    "pacify_target",
 ]

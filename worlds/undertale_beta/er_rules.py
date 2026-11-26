@@ -25,7 +25,8 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
         connecting_region=world.get_region("Trash Zone Fall"))
 
     world.get_region("room_water20").connect(
-        connecting_region=world.get_region("room_water21"))
+        connecting_region=world.get_region("room_water21"),
+        rule=lambda state, world=world, player=player: world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or ((world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_hp)) and state.has("Spear Shield", player) and state.has("ITEM", player) and state.has("Waterfall Population Pack", player, math.ceil(18 / world.options.kill_sanity_pack_size.value))))
 
     world.get_region("room_water21").connect(
         connecting_region=world.get_region("room_water20"))
@@ -34,7 +35,8 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
         connecting_region=world.get_region("room_water_undynefinal"))
 
     world.get_region("room_water_undynefinal").connect(
-        connecting_region=world.get_region("room_water21"))
+        connecting_region=world.get_region("room_water21"),
+        rule=lambda state, world=world, player=player: state.has("Spear Shield", player) and state.has("ITEM", player))
 
     world.get_region("room_water_undynefinal").connect(
         connecting_region=world.get_region("room_fire2"))
@@ -201,7 +203,7 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
 
     world.get_region("room_fire_core_metttest").connect(
         connecting_region=world.get_region("room_fire_core_final"),
-        rule=(Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), options=[OptionFilter(KillSanity, KillSanity.option_locked), OptionFilter(RouteRequired, RouteRequired.option_genocide)], filtered_resolution=True)))
+        rule=((OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | Has("Yellow Bullets")) & Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), options=[OptionFilter(KillSanity, KillSanity.option_locked), OptionFilter(RouteRequired, RouteRequired.option_genocide)], filtered_resolution=True)))
 
     world.get_region("Metta Entrance").connect(
         connecting_region=world.get_region("room_fire_core_premett"))
@@ -425,6 +427,9 @@ def set_er_region_rules(world: "UndertaleWorld") -> None:
 def set_er_location_rules(world: "UndertaleWorld") -> None:
     player = world.player
     multiworld = world.multiworld
+    world.set_rule(multiworld.get_entrance("room_fire_savepoint2 -> room_fire_spider", player),
+                     Has("Loose Strings") | OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in")
+                   )
     world.set_rule(multiworld.get_entrance("room_fire_elevator_l1 -> room_fire_prelab", player),
                      (
                          ((CanReachRegion("room_fire_savepoint1", filtered_resolution=False, options=[OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_pacifist, RouteRequired.option_neutral], operator="in")]) | 
@@ -514,6 +519,13 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                      CanReachLocation("Toriel Fight") & Has("Door Unlock - "+door))
             world.set_rule(multiworld.get_entrance(door.split(" <-> ")[1] + " -> " + door.split(" <-> ")[0], player),
                      CanReachLocation("Toriel Fight") & Has("Door Unlock - "+door))
+        elif door == "room_fire_savepoint2 <-> room_fire_spider":
+            world.set_rule(multiworld.get_location("Approach Door "+door, player),
+                     CanReachRegion(door.split(" <-> ")[1]) | CanReachRegion(door.split(" <-> ")[0]))
+            world.set_rule(multiworld.get_entrance(door.split(" <-> ")[0] + " -> " + door.split(" <-> ")[1], player),
+                     (Has("Loose Strings") | OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in")) & Has("Door Unlock - "+door))
+            world.set_rule(multiworld.get_entrance(door.split(" <-> ")[1] + " -> " + door.split(" <-> ")[0], player),
+                     (Has("Loose Strings") | OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in")) & Has("Door Unlock - "+door))
         elif door == "room_water_blookyard <-> room_water_hapstablook":
             world.set_rule(multiworld.get_location("Approach Door "+door, player),
                     (CanReachRegion(door.split(" <-> ")[0]) & Has("Mystery Key")) | CanReachRegion(door.split(" <-> ")[1]))
@@ -521,6 +533,17 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                      Has("Door Unlock - "+door))
             world.set_rule(multiworld.get_entrance(door.split(" <-> ")[1] + " -> " + door.split(" <-> ")[0], player),
                      Has("Door Unlock - "+door))
+        elif door == "room_water20 <-> room_water21":
+            if _undertale_is_route(world, 2):
+                world.set_rule(multiworld.get_location("Approach Door "+door, player),
+                        (lambda state, world=world, player=player: world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or ((world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_hp)) and state.has("Spear Shield", player) and state.has("ITEM", player) and state.has("Waterfall Population Pack", player, math.ceil(18 / world.options.kill_sanity_pack_size.value)) and ((CanReachRegion(door.split(" <-> ")[0]) | CanReachRegion(door.split(" <-> ")[1])).resolve(world)))))
+            else:
+                world.set_rule(multiworld.get_location("Approach Door "+door, player),
+                               (Has("Spear Shield") & Has("ITEM")) & (CanReachRegion(door.split(" <-> ")[0]) | CanReachRegion(door.split(" <-> ")[1])))
+            world.set_rule(multiworld.get_entrance(door.split(" <-> ")[0] + " -> " + door.split(" <-> ")[1], player),
+                     CanReachLocation("Undyne Fight") & Has("Door Unlock - "+door))
+            world.set_rule(multiworld.get_entrance(door.split(" <-> ")[1] + " -> " + door.split(" <-> ")[0], player),
+                     CanReachLocation("Undyne Fight") & Has("Door Unlock - "+door))
         else:
             world.set_rule(multiworld.get_location("Approach Door "+door, player),
                     CanReachRegion(door.split(" <-> ")[0]) | CanReachRegion(door.split(" <-> ")[1]))
@@ -594,14 +617,14 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
         world.set_rule(multiworld.get_location("Papyrus Fight", player),
                  Has("Snowdin Population Pack", math.ceil(16 / FromOption(KillSanityPackSize).resolve(world))))
         world.set_rule(multiworld.get_location("Undyne Fight", player),
-                 lambda state, world=world, player=player: (world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_hp)) and state.has("ITEM", player) and state.has("Waterfall Population Pack", player, math.ceil(18 / world.options.kill_sanity_pack_size.value)))
+                 lambda state, world=world, player=player: (world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_hp)) and state.has("Spear Shield", player) and state.has("ITEM", player) and state.has("Waterfall Population Pack", player, math.ceil(18 / world.options.kill_sanity_pack_size.value)))
     else:
         if not _undertale_is_route(world, 2):
             world.set_rule(multiworld.get_location("Papyrus Fight", player),
                  Has("Jump") | OptionFilter(AdvancedLogic, AdvancedLogic.option_true))
         if _undertale_is_route(world, 2) and (not _undertale_is_route(world, 3)):
             world.set_rule(multiworld.get_location("Undyne Fight", player),
-                     lambda state, world=world, player=player: (world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_hp)) and state.has("ITEM", player))
+                     lambda state, world=world, player=player: (world.options.route_required.value == RouteRequired.option_genocide or state.can_reach_region("room_fire2", player) or (state.can_reach_region("room_water_undynefinal", player) and world.options.route_required.value == RouteRequired.option_neutral)) and (world.options.route_required.value == RouteRequired.option_neutral or world.options.route_required.value == RouteRequired.option_pacifist or (_undertale_return_reachable_def(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_def and _undertale_return_reachable_atk(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_atk and _undertale_return_reachable_hp(state, world, player, _undertale_return_reachable_level(_undertale_exp_available(state, world, player))) >= world.options.undying_req_hp)) and state.has("Spear Shield", player) and state.has("ITEM", player))
     if _undertale_is_route(world, 2) and (world.options.kill_sanity.value != 0):
         for i in range(0, 16):
             world.set_rule(multiworld.get_location("Ruins Kill " + str(i + 1), player),
@@ -648,7 +671,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
                          lambda state, maxlv=maxlv:
                          _undertale_return_reachable_level(_undertale_exp_available(state, world, player)) >= maxlv)
     world.set_rule(multiworld.get_location("Mettaton Fight", player),
-             CanReachRegion("room_fire_core_metttest") & Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), filtered_resolution=True, options=[OptionFilter(KillSanity, KillSanity.option_locked), OptionFilter(RouteRequired, RouteRequired.option_genocide)]))
+             CanReachRegion("room_fire_core_metttest") & (OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | Has("Yellow Bullets")) & Has("Hotland Population Pack", math.ceil(40 / FromOption(KillSanityPackSize).resolve(world)), filtered_resolution=True, options=[OptionFilter(KillSanity, KillSanity.option_locked), OptionFilter(RouteRequired, RouteRequired.option_genocide)]))
     world.set_rule(multiworld.get_location("Snowdin Shop 1", player),
              OptionFilter(RouteRequired, [RouteRequired.option_genocide, RouteRequired.option_all_routes], operator="in") | (_undertale_can_get_inf_gold()))
     world.set_rule(multiworld.get_location("Snowdin Shop 2", player),

@@ -95,6 +95,7 @@ item_table = {
     "Snowdin Key": ItemData(77082, ItemClassification.progression),
     "Waterfall Key": ItemData(77083, ItemClassification.progression),
     "Hotland Key": ItemData(77084, ItemClassification.progression),
+    "Yellow Bullets": ItemData(77085, ItemClassification.progression),
     "Jump": ItemData(77086, ItemClassification.progression),
     "Ruins Population Pack": ItemData(77087, ItemClassification.progression),
     "Snowdin Population Pack": ItemData(77088, ItemClassification.progression),
@@ -104,6 +105,8 @@ item_table = {
     "Snowdin Spare": ItemData(77093, ItemClassification.progression),
     "Waterfall Spare": ItemData(77094, ItemClassification.progression),
     "Hotland Spare": ItemData(77095, ItemClassification.progression),
+    "Spear Shield": ItemData(77096, ItemClassification.progression),
+    "Loose Strings": ItemData(77097, ItemClassification.progression),
     "Ice Trap": ItemData(77091, ItemClassification.trap),
     "LOVE Reduction Trap": ItemData(10001, ItemClassification.trap),
     "Max HP Reduction Trap": ItemData(10002, ItemClassification.trap),
@@ -195,6 +198,8 @@ key_items = {
     "Hotland Key": 1,
     "Mystery Key": 1,
     "Jump": 1,
+    "Yellow Bullets": 1,
+    "Loose Strings": 1,
 }
 
 junk_weights_all = {

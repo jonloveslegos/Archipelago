@@ -77,7 +77,7 @@ advancement_table = {
     "Right New Home Key": AdvData(79065, "room_asghouse3"),
     "Toriel Fight": AdvData(79066, "room_basement4"),
     "Papyrus Fight": AdvData(79067, "room_fogroom"),
-    "Undyne Fight": AdvData(79068, "room_water_undynefinal"),
+    "Undyne Fight": AdvData(79068, "room_water20"),
     "Hapstablook Diary 1": AdvData(79070, "room_water_hapstablook"),
     "Hapstablook Diary 2": AdvData(79071, "room_water_hapstablook"),
     "Hapstablook Diary 3": AdvData(79072, "room_water_hapstablook"),

@@ -19,6 +19,19 @@ class RandomizeJump(Toggle):
     default = 0
 
 
+class RandomizeShoot(Toggle):
+    """Adds the ability to shoot with the yellow soul to the item pool. 
+    Is forced off if your only goal is Genocide route, because the ability has no use in that route."""
+    display_name = "Randomize Yellow Soul shoot"
+    default = 0
+
+
+class RandomizeStrings(Toggle):
+    """Adds the ability to swap strings with the purple soul to the item pool."""
+    display_name = "Randomize Purple Soul strings"
+    default = 0
+
+
 class StartingArea(Choice):
     """Which area to start with access to. (You will always have access to New Home.)"""
     display_name = "Starting Area"
@@ -337,7 +350,7 @@ class AddDoorLocks(NamedRange):
     The doors at the hub will never be locked
     Adds one location at each locked transition as well, approach the transition to obtain the location, can still be obtained even after unlocking it.
     If the current room has a locked transition, you can press W to warp to the hub, to prevent you from being softlocked inside a one-way room.
-    Genocide route goal lowers the possible maximum to 191."""
+    Genocide route goal lowers the possible maximum to 190."""
     
     display_name = "Door Locks Added"
     default = 0
@@ -396,6 +409,8 @@ class UndertaleOptions(PerGameCommonOptions):
     extra_key_pieces:                         ExtraKeyPieces
     rando_item_button:                        RandoBattleOptions
     rando_jump:                               RandomizeJump
+    rando_shoot:                              RandomizeShoot
+    rando_strings:                            RandomizeStrings
     rando_love:                               RandomizeLove
     rando_stats:                              RandomizeStats
     enabled_spells:                           SpellsEnabled
