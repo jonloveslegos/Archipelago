@@ -105,6 +105,7 @@ class UndertaleWorld(World):
             "rando_jump": bool(self.options.rando_jump.value),
             "rando_shoot": bool(self.options.rando_shoot.value),
             "rando_strings": bool(self.options.rando_strings.value),
+            "rando_shield": bool(self.options.rando_shield.value),
             "cut_items": bool(self.options.cut_items.value),
             "kill_sanity_pack_size": self.options.kill_sanity_pack_size.value,
             "ice_traps": self.options.ice_traps.value,
@@ -345,6 +346,9 @@ class UndertaleWorld(World):
         if (not self.options.rando_shoot) or self.options.route_required.current_key == "genocide":
             itempool.remove("Yellow Bullets")
             self.multiworld.push_precollected(self.create_item("Yellow Bullets"))
+        if (not self.options.rando_shield):
+            itempool.remove("Spear Shield")
+            self.multiworld.push_precollected(self.create_item("Spear Shield"))
         if self.options.route_required == "genocide":
             itempool = [item for item in itempool if item != "Stained Apron"
                         and item != "Hot Dog...?" and item != "Punch Card"]

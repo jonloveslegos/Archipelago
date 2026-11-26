@@ -32,6 +32,12 @@ class RandomizeStrings(Toggle):
     default = 0
 
 
+class RandomizeShield(Toggle):
+    """Adds the ability to block projectiles with the green soul to the item pool."""
+    display_name = "Randomize Green Soul shield"
+    default = 0
+
+
 class StartingArea(Choice):
     """Which area to start with access to. (You will always have access to New Home.)"""
     display_name = "Starting Area"
@@ -411,6 +417,7 @@ class UndertaleOptions(PerGameCommonOptions):
     rando_jump:                               RandomizeJump
     rando_shoot:                              RandomizeShoot
     rando_strings:                            RandomizeStrings
+    rando_shield:                             RandomizeShield
     rando_love:                               RandomizeLove
     rando_stats:                              RandomizeStats
     enabled_spells:                           SpellsEnabled

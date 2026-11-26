@@ -200,6 +200,7 @@ key_items = {
     "Jump": 1,
     "Yellow Bullets": 1,
     "Loose Strings": 1,
+    "Spear Shield": 1,
 }
 
 junk_weights_all = {

@@ -429,6 +429,7 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
     multiworld = world.multiworld
     world.set_rule(multiworld.get_entrance("room_fire_savepoint2 -> room_fire_spider", player),
                      Has("Loose Strings") | OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in")
+                    | (OptionFilter(AdvancedLogic, AdvancedLogic.option_true) & _undertale_can_get_inf_gold())
                    )
     world.set_rule(multiworld.get_entrance("room_fire_elevator_l1 -> room_fire_prelab", player),
                      (
@@ -523,9 +524,9 @@ def set_er_location_rules(world: "UndertaleWorld") -> None:
             world.set_rule(multiworld.get_location("Approach Door "+door, player),
                      CanReachRegion(door.split(" <-> ")[1]) | CanReachRegion(door.split(" <-> ")[0]))
             world.set_rule(multiworld.get_entrance(door.split(" <-> ")[0] + " -> " + door.split(" <-> ")[1], player),
-                     (Has("Loose Strings") | OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in")) & Has("Door Unlock - "+door))
+                     (Has("Loose Strings") | OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in") | (OptionFilter(AdvancedLogic, AdvancedLogic.option_true) & _undertale_can_get_inf_gold())) & Has("Door Unlock - "+door))
             world.set_rule(multiworld.get_entrance(door.split(" <-> ")[1] + " -> " + door.split(" <-> ")[0], player),
-                     (Has("Loose Strings") | OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in")) & Has("Door Unlock - "+door))
+                     (Has("Loose Strings") | OptionFilter(RouteRequired, [RouteRequired.option_all_routes, RouteRequired.option_genocide], operator="in") | (OptionFilter(AdvancedLogic, AdvancedLogic.option_true) & _undertale_can_get_inf_gold())) & Has("Door Unlock - "+door))
         elif door == "room_water_blookyard <-> room_water_hapstablook":
             world.set_rule(multiworld.get_location("Approach Door "+door, player),
                     (CanReachRegion(door.split(" <-> ")[0]) & Has("Mystery Key")) | CanReachRegion(door.split(" <-> ")[1]))
